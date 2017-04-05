@@ -1,4 +1,4 @@
-package com.github.jhanne82.component;
+package com.github.jhanne82.documenttree.component;
 
 
 import org.apache.commons.collections.buffer.CircularFifoBuffer;

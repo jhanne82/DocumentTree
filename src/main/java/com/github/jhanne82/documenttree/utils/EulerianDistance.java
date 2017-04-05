@@ -1,4 +1,4 @@
-package com.github.jhanne82.utils;
+package com.github.jhanne82.documenttree.utils;
 
 
 import java.math.BigDecimal;
