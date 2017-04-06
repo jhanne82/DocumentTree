@@ -9,20 +9,22 @@ public class Document <T>{
 
     private final CircularFifoBuffer relevanceBuffer;
     private final T[] termVector;
+    private int number;
 
     private int   timestampOfLastSearch;
 
 
 
-    public Document( T[] termVector ){
-        this.relevanceBuffer = new CircularFifoBuffer( 20 );
-        this.termVector = termVector;
+    public Document( T[] termVector, int number ){
+        this( termVector, 20, number );
     }
 
 
-    public Document( T[] termVector, int bufferSize ){
+
+    public Document( T[] termVector, int bufferSize, int number ){
         this.relevanceBuffer = new CircularFifoBuffer( bufferSize );
         this.termVector = termVector;
+        this.number = number;
     }
 
 
@@ -65,5 +67,10 @@ public class Document <T>{
 
     public void clearRelevanceBuffer() {
         relevanceBuffer.clear();
+    }
+
+
+    public int getNumber() {
+        return number;
     }
 }

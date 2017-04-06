@@ -7,13 +7,13 @@ import com.github.jhanne82.documenttree.numbergenerator.Distribution;
 import com.github.jhanne82.documenttree.numbergenerator.RandomNumberGenerator;
 
 
+
 public class Simulation {
 
 
     private static final int MAX_COUNT_OF_CREATED_DOCUMENTS = 1000;
     private static final int MAX_COUNT_OF_TERMS_USED_TO_DEFINE_DOCUMENT = 1000;
     private static final int MAX_COUNT_OF_TERMS_WITH_QUANTIFIER = 3;
-    private static final int MAX_COUNT_OF_CHILDS_PER_NODE = 3;
 
 
     public Simulation( boolean useCluster,
@@ -26,62 +26,56 @@ public class Simulation {
 
     private DocumentNode<Integer> createDocumentTree( Distribution distribution ) {
 
-        Document<Integer> document = createDocument( distribution );
-        DocumentNode<Integer> root = new DocumentNode<>( document );
+        DocumentNode<Integer> root = new DocumentNode<>( createDocument( distribution ) );
 
-        //createNode( root, 1, distribution ) ;
-        root = add( createDocument() );
+        Document document = createDocument( distribution );
+
+        do {
+            insert( null, root, document );
+            document = createDocument( distribution );
+
+        } while ( document != null );
 
         return root;
     }
 
 
-    private DocumentNode<Integer> add( Document<Integer> document ) {
 
-        if( document != null ) {
-            return new DocumentNode<>(document, add(createDocument()), add(createDocument()));
-        } else {
-            return new DocumentNode<>();
-        }
-    }
+    private void insert( DocumentNode<Integer> parent, DocumentNode<Integer> currentNode, Document<Integer> document ) {
 
+        if( currentNode == null ) {
+            currentNode= new DocumentNode<>( document );
 
-    private void createNode( DocumentNode<Integer> parent, int count, Distribution distribution ) {
+            if( parent != null ){
+                if( parent.isLeaf() || parent.getLeftChild() == null ) {
+                    parent.addLeftChildLeaf( currentNode );
+                } else {
+                    parent.addRightChildLeaf( currentNode );
+                }
 
-        if( count < MAX_COUNT_OF_CREATED_DOCUMENTS ) {
-
-            Document<Integer> document = createDocument( distribution );
-            DocumentNode<Integer> child = new DocumentNode<>( document );
-            parent.addChildLeaf( child );
-
-            count++;
-
-            if( parent.getChildLeaves().size() < MAX_COUNT_OF_CHILDS_PER_NODE ) {
-                createNode( parent, count, distribution );
-            } else {
-                createNode( child, count, distribution );
             }
+            return;
+        }
+
+        if( currentNode.getDocument().getNumber() > document.getNumber() ) {
+            insert( currentNode, currentNode.getLeftChild(), document );
+        } else {
+            insert( currentNode, currentNode.getRightChild(), document );
         }
     }
+
+
 
 
     int COUNT = 0;
-    private Document<Integer> createDocument() {
-
-        System.out.println( "COUNT : " + COUNT);
-
-        if( COUNT < MAX_COUNT_OF_CREATED_DOCUMENTS ) {
-            COUNT++;
-            return createDocument( Distribution.EQUALLY );
-        }
-
-        return null;
-    }
-
-
     private Document<Integer> createDocument( Distribution distribution ) {
 
+        if( COUNT >= MAX_COUNT_OF_CREATED_DOCUMENTS ) {
+            return null;
+        }
+
         Integer[] termVector = new Integer[MAX_COUNT_OF_TERMS_USED_TO_DEFINE_DOCUMENT];
+
         for( int i = 0; i < MAX_COUNT_OF_TERMS_WITH_QUANTIFIER ; ) {
             int index = (new RandomNumberGenerator( distribution,
                                                     MAX_COUNT_OF_TERMS_USED_TO_DEFINE_DOCUMENT ) ).getInt();
@@ -90,7 +84,10 @@ public class Simulation {
                 i++;
             }
         }
-        return new Document<>( termVector );
+
+        COUNT++;
+        return new Document<>( termVector, (new RandomNumberGenerator( distribution,
+                                                                       MAX_COUNT_OF_CREATED_DOCUMENTS ) ).getInt() );
     }
 
 
