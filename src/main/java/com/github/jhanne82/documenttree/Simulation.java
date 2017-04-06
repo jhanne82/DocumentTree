@@ -29,9 +29,20 @@ public class Simulation {
         Document<Integer> document = createDocument( distribution );
         DocumentNode<Integer> root = new DocumentNode<>( document );
 
-        createNode( root, 1, distribution ) ;
+        //createNode( root, 1, distribution ) ;
+        root = add( createDocument() );
 
         return root;
+    }
+
+
+    private DocumentNode<Integer> add( Document<Integer> document ) {
+
+        if( document != null ) {
+            return new DocumentNode<>(document, add(createDocument()), add(createDocument()));
+        } else {
+            return new DocumentNode<>();
+        }
     }
 
 
@@ -51,6 +62,20 @@ public class Simulation {
                 createNode( child, count, distribution );
             }
         }
+    }
+
+
+    int COUNT = 0;
+    private Document<Integer> createDocument() {
+
+        System.out.println( "COUNT : " + COUNT);
+
+        if( COUNT < MAX_COUNT_OF_CREATED_DOCUMENTS ) {
+            COUNT++;
+            return createDocument( Distribution.EQUALLY );
+        }
+
+        return null;
     }
 
 

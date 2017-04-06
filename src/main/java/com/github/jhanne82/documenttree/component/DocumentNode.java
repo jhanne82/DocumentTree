@@ -10,12 +10,27 @@ public class DocumentNode<T> {
 
    private List<DocumentNode<T>> leaves = new LinkedList<>();
    private DocumentNode<T>       parent = null;
+   public DocumentNode<T>       left = null;
+   public DocumentNode<T>       right = null;
    private Document<T>           document;
 
 
    public DocumentNode( Document<T> document ) {
       this.document = document;
    }
+
+
+
+   public DocumentNode( Document<T> document, DocumentNode<T> left, DocumentNode<T> right ) {
+      this.document = document;
+      this.left = left;
+      addChildLeaf( left );
+      this.right = right;
+      addChildLeaf( right);
+   }
+
+
+   public DocumentNode(){}
 
 
    public void setParent( DocumentNode<T> parent ) {
