@@ -2,7 +2,6 @@ package com.github.jhanne82.documenttree;
 
 
 import com.github.jhanne82.documenttree.component.Document;
-import com.github.jhanne82.documenttree.component.DocumentNode;
 import com.github.jhanne82.documenttree.component.DocumentTree;
 import com.github.jhanne82.documenttree.numbergenerator.Distribution;
 import com.github.jhanne82.documenttree.numbergenerator.RandomNumberGenerator;
@@ -16,8 +15,8 @@ public class Simulation {
     private static final int MAX_COUNT_OF_TERMS_WITH_QUANTIFIER = 3;
 
     private Document<Integer>[] referenceTree;
-    DocumentTree<Integer> globalKnowledge = new DocumentTree();
-    DocumentTree<Integer> localKnowledge  = new DocumentTree();
+    private DocumentTree<Integer> globalKnowledge = new DocumentTree<>();
+    private DocumentTree<Integer> localKnowledge  = new DocumentTree<>();
 
 
 
@@ -30,7 +29,7 @@ public class Simulation {
 
 
     private void createDocumentTree( Distribution distribution ) {
-        referenceTree = createDocuments( MAX_COUNT_OF_CREATED_DOCUMENTS );
+        referenceTree = createDocuments( MAX_COUNT_OF_CREATED_DOCUMENTS, distribution );
 
         globalKnowledge.level_order_insert( globalKnowledge.rootNode, referenceTree, 0, MAX_COUNT_OF_CREATED_DOCUMENTS );
         localKnowledge.level_order_insert(  localKnowledge.rootNode, referenceTree, 0, MAX_COUNT_OF_CREATED_DOCUMENTS );
@@ -38,12 +37,12 @@ public class Simulation {
 
 
 
-    private Document<Integer>[] createDocuments( int size ) {
+    private Document<Integer>[] createDocuments( int size, Distribution distribution ) {
 
         Document<Integer>[] documents = new Document[ size ];
 
         for( int i = 0; i < size; i++ ) {
-            documents[i] = createDocument( Distribution.EQUALLY );
+            documents[i] = createDocument( distribution );
         }
 
         return documents;
