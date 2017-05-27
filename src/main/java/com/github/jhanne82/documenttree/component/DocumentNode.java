@@ -10,8 +10,8 @@ public class DocumentNode<T> {
 
    private List<DocumentNode<T>> leaves = new LinkedList<>();
    private DocumentNode<T>       parent = null;
-   public DocumentNode<T>       left = null;
-   public DocumentNode<T>       right = null;
+   private DocumentNode<T>       left = null;
+   private DocumentNode<T>       right = null;
    private Document<T>           document;
 
 
@@ -38,16 +38,34 @@ public class DocumentNode<T> {
    }
 
 
+   public void setLeftChild( DocumentNode<T> left ) {
+      this.left = left;
+      addChildLeaf( left );
+   }
+
+
+
+   public DocumentNode<T> getLeftChild() {
+       return this.left;
+   }
+
+
+   public void setRightChild( DocumentNode<T> right ) {
+      this.right = right;
+      addChildLeaf( right );
+   }
+
+
+
+   public DocumentNode<T> getRightChild() {
+       return this.right;
+   }
+
+
    public List<DocumentNode<T>> getChildLeaves() {
       return leaves;
    }
 
-
-   public void addChildLeaf( Document<T> document ) {
-
-      DocumentNode<T> childLeaf = new DocumentNode<>( document );
-      addChildLeaf( childLeaf );
-   }
 
 
    public void addChildLeaf( DocumentNode<T> childLeaf ) {

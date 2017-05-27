@@ -5,7 +5,8 @@ import org.apache.commons.collections.buffer.CircularFifoBuffer;
 
 import java.math.BigDecimal;
 
-public class Document <T>{
+public class Document <T>
+    implements Cloneable {
 
     private final CircularFifoBuffer relevanceBuffer;
     private final T[] termVector;
@@ -65,5 +66,13 @@ public class Document <T>{
 
     public void clearRelevanceBuffer() {
         relevanceBuffer.clear();
+    }
+
+
+    @Override
+    public Document<T> clone() {
+
+        Document<T> newDocument = new Document<T>( termVector.clone() );
+        return newDocument;
     }
 }
