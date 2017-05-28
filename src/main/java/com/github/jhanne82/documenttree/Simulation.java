@@ -25,6 +25,7 @@ public class Simulation {
                        Distribution distributionSearch ) {
 
         createDocumentTree( distributionDocuments );
+        globalKnowledge.bts( MAX_COUNT_OF_CREATED_DOCUMENTS, createDocument( Distribution.EQUALLY ).getTermVector() );
     }
 
 

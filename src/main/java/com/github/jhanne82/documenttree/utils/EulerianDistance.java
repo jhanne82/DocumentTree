@@ -7,7 +7,7 @@ public class EulerianDistance {
 
 
 
-    public static BigDecimal calEulerianDistance( int[] vectorA, int[] vectorB ) {
+    public static<T> BigDecimal calEulerianDistance( T[] vectorA, T[] vectorB ) {
 
         BigDecimal eulerianDistance = BigDecimal.ZERO;
 

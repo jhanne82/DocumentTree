@@ -1,5 +1,10 @@
 package com.github.jhanne82.documenttree.component;
 
+import com.github.jhanne82.documenttree.utils.EulerianDistance;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+
 public class DocumentTree<T> {
 
     public DocumentNode<T> rootNode;
@@ -29,6 +34,45 @@ public class DocumentTree<T> {
 
         level_order_insert( root.getLeftChild(), documents, left, size );
         level_order_insert( root.getRightChild(), documents, right, size );
+    }
+
+
+
+    public ResultDocumentList<T> bts( int maxVisitedNode, T[] searchTerm ) {
+        ResultDocumentList<T> resultDocumentList = new ResultDocumentList<>();
+        ArrayList<DocumentNode<T>> nodesOnCurrentLevel = new ArrayList<>();
+        ArrayList<DocumentNode<T>> nodesOnNextLevel    = new ArrayList<>();
+
+        nodesOnNextLevel.add( rootNode );
+
+        int nodeCount = 0;
+
+        while ( nodeCount < maxVisitedNode ) {
+            nodesOnCurrentLevel.clear();
+            
+            // gefundene Knoten (nächstes Level) werden zum aktuellen Level
+            nodesOnCurrentLevel = (ArrayList<DocumentNode<T>>) nodesOnNextLevel.clone();
+            nodesOnNextLevel.clear();
+
+            // gibt nichts mehr zu entdecken
+            if (nodesOnCurrentLevel.isEmpty()) {
+                break;
+            }
+
+            for( DocumentNode<T> node : nodesOnCurrentLevel ) {
+                if( nodeCount == maxVisitedNode ) {
+                    break;
+                }
+                // TODO
+                BigDecimal euler = EulerianDistance.calEulerianDistance(node.getDocument().getTermVector(), searchTerm );
+                node.getDocument().addRelevance( EulerianDistance.transformEulerianDistanceToRelevanceValue( euler ));
+                resultDocumentList.add( node.getDocument() );
+                nodesOnNextLevel.addAll( node.getChildLeaves() );
+                nodeCount++;
+            }
+        }
+
+        return resultDocumentList;
     }
 
 
