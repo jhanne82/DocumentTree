@@ -21,6 +21,9 @@ public class EulerianDistance {
         double basis = 0.5;
 
         // 1/euler -> 1/10=0,1  1/1=1
+        if( BigDecimal.ZERO.compareTo( eulerianDistance ) == 0 ) {
+            return BigDecimal.ZERO;
+        }
         return BigDecimal.ONE.divide( eulerianDistance );
     }
 
