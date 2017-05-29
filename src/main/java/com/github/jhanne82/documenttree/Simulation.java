@@ -25,8 +25,8 @@ public class Simulation {
                        Distribution distributionSearch ) {
 
         createDocumentTree( distributionDocuments );
-        //breadthFirstSearch( MAX_COUNT_OF_CREATED_DOCUMENTS, createDocument( Distribution.EQUALLY ).getTermVector() );
-        globalKnowledge.depthFirstSearch( MAX_COUNT_OF_CREATED_DOCUMENTS -100, createDocument(Distribution.EQUALLY).getTermVector());
+        System.out.println( globalKnowledge.breadthFirstSearch( MAX_COUNT_OF_CREATED_DOCUMENTS, createDocument( Distribution.EQUALLY, 0 ).getTermVector() ).toString() );
+        System.out.println( globalKnowledge.depthFirstSearch( MAX_COUNT_OF_CREATED_DOCUMENTS -100, createDocument(Distribution.EQUALLY, 0).getTermVector()).toString() );
     }
 
 
@@ -44,7 +44,7 @@ public class Simulation {
         Document<Integer>[] documents = new Document[ size ];
 
         for( int i = 0; i < size; i++ ) {
-            documents[i] = createDocument( distribution );
+            documents[i] = createDocument( distribution, i );
         }
 
         return documents;
@@ -52,7 +52,7 @@ public class Simulation {
 
 
 
-    private Document<Integer> createDocument( Distribution distribution ) {
+    private Document<Integer> createDocument( Distribution distribution, int counter ) {
 
         Integer[] termVector = new Integer[MAX_COUNT_OF_TERMS_USED_TO_DEFINE_DOCUMENT];
         for( int i = 0; i < MAX_COUNT_OF_TERMS_WITH_QUANTIFIER ; ) {
@@ -63,7 +63,7 @@ public class Simulation {
                 i++;
             }
         }
-        return new Document<>( termVector );
+        return new Document<>( termVector, "Document " + counter  );
     }
 
 

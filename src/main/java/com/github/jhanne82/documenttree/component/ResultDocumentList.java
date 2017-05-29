@@ -2,6 +2,7 @@ package com.github.jhanne82.documenttree.component;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 
 public class ResultDocumentList<T>
@@ -39,6 +40,11 @@ public class ResultDocumentList<T>
         }
 
         return true;
+    }
 
+
+    @Override
+    public String toString() {
+        return Arrays.toString( this.toArray() );
     }
 }

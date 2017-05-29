@@ -10,20 +10,21 @@ public class Document <T>
 
     private final CircularFifoBuffer relevanceBuffer;
     private final T[] termVector;
+    private final String documentName;
 
     private int   timestampOfLastSearch;
 
 
 
-    public Document( T[] termVector ){
-        this.relevanceBuffer = new CircularFifoBuffer( 20 );
-        this.termVector = termVector;
+    public Document( T[] termVector, String documentName ){
+        this( termVector, 20, documentName );
     }
 
 
-    public Document( T[] termVector, int bufferSize ){
+    public Document( T[] termVector, int bufferSize, String documentName ){
         this.relevanceBuffer = new CircularFifoBuffer( bufferSize );
         this.termVector = termVector;
+        this.documentName = documentName;
     }
 
 
@@ -72,7 +73,13 @@ public class Document <T>
     @Override
     public Document<T> clone() {
 
-        Document<T> newDocument = new Document<T>( termVector.clone() );
+        Document<T> newDocument = new Document<T>( termVector.clone(), documentName );
         return newDocument;
+    }
+
+
+    @Override
+    public String toString() {
+        return documentName + " (" + getAverageRelevance() + ")";
     }
 }
