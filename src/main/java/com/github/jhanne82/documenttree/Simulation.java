@@ -25,7 +25,8 @@ public class Simulation {
                        Distribution distributionSearch ) {
 
         createDocumentTree( distributionDocuments );
-        globalKnowledge.breadthFirstSearch( MAX_COUNT_OF_CREATED_DOCUMENTS, createDocument( Distribution.EQUALLY ).getTermVector() );
+        //breadthFirstSearch( MAX_COUNT_OF_CREATED_DOCUMENTS, createDocument( Distribution.EQUALLY ).getTermVector() );
+        globalKnowledge.depthFirstSearch( MAX_COUNT_OF_CREATED_DOCUMENTS -100, createDocument(Distribution.EQUALLY).getTermVector());
     }
 
 

@@ -74,4 +74,34 @@ public class DocumentTree<T> {
     }
 
 
+    private static int currentlyVisitedNode = 0;
+    public ResultDocumentList<T> depthFirstSearch( int maxVisitedNode, T[] searchTerm ) {
+
+        currentlyVisitedNode = 0;
+        ResultDocumentList resultDocumentList = new ResultDocumentList();
+        depthFirstSearch( rootNode, maxVisitedNode, resultDocumentList, searchTerm );
+        return resultDocumentList;
+    }
+
+
+    private boolean depthFirstSearch( DocumentNode<T> node, int maxVisitedNode, ResultDocumentList<T> resultDocumentList, T[] searchTerm ) {
+
+        if ( node == null)
+            return false;
+
+
+        if (currentlyVisitedNode == maxVisitedNode ) {
+            return true;
+        } else {
+            BigDecimal euler = EulerianDistance.calEulerianDistance(node.getDocument().getTermVector(), searchTerm );
+            node.getDocument().addRelevance( EulerianDistance.transformEulerianDistanceToRelevanceValue( euler ));
+            resultDocumentList.add( node.getDocument() );
+            currentlyVisitedNode++;
+        }
+
+        return (   depthFirstSearch( node.getLeftChild(), maxVisitedNode, resultDocumentList, searchTerm )
+                || depthFirstSearch( node.getRightChild(), maxVisitedNode, resultDocumentList, searchTerm ));
+    }
+
+
 }
