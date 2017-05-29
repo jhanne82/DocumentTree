@@ -20,7 +20,8 @@ public class EulerianDistance {
     public static BigDecimal transformEulerianDistanceToRelevanceValue( BigDecimal eulerianDistance ) {
         double basis = 0.5;
 
-        return BigDecimal.valueOf( Math.pow( basis, eulerianDistance.doubleValue() ) );
+        // 1/euler -> 1/10=0,1  1/1=1
+        return BigDecimal.ONE.divide( eulerianDistance );
     }
 
 }

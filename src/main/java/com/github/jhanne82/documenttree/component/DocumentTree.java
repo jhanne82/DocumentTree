@@ -38,7 +38,7 @@ public class DocumentTree<T> {
 
 
 
-    public ResultDocumentList<T> bts( int maxVisitedNode, T[] searchTerm ) {
+    public ResultDocumentList<T> breadthFirstSearch( int maxVisitedNode, T[] searchTerm ) {
         ResultDocumentList<T> resultDocumentList = new ResultDocumentList<>();
         ArrayList<DocumentNode<T>> nodesOnCurrentLevel = new ArrayList<>();
         ArrayList<DocumentNode<T>> nodesOnNextLevel    = new ArrayList<>();
@@ -50,11 +50,10 @@ public class DocumentTree<T> {
         while ( nodeCount < maxVisitedNode ) {
             nodesOnCurrentLevel.clear();
             
-            // gefundene Knoten (nächstes Level) werden zum aktuellen Level
+            // ChildLeaves von vorherigen Nodes werden zu aktuellen Nodes
             nodesOnCurrentLevel = (ArrayList<DocumentNode<T>>) nodesOnNextLevel.clone();
             nodesOnNextLevel.clear();
 
-            // gibt nichts mehr zu entdecken
             if (nodesOnCurrentLevel.isEmpty()) {
                 break;
             }
@@ -63,7 +62,6 @@ public class DocumentTree<T> {
                 if( nodeCount == maxVisitedNode ) {
                     break;
                 }
-                // TODO
                 BigDecimal euler = EulerianDistance.calEulerianDistance(node.getDocument().getTermVector(), searchTerm );
                 node.getDocument().addRelevance( EulerianDistance.transformEulerianDistanceToRelevanceValue( euler ));
                 resultDocumentList.add( node.getDocument() );
