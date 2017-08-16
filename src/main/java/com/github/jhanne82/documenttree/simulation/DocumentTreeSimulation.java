@@ -2,6 +2,7 @@ package com.github.jhanne82.documenttree.simulation;
 
 import com.github.jhanne82.documenttree.document.Document;
 import com.github.jhanne82.documenttree.document.DocumentTree;
+import com.github.jhanne82.documenttree.document.Term;
 
 import java.util.List;
 
@@ -15,7 +16,7 @@ public abstract class DocumentTreeSimulation <T> {
 
 
     private DocumentTree<T> documentTreeWithGlobalKnowledge;
-    //private DocumentTree<T> documentTreeWithLocalKnowledge;
+    private DocumentTree<T> documentTreeWithLocalKnowledge;
     private DocumentTree<T> stressReducedDocumentTree;
     private Document<T>[]   optimalDocumentTree;
 
@@ -26,10 +27,9 @@ public abstract class DocumentTreeSimulation <T> {
     }
 
 
-    /*
     public void setDocumentTreeWithLocalKnowledge( DocumentTree<T> documentTreeWithLocalKnowledge ) {
         this.documentTreeWithLocalKnowledge = documentTreeWithLocalKnowledge;
-    } */
+    }
 
 
 
@@ -57,24 +57,21 @@ public abstract class DocumentTreeSimulation <T> {
 
 
 
-    public void runSimulation( List<T[]> searchTermVectorList,
+    public void runSimulation( List<List<Term<T>>> searchTermVectorList,
                                SearchType searchType,
                                int limitForLocalKnowledge,
                                int countOfSearchesForRepositioning ) {
 
         int i = 0;
-        for( T[] searchTerm : searchTermVectorList ) {
+        for( List<Term<T>> searchTerm : searchTermVectorList ) {
             search( searchTerm, searchType, limitForLocalKnowledge );
-            System.out.println("Repositierung START...");
         //    documentTreeWithLocalKnowledge.repositioning( countOfSearchesForRepositioning );
             documentTreeWithGlobalKnowledge.repositioning( countOfSearchesForRepositioning );
-            System.out.println("Repositierung END...");
         }
     }
 
-    private void search( T[] searchTermVector, SearchType searchType, int limitForLocalKnowledge ) {
+    private void search( List<Term<T>> searchTermVector, SearchType searchType, int limitForLocalKnowledge ) {
 
-        System.out.println( "search START...");
         Document bestMatch = searchOnOptimalDocumentTree( searchTermVector );
         switch ( searchType ) {
             case DEPTH_FIRST:
@@ -91,13 +88,10 @@ public abstract class DocumentTreeSimulation <T> {
             default:
                 throw new UnsupportedOperationException();
         }
-
-
-        System.out.println( "search END... ");
     }
 
 
-    protected abstract Document<T> searchOnOptimalDocumentTree( T[] searchTermVector );
+    protected abstract Document<T> searchOnOptimalDocumentTree( List<Term<T>> searchTermVector );
 
 
 }

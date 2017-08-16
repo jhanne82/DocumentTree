@@ -3,8 +3,6 @@ package com.github.jhanne82.documenttree.simulation;
 import com.github.jhanne82.documenttree.document.Document;
 import com.github.jhanne82.documenttree.document.ResultDocumentList;
 
-import java.util.Arrays;
-
 public class Result {
 
 
@@ -22,7 +20,7 @@ public class Result {
     public void computeHitMissRate(ResultDocumentList resultDocumentList, Document bestMatch ) {
 
         Document doc = (Document)resultDocumentList.stream()
-                                         .filter( x -> Arrays.equals( ((Document)x).getTermVector(), bestMatch.getTermVector() ) )
+                                         .filter( x -> ((Document)x).getTermList().retainAll( bestMatch.getTermList() ) )
                                          .findFirst().orElse( null );
 
         if( doc == null ) {

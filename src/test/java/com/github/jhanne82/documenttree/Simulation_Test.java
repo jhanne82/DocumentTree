@@ -1,6 +1,7 @@
 package com.github.jhanne82.documenttree;
 
 
+import com.github.jhanne82.documenttree.document.Term;
 import com.github.jhanne82.documenttree.simulation.Distribution;
 import com.github.jhanne82.documenttree.simulation.DocumentTreeSimulation;
 import com.github.jhanne82.documenttree.simulation.SearchType;
@@ -35,7 +36,7 @@ public class Simulation_Test {
                                                                                    false );
 
         System.out.println( "CreateSearchTerms START...");
-        List<Double[]> searchTermVectorList = NumberSimulationUtils.createSearchTermVectorList( Distribution.EQUALLY,
+        List<List<Term<Double>>> searchTermVectorList = NumberSimulationUtils.createSearchTermVectorList( Distribution.EQUALLY,
                                                                                                 MAX_COUNT_OF_TERMS_USED_TO_DEFINE_VECTOR,
                                                                                                 MAX_COUNT_OF_TERMS_WITH_QUANTIFIER,
                                                                                                 MAX_COUNT_OF_CREATED_SEARCHES );

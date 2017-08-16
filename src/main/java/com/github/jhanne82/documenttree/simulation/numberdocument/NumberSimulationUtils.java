@@ -2,6 +2,7 @@ package com.github.jhanne82.documenttree.simulation.numberdocument;
 
 import com.github.jhanne82.documenttree.document.Document;
 import com.github.jhanne82.documenttree.document.DocumentTree;
+import com.github.jhanne82.documenttree.document.Term;
 import com.github.jhanne82.documenttree.document.numberdocument.NumberDocumentTree;
 import com.github.jhanne82.documenttree.simulation.Distribution;
 import com.github.jhanne82.documenttree.simulation.DocumentTreeSimulation;
@@ -52,12 +53,12 @@ public class NumberSimulationUtils {
 
 
 
-    public static List<Double[]> createSearchTermVectorList( Distribution distributionOfSearchTerms,
-                                                             int maxCountOfTerms,
-                                                             int maxCountOfTermsWithQuantifier,
-                                                             int maxCountOfSearches ) {
+    public static List<List<Term<Double>>> createSearchTermVectorList(Distribution distributionOfSearchTerms,
+                                                                      int maxCountOfTerms,
+                                                                      int maxCountOfTermsWithQuantifier,
+                                                                      int maxCountOfSearches ) {
 
-        List<Double[]> searchTermVectorList = new ArrayList<>( maxCountOfSearches );
+        List<List<Term<Double>>> searchTermVectorList = new ArrayList<>( maxCountOfSearches );
         RandomNumberGenerator randomNumberForIndex = new RandomNumberGenerator( distributionOfSearchTerms,
                                                                                 maxCountOfTerms );
         RandomNumberGenerator randomNumberForTerm  = new RandomNumberGenerator( distributionOfSearchTerms,
@@ -65,16 +66,18 @@ public class NumberSimulationUtils {
 
         for( int i = 0; i < maxCountOfSearches; i++ ) {
 
-            Double[] searchVector = new Double[ maxCountOfTerms ];
+            List<Term<Double>> searchTermList = new ArrayList<>(maxCountOfTermsWithQuantifier );
+
             for( int termsWithQuantifier = 0; termsWithQuantifier < maxCountOfTermsWithQuantifier; ) {
                 int index = randomNumberForIndex.getInt();
 
-                if( searchVector[index] == null ) {
-                    searchVector[index] = randomNumberForTerm.getDouble();
+                Term<Double> term = searchTermList.stream().filter( t -> t.getIndex() == index ).findFirst().orElse( null );
+                if( term == null ) {
+                    searchTermList.add( new Term<Double>( index, randomNumberForTerm.getDouble() ) );
                     termsWithQuantifier++;
                 }
             }
-            searchTermVectorList.add( searchVector );
+            searchTermVectorList.add( searchTermList );
         }
         return searchTermVectorList;
     }
@@ -91,12 +94,12 @@ public class NumberSimulationUtils {
         Document<Double>[] documentArray = new Document[maxCountOfDocuments];
 
         int i = 0;
-        for( Double[] vector : createSearchTermVectorList( distributionOfDocuemntTerms,
+        for( List<Term<Double>> termList: createSearchTermVectorList( distributionOfDocuemntTerms,
                                                            maxCountOfTerms,
                                                            maxCountOfTermsWithQuantifier,
                                                            maxCountOfDocuments ) ) {
 
-            documentArray[i++] = new Document<>( vector, "Document " + i );
+            documentArray[i++] = new Document<>( termList, "Document " + i );
         }
         System.out.println( "CreateDocuments END....");
         return documentArray;

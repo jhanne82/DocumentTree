@@ -3,25 +3,30 @@ package com.github.jhanne82.documenttree.document;
 
 import org.apache.commons.collections.buffer.CircularFifoBuffer;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Document <T>
     implements Cloneable {
 
     private final CircularFifoBuffer relevanceBuffer;
-    private final T[] termVector;
+    //private final T[] termVector;
     private final String documentName;
+
+    private final List<Term<T>> termList;
 
     private int   timestampOfLastSearch;
 
 
 
-    public Document( T[] termVector, String documentName ){
-        this( termVector, 20, documentName );
+    public Document( List<Term<T>> termVectorList, String documentName ){
+        this( termVectorList, 20, documentName );
     }
 
 
-    public Document( T[] termVector, int bufferSize, String documentName ){
+    public Document( List<Term<T>> termVectorList, int bufferSize, String documentName ){
         this.relevanceBuffer = new CircularFifoBuffer( bufferSize );
-        this.termVector = termVector;
+        this.termList = termVectorList;
         this.documentName = documentName;
     }
 
@@ -37,8 +42,8 @@ public class Document <T>
     }
 
 
-    public T[] getTermVector() {
-        return this.termVector;
+    public List<Term<T>> getTermList() {
+        return this.termList;
     }
 
     
@@ -77,7 +82,7 @@ public class Document <T>
     @Override
     public Document<T> clone() {
 
-        return new Document<>( termVector.clone(), documentName );
+        return new Document<>(new ArrayList<>(termList), documentName );
     }
 
 

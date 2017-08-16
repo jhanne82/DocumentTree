@@ -2,10 +2,11 @@ package com.github.jhanne82.documenttree.document;
 
 
 import java.util.ArrayList;
+import java.util.List;
 
 public abstract class DocumentTree<T> {
 
-    public DocumentNode<T> rootNode;
+    private DocumentNode<T> rootNode;
 
 
     public void level_order_insert( DocumentNode<T> root, Document<T>[] documents, int start, int size ) {
@@ -36,7 +37,7 @@ public abstract class DocumentTree<T> {
 
 
 
-    public ResultDocumentList<T> breadthFirstSearch( int maxVisitedNode, T[] searchTerm ) {
+    public ResultDocumentList<T> breadthFirstSearch( int maxVisitedNode, List<Term<T>> searchTerm ) {
         ResultDocumentList<T> resultDocumentList = new ResultDocumentList<>();
         ArrayList<DocumentNode<T>> nodesOnCurrentLevel = new ArrayList<>();
         ArrayList<DocumentNode<T>> nodesOnNextLevel    = new ArrayList<>();
@@ -57,7 +58,7 @@ public abstract class DocumentTree<T> {
                 if( nodeCount == maxVisitedNode ) {
                     break;
                 }
-                node.getDocument().addRelevance( calcRelevanceOfDocument( node.getDocument().getTermVector(), searchTerm ) );
+                node.getDocument().addRelevance( calcRelevanceOfDocument( node.getDocument().getTermList(), searchTerm ) );
                 resultDocumentList.add( node.getDocument() );
                 nodesOnNextLevel.addAll( node.getChildLeaves() );
                 nodeCount++;
@@ -69,7 +70,7 @@ public abstract class DocumentTree<T> {
 
 
     private static int currentlyVisitedNode = 0;
-    public ResultDocumentList<T> depthFirstSearch( int maxVisitedNode, T[] searchTerm ) {
+    public ResultDocumentList<T> depthFirstSearch( int maxVisitedNode, List<Term<T>> searchTerm ) {
 
         currentlyVisitedNode = 0;
         ResultDocumentList<T> resultDocumentList = new ResultDocumentList<>();
@@ -78,7 +79,7 @@ public abstract class DocumentTree<T> {
     }
 
 
-    private boolean depthFirstSearch( DocumentNode<T> node, int maxVisitedNode, ResultDocumentList<T> resultDocumentList, T[] searchTerm ) {
+    private boolean depthFirstSearch( DocumentNode<T> node, int maxVisitedNode, ResultDocumentList<T> resultDocumentList, List<Term<T>> searchTerm ) {
 
         if ( node == null) {
             return false;
@@ -88,7 +89,7 @@ public abstract class DocumentTree<T> {
         if (currentlyVisitedNode == maxVisitedNode ) {
             return true;
         } else {
-            node.getDocument().addRelevance( calcRelevanceOfDocument( node.getDocument().getTermVector(), searchTerm ) );
+            node.getDocument().addRelevance( calcRelevanceOfDocument( node.getDocument().getTermList(), searchTerm ) );
             resultDocumentList.add( node.getDocument() );
             currentlyVisitedNode++;
         }
@@ -98,7 +99,7 @@ public abstract class DocumentTree<T> {
     }
 
 
-    protected abstract double calcRelevanceOfDocument( T[] documentTermVector, T[] searchTermVector );
+    protected abstract double calcRelevanceOfDocument(List<Term<T>> documentTermVector, List<Term<T>> searchTermVector );
 
 
 
