@@ -8,27 +8,16 @@ import java.util.List;
 public abstract class DocumentTreeSimulation <T> {
 
 
-    // Bewertungskriterien
-    private int averageSearchTime = 0;
-    private int missRate = 0;
-    private int hitRate = 0;
-    private int averageCountOfRepositioning = 0;
-    private int conformityOfOptimalDocumentTree = 0;
-    private int conformityOfStressReducedDocumentTree = 0;
-    private int distanceToOptimalPosition = 0;
+    
+    private Result resultOfGlobalKnowledge = new Result();
+    private Result resultOfLocalKnowledge = new Result();
 
 
 
     private DocumentTree<T> documentTreeWithGlobalKnowledge;
-    private DocumentTree<T> documentTreeWithLocalKnowledge;
+    //private DocumentTree<T> documentTreeWithLocalKnowledge;
     private DocumentTree<T> stressReducedDocumentTree;
     private Document<T>[]   optimalDocumentTree;
-
-
-
-    public DocumentTree<T> getDocumentTreeWithGlobalKnowledge() {
-        return documentTreeWithGlobalKnowledge;
-    }
 
 
 
@@ -37,16 +26,10 @@ public abstract class DocumentTreeSimulation <T> {
     }
 
 
-
-    public DocumentTree<T> getDocumentTreeWithLocalKnowledge() {
-        return documentTreeWithLocalKnowledge;
-    }
-
-
-
+    /*
     public void setDocumentTreeWithLocalKnowledge( DocumentTree<T> documentTreeWithLocalKnowledge ) {
         this.documentTreeWithLocalKnowledge = documentTreeWithLocalKnowledge;
-    }
+    } */
 
 
 
@@ -83,7 +66,7 @@ public abstract class DocumentTreeSimulation <T> {
         for( T[] searchTerm : searchTermVectorList ) {
             search( searchTerm, searchType, limitForLocalKnowledge );
             System.out.println("Repositierung START...");
-            documentTreeWithLocalKnowledge.repositioning( countOfSearchesForRepositioning );
+        //    documentTreeWithLocalKnowledge.repositioning( countOfSearchesForRepositioning );
             documentTreeWithGlobalKnowledge.repositioning( countOfSearchesForRepositioning );
             System.out.println("Repositierung END...");
         }
@@ -92,16 +75,16 @@ public abstract class DocumentTreeSimulation <T> {
     private void search( T[] searchTermVector, SearchType searchType, int limitForLocalKnowledge ) {
 
         System.out.println( "search START...");
-        new GlobalTreeSearch(searchType, searchTermVector).start();
+        Document bestMatch = searchOnOptimalDocumentTree( searchTermVector );
         switch ( searchType ) {
             case DEPTH_FIRST:
-                //documentTreeWithGlobalKnowledge.depthFirstSearch( 0, searchTermVector );
-                documentTreeWithLocalKnowledge.depthFirstSearch( limitForLocalKnowledge, searchTermVector );
+                resultOfGlobalKnowledge.computeHitMissRate( documentTreeWithGlobalKnowledge.depthFirstSearch( 0, searchTermVector ), bestMatch );
+          //      documentTreeWithLocalKnowledge.depthFirstSearch( limitForLocalKnowledge, searchTermVector );
                 stressReducedDocumentTree.depthFirstSearch( limitForLocalKnowledge, searchTermVector );
                 break;
             case BREADTH_FIRST:
-                //documentTreeWithGlobalKnowledge.breadthFirstSearch( 0, searchTermVector );
-                documentTreeWithLocalKnowledge.breadthFirstSearch( limitForLocalKnowledge, searchTermVector );
+                documentTreeWithGlobalKnowledge.breadthFirstSearch( 0, searchTermVector );
+            //    documentTreeWithLocalKnowledge.breadthFirstSearch( limitForLocalKnowledge, searchTermVector );
                 stressReducedDocumentTree.breadthFirstSearch( limitForLocalKnowledge, searchTermVector );
                 break;
             case RANDOM_WALKER:
@@ -109,42 +92,12 @@ public abstract class DocumentTreeSimulation <T> {
                 throw new UnsupportedOperationException();
         }
 
-        searchOnOptimalDocumentTree( searchTermVector );
 
         System.out.println( "search END... ");
     }
 
 
-    protected abstract void searchOnOptimalDocumentTree( T[] searchTermVector );
-
-
-    public class GlobalTreeSearch extends Thread {
-
-        private SearchType searchType;
-        private T[] searchTermVector;
-
-        public GlobalTreeSearch( SearchType searchType, T[] searchTermVector ) {
-            this.searchType = searchType;
-            this.searchTermVector = searchTermVector;
-        }
-
-        @Override
-        public void run() {
-
-            switch ( searchType ) {
-                case DEPTH_FIRST:
-                    documentTreeWithGlobalKnowledge.depthFirstSearch( 0, searchTermVector );
-                    break;
-                case BREADTH_FIRST:
-                    documentTreeWithGlobalKnowledge.breadthFirstSearch( 0, searchTermVector );
-                    break;
-                case RANDOM_WALKER:
-                default:
-                    throw new UnsupportedOperationException();
-            }
-            super.run();
-        }
-    }
+    protected abstract Document<T> searchOnOptimalDocumentTree( T[] searchTermVector );
 
 
 }
