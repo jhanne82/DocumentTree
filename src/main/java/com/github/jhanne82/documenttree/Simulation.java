@@ -1,10 +1,11 @@
 package com.github.jhanne82.documenttree;
 
 
-import com.github.jhanne82.documenttree.component.Document;
-import com.github.jhanne82.documenttree.component.DocumentTree;
-import com.github.jhanne82.documenttree.numbergenerator.Distribution;
-import com.github.jhanne82.documenttree.numbergenerator.RandomNumberGenerator;
+import com.github.jhanne82.documenttree.document.Document;
+import com.github.jhanne82.documenttree.document.DocumentTree;
+import com.github.jhanne82.documenttree.document.numberdocument.NumberDocumentTree;
+import com.github.jhanne82.documenttree.simulation.Distribution;
+import com.github.jhanne82.documenttree.utils.RandomNumberGenerator;
 
 
 public class Simulation {
@@ -15,8 +16,8 @@ public class Simulation {
     private static final int MAX_COUNT_OF_TERMS_WITH_QUANTIFIER = 3;
 
     private Document<Integer>[] referenceTree;
-    private DocumentTree<Integer> globalKnowledge = new DocumentTree<>();
-    private DocumentTree<Integer> localKnowledge  = new DocumentTree<>();
+    private DocumentTree globalKnowledge = new NumberDocumentTree();
+    private DocumentTree localKnowledge  = new NumberDocumentTree();
 
 
 
@@ -59,7 +60,9 @@ public class Simulation {
             int index = (new RandomNumberGenerator( distribution,
                                                     MAX_COUNT_OF_TERMS_USED_TO_DEFINE_DOCUMENT ) ).getInt();
             if ( termVector[ index ] == null ) {
-                termVector[index] = 1;
+                // random number + 1 to avoid 0 values and max value is exclusive
+                termVector[index] = (new RandomNumberGenerator( distribution,
+                                                                10 ) ).getInt() + 1;
                 i++;
             }
         }

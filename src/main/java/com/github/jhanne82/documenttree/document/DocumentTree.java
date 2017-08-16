@@ -1,11 +1,10 @@
-package com.github.jhanne82.documenttree.component;
+package com.github.jhanne82.documenttree.document;
 
-import com.github.jhanne82.documenttree.utils.EulerianDistance;
 
-import java.math.BigDecimal;
+import javax.print.Doc;
 import java.util.ArrayList;
 
-public class DocumentTree<T> {
+public abstract class DocumentTree<T> {
 
     public DocumentNode<T> rootNode;
 
@@ -47,23 +46,19 @@ public class DocumentTree<T> {
 
         int nodeCount = 0;
 
-        while ( nodeCount < maxVisitedNode ) {
+        // maxVisitedNode means no Abbruchkriterium
+        while ( !nodesOnNextLevel.isEmpty() && ( maxVisitedNode == 0 || nodeCount < maxVisitedNode ) ) {
             nodesOnCurrentLevel.clear();
             
             // ChildLeaves von vorherigen Nodes werden zu aktuellen Nodes
             nodesOnCurrentLevel = (ArrayList<DocumentNode<T>>) nodesOnNextLevel.clone();
             nodesOnNextLevel.clear();
 
-            if (nodesOnCurrentLevel.isEmpty()) {
-                break;
-            }
-
             for( DocumentNode<T> node : nodesOnCurrentLevel ) {
                 if( nodeCount == maxVisitedNode ) {
                     break;
                 }
-                BigDecimal euler = EulerianDistance.calEulerianDistance(node.getDocument().getTermVector(), searchTerm );
-                node.getDocument().addRelevance( EulerianDistance.transformEulerianDistanceToRelevanceValue( euler ));
+                node.getDocument().addRelevance( calcRelevanceOfDocument( node.getDocument().getTermVector(), searchTerm ) );
                 resultDocumentList.add( node.getDocument() );
                 nodesOnNextLevel.addAll( node.getChildLeaves() );
                 nodeCount++;
@@ -78,7 +73,7 @@ public class DocumentTree<T> {
     public ResultDocumentList<T> depthFirstSearch( int maxVisitedNode, T[] searchTerm ) {
 
         currentlyVisitedNode = 0;
-        ResultDocumentList resultDocumentList = new ResultDocumentList();
+        ResultDocumentList<T> resultDocumentList = new ResultDocumentList<>();
         depthFirstSearch( rootNode, maxVisitedNode, resultDocumentList, searchTerm );
         return resultDocumentList;
     }
@@ -86,21 +81,79 @@ public class DocumentTree<T> {
 
     private boolean depthFirstSearch( DocumentNode<T> node, int maxVisitedNode, ResultDocumentList<T> resultDocumentList, T[] searchTerm ) {
 
-        if ( node == null)
+        if ( node == null) {
             return false;
+        }
 
 
         if (currentlyVisitedNode == maxVisitedNode ) {
             return true;
         } else {
-            BigDecimal euler = EulerianDistance.calEulerianDistance(node.getDocument().getTermVector(), searchTerm );
-            node.getDocument().addRelevance( EulerianDistance.transformEulerianDistanceToRelevanceValue( euler ));
+            node.getDocument().addRelevance( calcRelevanceOfDocument( node.getDocument().getTermVector(), searchTerm ) );
             resultDocumentList.add( node.getDocument() );
             currentlyVisitedNode++;
         }
 
         return (   depthFirstSearch( node.getLeftChild(), maxVisitedNode, resultDocumentList, searchTerm )
                 || depthFirstSearch( node.getRightChild(), maxVisitedNode, resultDocumentList, searchTerm ));
+    }
+
+
+    protected abstract double calcRelevanceOfDocument( T[] documentTermVector, T[] searchTermVector );
+
+
+
+    public void repositioning( int numberOfRelevenceCalculationToRepositiong ) {
+        repositioning( rootNode, numberOfRelevenceCalculationToRepositiong );
+    }
+
+
+    private boolean repositioning( DocumentNode<T> node, int numberOfRelevenceCalculationToRepositiong ) {
+
+        if ( node == null) {
+            return false;
+        }
+
+        if( node.getDocument().getCountOfStoredRelevances() >= numberOfRelevenceCalculationToRepositiong ) {
+
+            DocumentNode<T> leftChild = node.getLeftChild();
+            if(    leftChild != null
+                && node.getDocument().getAverageRelevance().compareTo( leftChild.getDocument().getAverageRelevance() ) < 0  ) {
+                switchNodes( node, leftChild );
+
+            } else {
+                DocumentNode<T> rightChild = node.getLeftChild();
+
+                if(    rightChild != null
+                    && node.getDocument().getAverageRelevance().compareTo( rightChild.getDocument().getAverageRelevance() ) < 0 ) {
+                    switchNodes( node, rightChild );
+                }
+            }
+        }
+
+
+        return    repositioning( node.getLeftChild(), numberOfRelevenceCalculationToRepositiong )
+               || repositioning( node.getRightChild(), numberOfRelevenceCalculationToRepositiong );
+    }
+
+
+    private void switchNodes( DocumentNode<T> a, DocumentNode<T> b ) {
+        DocumentNode<T> tmpParent = a.getParent();
+        b.setParent( tmpParent );
+        a.setParent( b );
+
+        DocumentNode<T> tmpRightChild = a.getRightChild();
+        DocumentNode<T> tmpLeftChild  = a.getLeftChild();
+
+        a.setRightChild( b.getRightChild() );
+        b.setRightChild( tmpRightChild );
+
+        a.setLeftChild( b.getLeftChild() );
+        b.setLeftChild( tmpLeftChild );
+
+        a.getDocument().clearRelevanceBuffer();
+        b.getDocument().clearRelevanceBuffer();
+
     }
 
 

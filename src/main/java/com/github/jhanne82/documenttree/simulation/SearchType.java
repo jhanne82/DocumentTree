@@ -1,4 +1,4 @@
-package com.github.jhanne82.documenttree.search;
+package com.github.jhanne82.documenttree.simulation;
 
 
 

@@ -1,4 +1,4 @@
-package com.github.jhanne82.documenttree.component;
+package com.github.jhanne82.documenttree.document;
 
 
 import org.apache.commons.collections.buffer.CircularFifoBuffer;
@@ -52,14 +52,14 @@ public class Document <T>
             averageRelevance.add( ( BigDecimal )singleRelevance );
         }
 
-        averageRelevance = averageRelevance.divide( BigDecimal.valueOf( relevanceBuffer.size() ) );
+        averageRelevance = averageRelevance.divide( BigDecimal.valueOf( relevanceBuffer.size() ), BigDecimal.ROUND_HALF_UP );
 
         return averageRelevance;
     }
 
 
 
-    public void addRelevance( BigDecimal relevance ) {
+    public void addRelevance( double relevance ) {
         relevanceBuffer.add( relevance );
     }
 
@@ -70,11 +70,16 @@ public class Document <T>
     }
 
 
+
+    public int getCountOfStoredRelevances() {
+        return relevanceBuffer.size();
+    }
+
+
     @Override
     public Document<T> clone() {
 
-        Document<T> newDocument = new Document<T>( termVector.clone(), documentName );
-        return newDocument;
+        return new Document<>( termVector.clone(), documentName );
     }
 
 

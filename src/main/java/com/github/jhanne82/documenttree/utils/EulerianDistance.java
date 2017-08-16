@@ -1,30 +1,29 @@
 package com.github.jhanne82.documenttree.utils;
 
 
-import java.math.BigDecimal;
 
 public class EulerianDistance {
 
 
 
-    public static<T> BigDecimal calEulerianDistance( T[] vectorA, T[] vectorB ) {
+    public static double calEulerianDistance( Double[] documentVector, Double[] searchVector ) {
 
-        BigDecimal eulerianDistance = BigDecimal.ZERO;
-
-
-        return eulerianDistance;
+        double sum = 0;
+        for( int i = 0; i< documentVector.length; i++ ) {
+            sum += Math.pow( ( documentVector[i] - searchVector[i]), 2 );
+        }
+        return Math.sqrt( sum );
     }
 
 
 
-    public static BigDecimal transformEulerianDistanceToRelevanceValue( BigDecimal eulerianDistance ) {
-        double basis = 0.5;
+    public static double transformEulerianDistanceToRelevanceValue( double eulerianDistance ) {
 
         // 1/euler -> 1/10=0,1  1/1=1
-        if( BigDecimal.ZERO.compareTo( eulerianDistance ) == 0 ) {
-            return BigDecimal.ZERO;
+        if( eulerianDistance == 0 ) {
+            return eulerianDistance;
         }
-        return BigDecimal.ONE.divide( eulerianDistance );
+        return ( 1/ eulerianDistance );
     }
 
 }

@@ -1,4 +1,4 @@
-package com.github.jhanne82.documenttree.component;
+package com.github.jhanne82.documenttree.document;
 
 
 import java.util.ArrayList;

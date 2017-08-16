@@ -1,4 +1,4 @@
-package com.github.jhanne82.documenttree.component;
+package com.github.jhanne82.documenttree.document;
 
 
 import java.util.LinkedList;
@@ -36,6 +36,13 @@ public class DocumentNode<T> {
    public void setParent( DocumentNode<T> parent ) {
       this.parent = parent;
    }
+
+
+
+   public DocumentNode<T> getParent() {
+      return parent;
+   }
+
 
 
    public void setLeftChild( DocumentNode<T> left ) {
