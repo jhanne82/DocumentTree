@@ -28,9 +28,12 @@ public class Result {
         } else {
             hitRate++;
         }
+    }
 
 
 
+    public String toString() {
+        return "Hit/MissRate: " + hitRate + "/" + missRate;
     }
 
 

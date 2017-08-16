@@ -65,9 +65,11 @@ public abstract class DocumentTreeSimulation <T> {
         int i = 0;
         for( List<Term<T>> searchTerm : searchTermVectorList ) {
             search( searchTerm, searchType, limitForLocalKnowledge );
-        //    documentTreeWithLocalKnowledge.repositioning( countOfSearchesForRepositioning );
+            documentTreeWithLocalKnowledge.repositioning( countOfSearchesForRepositioning );
             documentTreeWithGlobalKnowledge.repositioning( countOfSearchesForRepositioning );
         }
+
+        System.out.println( resultOfGlobalKnowledge );
     }
 
     private void search( List<Term<T>> searchTermVector, SearchType searchType, int limitForLocalKnowledge ) {
@@ -76,12 +78,12 @@ public abstract class DocumentTreeSimulation <T> {
         switch ( searchType ) {
             case DEPTH_FIRST:
                 resultOfGlobalKnowledge.computeHitMissRate( documentTreeWithGlobalKnowledge.depthFirstSearch( 0, searchTermVector ), bestMatch );
-          //      documentTreeWithLocalKnowledge.depthFirstSearch( limitForLocalKnowledge, searchTermVector );
+                documentTreeWithLocalKnowledge.depthFirstSearch( limitForLocalKnowledge, searchTermVector );
                 stressReducedDocumentTree.depthFirstSearch( limitForLocalKnowledge, searchTermVector );
                 break;
             case BREADTH_FIRST:
                 documentTreeWithGlobalKnowledge.breadthFirstSearch( 0, searchTermVector );
-            //    documentTreeWithLocalKnowledge.breadthFirstSearch( limitForLocalKnowledge, searchTermVector );
+                documentTreeWithLocalKnowledge.breadthFirstSearch( limitForLocalKnowledge, searchTermVector );
                 stressReducedDocumentTree.breadthFirstSearch( limitForLocalKnowledge, searchTermVector );
                 break;
             case RANDOM_WALKER:

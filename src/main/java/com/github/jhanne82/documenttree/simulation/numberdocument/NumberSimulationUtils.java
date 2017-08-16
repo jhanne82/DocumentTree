@@ -35,11 +35,11 @@ public class NumberSimulationUtils {
                                                                      maxCountOfDocuments );
 
         documentTreeWithGlobalKnowledge.level_order_insert( null, optimalDocumentTree, 0, maxCountOfDocuments );
-        //documentTreeWithLocalKnowledge.level_order_insert( null, optimalDocumentTree, 0, maxCountOfDocuments );
+        documentTreeWithLocalKnowledge.level_order_insert( null, optimalDocumentTree, 0, maxCountOfDocuments );
         stressReducedDocumentTree.level_order_insert( null, optimalDocumentTree, 0, maxCountOfDocuments );
 
         simulation.setDocumentTreeWithGlobalKnowledge( documentTreeWithGlobalKnowledge );
-       // simulation.setDocumentTreeWithLocalKnowledge( documentTreeWithLocalKnowledge );
+        simulation.setDocumentTreeWithLocalKnowledge( documentTreeWithLocalKnowledge );
         simulation.setStressReducedDocumentTree( stressReducedDocumentTree );
         simulation.setOptimalDocumentTree( optimalDocumentTree );
 
@@ -73,7 +73,7 @@ public class NumberSimulationUtils {
 
                 Term<Double> term = searchTermList.stream().filter( t -> t.getIndex() == index ).findFirst().orElse( null );
                 if( term == null ) {
-                    searchTermList.add( new Term<Double>( index, randomNumberForTerm.getDouble() ) );
+                    searchTermList.add(new Term<>(index, randomNumberForTerm.getDouble()) );
                     termsWithQuantifier++;
                 }
             }
