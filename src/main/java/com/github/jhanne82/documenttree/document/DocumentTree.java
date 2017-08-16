@@ -1,7 +1,6 @@
 package com.github.jhanne82.documenttree.document;
 
 
-import javax.print.Doc;
 import java.util.ArrayList;
 
 public abstract class DocumentTree<T> {
@@ -118,14 +117,14 @@ public abstract class DocumentTree<T> {
 
             DocumentNode<T> leftChild = node.getLeftChild();
             if(    leftChild != null
-                && node.getDocument().getAverageRelevance().compareTo( leftChild.getDocument().getAverageRelevance() ) < 0  ) {
+                && node.getDocument().getAverageRelevance() < leftChild.getDocument().getAverageRelevance() ) {
                 switchNodes( node, leftChild );
 
             } else {
                 DocumentNode<T> rightChild = node.getLeftChild();
 
                 if(    rightChild != null
-                    && node.getDocument().getAverageRelevance().compareTo( rightChild.getDocument().getAverageRelevance() ) < 0 ) {
+                    && node.getDocument().getAverageRelevance() < rightChild.getDocument().getAverageRelevance() ) {
                     switchNodes( node, rightChild );
                 }
             }

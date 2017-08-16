@@ -3,8 +3,6 @@ package com.github.jhanne82.documenttree.document;
 
 import org.apache.commons.collections.buffer.CircularFifoBuffer;
 
-import java.math.BigDecimal;
-
 public class Document <T>
     implements Cloneable {
 
@@ -44,15 +42,15 @@ public class Document <T>
     }
 
     
-    public BigDecimal getAverageRelevance() {
+    public double getAverageRelevance() {
 
-        BigDecimal averageRelevance = BigDecimal.ZERO;
+        double averageRelevance = 0;
 
         for ( Object singleRelevance : relevanceBuffer ) {
-            averageRelevance.add( ( BigDecimal )singleRelevance );
+            averageRelevance += (double)singleRelevance;
         }
 
-        averageRelevance = averageRelevance.divide( BigDecimal.valueOf( relevanceBuffer.size() ), BigDecimal.ROUND_HALF_UP );
+        averageRelevance = averageRelevance / relevanceBuffer.size();
 
         return averageRelevance;
     }

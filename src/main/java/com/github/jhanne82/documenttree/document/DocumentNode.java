@@ -76,7 +76,9 @@ public class DocumentNode<T> {
 
 
    public void addChildLeaf( DocumentNode<T> childLeaf ) {
-      childLeaf.setParent( this );
+      if( childLeaf != null ) {
+         childLeaf.setParent( this );
+      }
       this.leaves.add( childLeaf );
    }
 

@@ -24,7 +24,7 @@ public class ResultDocumentList<T>
         } else {
             for( int i = 0; i < MAX_RESULTS; i++ ) {
                 Document doc = get( i );
-                if( document.getAverageRelevance().compareTo( doc.getAverageRelevance() ) >= 0 ) {
+                if( document.getAverageRelevance() > ( doc.getAverageRelevance() )  ) {
                     add( i, document );
                     remove( MAX_RESULTS - 1 );
                     break;
@@ -34,7 +34,13 @@ public class ResultDocumentList<T>
             sort(new Comparator<Document<T>>() {
                 @Override
                 public int compare(Document<T> o1, Document<T> o2) {
-                    return o1.getAverageRelevance().compareTo( o2.getAverageRelevance() );
+                    if( o1.getAverageRelevance() < o2.getAverageRelevance() ) {
+                        return -1;
+                    }
+                    if( o1.getAverageRelevance() == o2.getAverageRelevance() ) {
+                        return 0;
+                    }
+                    return 1;
                 }
             });
         }
