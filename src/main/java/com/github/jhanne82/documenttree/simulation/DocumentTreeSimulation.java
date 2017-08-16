@@ -92,14 +92,15 @@ public abstract class DocumentTreeSimulation <T> {
     private void search( T[] searchTermVector, SearchType searchType, int limitForLocalKnowledge ) {
 
         System.out.println( "search START...");
+        new GlobalTreeSearch(searchType, searchTermVector).start();
         switch ( searchType ) {
             case DEPTH_FIRST:
-                documentTreeWithGlobalKnowledge.depthFirstSearch( 0, searchTermVector );
+                //documentTreeWithGlobalKnowledge.depthFirstSearch( 0, searchTermVector );
                 documentTreeWithLocalKnowledge.depthFirstSearch( limitForLocalKnowledge, searchTermVector );
                 stressReducedDocumentTree.depthFirstSearch( limitForLocalKnowledge, searchTermVector );
                 break;
             case BREADTH_FIRST:
-                documentTreeWithGlobalKnowledge.breadthFirstSearch( 0, searchTermVector );
+                //documentTreeWithGlobalKnowledge.breadthFirstSearch( 0, searchTermVector );
                 documentTreeWithLocalKnowledge.breadthFirstSearch( limitForLocalKnowledge, searchTermVector );
                 stressReducedDocumentTree.breadthFirstSearch( limitForLocalKnowledge, searchTermVector );
                 break;
@@ -115,6 +116,35 @@ public abstract class DocumentTreeSimulation <T> {
 
 
     protected abstract void searchOnOptimalDocumentTree( T[] searchTermVector );
+
+
+    public class GlobalTreeSearch extends Thread {
+
+        private SearchType searchType;
+        private T[] searchTermVector;
+
+        public GlobalTreeSearch( SearchType searchType, T[] searchTermVector ) {
+            this.searchType = searchType;
+            this.searchTermVector = searchTermVector;
+        }
+
+        @Override
+        public void run() {
+
+            switch ( searchType ) {
+                case DEPTH_FIRST:
+                    documentTreeWithGlobalKnowledge.depthFirstSearch( 0, searchTermVector );
+                    break;
+                case BREADTH_FIRST:
+                    documentTreeWithGlobalKnowledge.breadthFirstSearch( 0, searchTermVector );
+                    break;
+                case RANDOM_WALKER:
+                default:
+                    throw new UnsupportedOperationException();
+            }
+            super.run();
+        }
+    }
 
 
 }
