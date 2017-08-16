@@ -82,13 +82,16 @@ public abstract class DocumentTreeSimulation <T> {
         int i = 0;
         for( T[] searchTerm : searchTermVectorList ) {
             search( searchTerm, searchType, limitForLocalKnowledge );
+            System.out.println("Repositierung START...");
             documentTreeWithLocalKnowledge.repositioning( countOfSearchesForRepositioning );
             documentTreeWithGlobalKnowledge.repositioning( countOfSearchesForRepositioning );
+            System.out.println("Repositierung END...");
         }
     }
 
     private void search( T[] searchTermVector, SearchType searchType, int limitForLocalKnowledge ) {
 
+        System.out.println( "search START...");
         switch ( searchType ) {
             case DEPTH_FIRST:
                 documentTreeWithGlobalKnowledge.depthFirstSearch( 0, searchTermVector );
@@ -107,6 +110,7 @@ public abstract class DocumentTreeSimulation <T> {
 
         searchOnOptimalDocumentTree( searchTermVector );
 
+        System.out.println( "search END... ");
     }
 
 
