@@ -34,11 +34,11 @@ public class NumberSimulationUtils {
                                                                      maxCountOfDocuments );
 
         documentTreeWithGlobalKnowledge.level_order_insert( null, optimalDocumentTree, 0, maxCountOfDocuments );
-        documentTreeWithLocalKnowledge.level_order_insert( null, optimalDocumentTree, 0, maxCountOfDocuments );
+        //documentTreeWithLocalKnowledge.level_order_insert( null, optimalDocumentTree, 0, maxCountOfDocuments );
         stressReducedDocumentTree.level_order_insert( null, optimalDocumentTree, 0, maxCountOfDocuments );
 
         simulation.setDocumentTreeWithGlobalKnowledge( documentTreeWithGlobalKnowledge );
-        simulation.setDocumentTreeWithLocalKnowledge( documentTreeWithLocalKnowledge );
+       // simulation.setDocumentTreeWithLocalKnowledge( documentTreeWithLocalKnowledge );
         simulation.setStressReducedDocumentTree( stressReducedDocumentTree );
         simulation.setOptimalDocumentTree( optimalDocumentTree );
 
