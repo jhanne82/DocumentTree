@@ -66,13 +66,12 @@ public class NumberSimulationUtils {
         for( int i = 0; i < maxCountOfSearches; i++ ) {
 
             Double[] searchVector = new Double[ maxCountOfTerms ];
-
             for( int termsWithQuantifier = 0; termsWithQuantifier < maxCountOfTermsWithQuantifier; ) {
                 int index = randomNumberForIndex.getInt();
 
                 if( searchVector[index] == null ) {
                     searchVector[index] = randomNumberForTerm.getDouble();
-                    i++;
+                    termsWithQuantifier++;
                 }
             }
             searchTermVectorList.add( searchVector );

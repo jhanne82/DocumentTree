@@ -34,10 +34,12 @@ public class Simulation_Test {
                                                                                    MAX_COUNT_OF_CREATED_DOCUMENTS,
                                                                                    false );
 
+        System.out.println( "CreateSearchTerms START...");
         List<Double[]> searchTermVectorList = NumberSimulationUtils.createSearchTermVectorList( Distribution.EQUALLY,
                                                                                                 MAX_COUNT_OF_TERMS_USED_TO_DEFINE_VECTOR,
                                                                                                 MAX_COUNT_OF_TERMS_WITH_QUANTIFIER,
                                                                                                 MAX_COUNT_OF_CREATED_SEARCHES );
+        System.out.println( "CreateSearchTerms END...");
 
         simulation.runSimulation( searchTermVectorList,
                                   SearchType.DEPTH_FIRST,
