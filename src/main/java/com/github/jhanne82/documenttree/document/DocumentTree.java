@@ -59,7 +59,6 @@ public abstract class DocumentTree<T> {
                     break;
                 }
                 if( node == null ) {
-                    System.out.println(" WARNING: node without document");
                     continue;
                 }
                 node.getDocument().addRelevance( calcRelevanceOfDocument( node.getDocument().getTermList(), searchTerm ) );
