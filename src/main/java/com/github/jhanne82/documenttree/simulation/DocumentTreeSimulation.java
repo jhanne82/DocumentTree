@@ -89,6 +89,9 @@ public abstract class DocumentTreeSimulation <T> {
                                       maxCountOfTermsWithQuantifier),
                     searchType,
                     limitForLocalKnowledge );
+
+            documentTreeWithLocalKnowledge.repositioning( numberOfSearchesBeforeRepositioning );
+            documentTreeWithGlobalKnowledge.repositioning( numberOfSearchesBeforeRepositioning );
         }
         return result;
     }
