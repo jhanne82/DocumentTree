@@ -1,19 +1,9 @@
 package com.github.jhanne82.documenttree.simulation;
 
-import com.github.jhanne82.documenttree.document.Document;
-import com.github.jhanne82.documenttree.document.ResultDocumentList;
-
 public class SimulationResult {
 
 
-
-    private static final int MAX_COUNT_OF_CREATED_DOCUMENTS = 1000;
-    private static final int MAX_COUNT_OF_CREATED_SEARCHES = 1000000;
-    private static final int MAX_COUNT_OF_TERMS_USED_TO_DEFINE_VECTOR = 1000;
-    private static final int MAX_COUNT_OF_TERMS_WITH_QUANTIFIER = 3;
-    private static final int LIMIT_FOR_LOCAL_KNOWLEDGE = 300;
-    private static final int NUMBER_OF_SEARCHES_BEFORE_REPOSITIONING = 20;
-
+    private final SimulationSetup simulationSetup;
 
     // Bewertungskriterien
     private int averageSearchTime = 0;
@@ -26,26 +16,35 @@ public class SimulationResult {
 
 
 
-
-
-    public void computeHitMissRate(ResultDocumentList resultDocumentList, Document bestMatch ) {
-
-        Document doc = (Document)resultDocumentList.stream()
-                                         .filter( x -> ((Document)x).getTermList().retainAll( bestMatch.getTermList() ) )
-                                         .findFirst().orElse( null );
-
-        if( doc == null ) {
-            missRate++;
-        } else {
-            hitRate++;
-        }
+    public SimulationResult( SimulationSetup simulationSetup ) {
+        this.simulationSetup = simulationSetup;
     }
 
 
+    public int getHitRate() {return hitRate; }
+    public void setHitRate( int hitRate ) { this.hitRate = hitRate; }
 
+
+    public int getMissRate() { return missRate; }
+    public void setMissRate( int missRate ) { this.missRate = missRate; }
+
+
+    @Override
     public String toString() {
-        return "Hit/MissRate: " + hitRate + "/" + missRate;
+
+        String str = "Simulation wurde mit folgenden Parametern gestartet: ";
+        str += "\n        SearchType: " + simulationSetup.searchType;
+        str += "\n        Search Distribution: "   + simulationSetup.distributionForSearchVector;
+        str += "\n        Document Distribution: " + simulationSetup.distributionForDocumentVector;
+        str += "\n        Cluster Usage: " + simulationSetup.cluster;
+
+        str += "\n\n";
+
+        str += "Die Simulation wurde mit folgendem Ergebnis beendet: ";
+        str += "\n        Hit/MissRate: " + hitRate + "/" + missRate;
+
+        return str;
+
+
     }
-
-
 }

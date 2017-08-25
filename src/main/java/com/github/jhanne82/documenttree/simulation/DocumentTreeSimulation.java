@@ -10,10 +10,6 @@ public abstract class DocumentTreeSimulation <T> {
 
 
     
-    private SimulationResult resultOfGlobalKnowledge = new SimulationResult();
-    private SimulationResult resultOfLocalKnowledge = new SimulationResult();
-
-
     protected DocumentTree<T> documentTreeWithGlobalKnowledge;
     protected DocumentTree<T> documentTreeWithLocalKnowledge;
     protected DocumentTree<T> stressReducedDocumentTree;
@@ -38,11 +34,7 @@ public abstract class DocumentTreeSimulation <T> {
     protected abstract Document<T> searchOnOptimalDocumentTree( List<Term<T>> searchTermVector );
 
 
-    protected abstract void setupRequiredDocumentTrees( Distribution distributionOfDocumentTerms,
-                                                        int maxCountOfTerms,
-                                                        int maxCountOfTermsWithQuantifier,
-                                                        int maxCountOfDocuments,
-                                                        boolean cluster );
+    protected abstract void setupRequiredDocumentTrees( SimulationSetup setup );
 
 
     protected abstract List<Term<T>> createTermVector( Distribution distribution,
@@ -50,30 +42,30 @@ public abstract class DocumentTreeSimulation <T> {
                                                        int maxCountOfTermsWithQuantifier );
 
 
-    public SimulationResult startSearchSimulation(Distribution distribution,
-                                                  SearchType searchType,
-                                                  int maxCountOfTermsUsedToDefineVector,
-                                                  int maxCountOfTermsWithQuantifier,
-                                                  int maxCountOfCreatedSearches,
-                                                  int limitForLocalKnowledge,
-                                                  int numberOfSearchesBeforeRepositioning) {
+    public SimulationResult startSearchSimulation( SimulationSetup setup ) {
 
-        SimulationResult result = new SimulationResult();
+        SimulationResult result = new SimulationResult( setup );
 
-        for( int i = 0; i < maxCountOfCreatedSearches; i++ ) {
+        for( int i = 0; i < setup.countOfPerformedSearches; i++ ) {
             System.out.println( "Suche " + i );
 
-            List<Term<T>> searchTermVector = createTermVector( distribution,
-                                                               maxCountOfTermsUsedToDefineVector,
-                                                               maxCountOfTermsWithQuantifier);
+            List<Term<T>> searchTermVector = createTermVector( setup.distributionForSearchVector,
+                                                               setup.countOfTermsUsedToDefineVector,
+                                                               setup.countOfTermsWithQuantifier);
 
             Document bestMatch = searchOnOptimalDocumentTree( searchTermVector );
-            searchOnTree( documentTreeWithGlobalKnowledge, searchTermVector, searchType, 1000 );
-            searchOnTree( documentTreeWithLocalKnowledge, searchTermVector, searchType, limitForLocalKnowledge );
-            searchOnTree( stressReducedDocumentTree, searchTermVector, searchType, limitForLocalKnowledge );
+            Document foundDocument = searchOnTree( documentTreeWithGlobalKnowledge, searchTermVector, setup.searchType, setup.countOfCreatedDocuments );
+            searchOnTree( documentTreeWithLocalKnowledge, searchTermVector, setup.searchType, setup.limitForLocalKnowledge );
+            searchOnTree( stressReducedDocumentTree, searchTermVector, setup.searchType, setup.limitForLocalKnowledge );
 
-            documentTreeWithLocalKnowledge.repositioning( numberOfSearchesBeforeRepositioning );
-            documentTreeWithGlobalKnowledge.repositioning( numberOfSearchesBeforeRepositioning );
+            documentTreeWithLocalKnowledge.repositioning( setup.requiredSearchesOnDocumentToRespositioning );
+            documentTreeWithGlobalKnowledge.repositioning( setup.requiredSearchesOnDocumentToRespositioning );
+
+            if( bestMatch.getDocumentName().equals( foundDocument.getDocumentName() ) ) {
+                result.setHitRate( result.getHitRate() + 1 );
+            } else {
+                result.setMissRate( result.getMissRate() + 1 );
+            }
         }
         return result;
     }

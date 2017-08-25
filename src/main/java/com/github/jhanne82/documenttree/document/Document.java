@@ -46,6 +46,13 @@ public class Document <T>
         return this.termList;
     }
 
+
+
+    public String getDocumentName() {
+        return documentName;
+    }
+
+
     
     public double getAverageRelevance() {
 

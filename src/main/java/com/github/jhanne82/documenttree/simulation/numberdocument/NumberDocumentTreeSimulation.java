@@ -5,6 +5,7 @@ import com.github.jhanne82.documenttree.document.Term;
 import com.github.jhanne82.documenttree.document.numberdocument.NumberDocumentTree;
 import com.github.jhanne82.documenttree.simulation.Distribution;
 import com.github.jhanne82.documenttree.simulation.DocumentTreeSimulation;
+import com.github.jhanne82.documenttree.simulation.SimulationSetup;
 import com.github.jhanne82.documenttree.utils.EulerianDistance;
 import com.github.jhanne82.documenttree.utils.RandomNumberGenerator;
 
@@ -44,24 +45,20 @@ public class NumberDocumentTreeSimulation
     }
 
     @Override
-    protected void setupRequiredDocumentTrees( Distribution distributionOfDocumentTerms,
-                                               int maxCountOfTerms,
-                                               int maxCountOfTermsWithQuantifier,
-                                               int maxCountOfDocuments,
-                                               boolean cluster) {
+    protected void setupRequiredDocumentTrees(SimulationSetup setup ) {
 
         documentTreeWithGlobalKnowledge = new NumberDocumentTree();
         documentTreeWithLocalKnowledge = new NumberDocumentTree();
         stressReducedDocumentTree = new NumberDocumentTree();
 
-        optimalDocumentTree = createDocuments( distributionOfDocumentTerms,
-                maxCountOfTerms,
-                maxCountOfTermsWithQuantifier,
-                maxCountOfDocuments );
+        optimalDocumentTree = createDocuments( setup.distributionForDocumentVector,
+                                               setup.countOfTermsUsedToDefineVector,
+                                               setup.countOfTermsWithQuantifier,
+                                               setup.countOfCreatedDocuments );
 
-        documentTreeWithGlobalKnowledge.level_order_insert( null, optimalDocumentTree, 0, maxCountOfDocuments );
-        documentTreeWithLocalKnowledge.level_order_insert( null, optimalDocumentTree, 0, maxCountOfDocuments );
-        stressReducedDocumentTree.level_order_insert( null, optimalDocumentTree, 0, maxCountOfDocuments );
+        documentTreeWithGlobalKnowledge.level_order_insert( null, optimalDocumentTree, 0, setup.countOfCreatedDocuments );
+        documentTreeWithLocalKnowledge.level_order_insert( null, optimalDocumentTree, 0, setup.countOfCreatedDocuments );
+        stressReducedDocumentTree.level_order_insert( null, optimalDocumentTree, 0, setup.countOfCreatedDocuments );
     }
 
 

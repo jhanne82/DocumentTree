@@ -61,19 +61,9 @@ public class SimulationAppliction {
                                                      false );
 
         DocumentTreeSimulation<Double> documentTreeSimulation = new NumberDocumentTreeSimulation();
-        documentTreeSimulation.setupRequiredDocumentTrees( Distribution.EQUALLY,
-                                                           MAX_COUNT_OF_TERMS_USED_TO_DEFINE_VECTOR,
-                                                           MAX_COUNT_OF_TERMS_WITH_QUANTIFIER,
-                                                           MAX_COUNT_OF_CREATED_DOCUMENTS,
-                                                           false );
+        documentTreeSimulation.setupRequiredDocumentTrees( setup );
 
-        SimulationResult result = documentTreeSimulation.startSearchSimulation( Distribution.EQUALLY,
-                SearchType.BREADTH_FIRST,
-                MAX_COUNT_OF_TERMS_USED_TO_DEFINE_VECTOR,
-                MAX_COUNT_OF_TERMS_WITH_QUANTIFIER,
-                MAX_COUNT_OF_CREATED_SEARCHES,
-                LIMIT_FOR_LOCAL_KNOWLEDGE,
-                NUMBER_OF_SEARCHES_BEFORE_REPOSITIONING );
+        SimulationResult result = documentTreeSimulation.startSearchSimulation( setup );
 
         System.out.println( result);
 
