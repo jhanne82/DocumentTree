@@ -11,7 +11,7 @@ public class Simulation_Test {
     @Test
     public void doSimulation_1_1() {
 
-        SimulationAppliction simulationAppliction = new SimulationAppliction( 100, 10000,
+        SimulationAppliction simulationAppliction = new SimulationAppliction( 100, 600,
                                                                               100, 3,
                                                                               50, 5);
         simulationAppliction.simulation_1_1();
