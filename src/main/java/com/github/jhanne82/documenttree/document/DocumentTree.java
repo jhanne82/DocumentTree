@@ -47,7 +47,7 @@ public abstract class DocumentTree<T> {
         int nodeCount = 0;
 
         // maxVisitedNode means no Abbruchkriterium
-        while ( !nodesOnNextLevel.isEmpty() && ( maxVisitedNode == 0 || nodeCount < maxVisitedNode ) ) {
+        while ( !nodesOnNextLevel.isEmpty() && ( nodeCount < maxVisitedNode ) ) {
             nodesOnCurrentLevel.clear();
             
             // ChildLeaves von vorherigen Nodes werden zu aktuellen Nodes
@@ -57,9 +57,6 @@ public abstract class DocumentTree<T> {
             for( DocumentNode<T> node : nodesOnCurrentLevel ) {
                 if( nodeCount == maxVisitedNode ) {
                     break;
-                }
-                if( node == null ) {
-                    continue;
                 }
                 node.getDocument().addRelevance( calcRelevanceOfDocument( node.getDocument().getTermList(), searchTerm ) );
                 resultDocumentList.add( node.getDocument() );
@@ -87,7 +84,6 @@ public abstract class DocumentTree<T> {
         if ( node == null) {
             return false;
         }
-
 
         if (currentlyVisitedNode == maxVisitedNode ) {
             return true;

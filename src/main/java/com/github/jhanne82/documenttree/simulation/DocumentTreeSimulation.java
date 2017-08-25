@@ -21,35 +21,13 @@ public abstract class DocumentTreeSimulation <T> {
 
 
 
-    public void runSimulation( List<List<Term<T>>> searchTermVectorList,
-                               SearchType searchType,
-                               int limitForLocalKnowledge,
-                               int countOfSearchesForRepositioning ) {
+    private Document<T> searchOnTree( DocumentTree<T> documentTree, List<Term<T>> searchTermVector, SearchType searchType, int limitForLocalKnowledge ) {
 
-        int i = 0;
-        for( List<Term<T>> searchTerm : searchTermVectorList ) {
-            search( searchTerm, searchType, limitForLocalKnowledge );
-            documentTreeWithLocalKnowledge.repositioning( countOfSearchesForRepositioning );
-            documentTreeWithGlobalKnowledge.repositioning( countOfSearchesForRepositioning );
-        }
-
-        System.out.println( resultOfGlobalKnowledge );
-    }
-
-    private void search( List<Term<T>> searchTermVector, SearchType searchType, int limitForLocalKnowledge ) {
-
-        Document bestMatch = searchOnOptimalDocumentTree( searchTermVector );
         switch ( searchType ) {
             case DEPTH_FIRST:
-                resultOfGlobalKnowledge.computeHitMissRate( documentTreeWithGlobalKnowledge.depthFirstSearch( 0, searchTermVector ), bestMatch );
-                documentTreeWithLocalKnowledge.depthFirstSearch( limitForLocalKnowledge, searchTermVector );
-                stressReducedDocumentTree.depthFirstSearch( limitForLocalKnowledge, searchTermVector );
-                break;
+                return documentTree.depthFirstSearch( limitForLocalKnowledge, searchTermVector ).get(0);
             case BREADTH_FIRST:
-                documentTreeWithGlobalKnowledge.breadthFirstSearch( 0, searchTermVector );
-                documentTreeWithLocalKnowledge.breadthFirstSearch( limitForLocalKnowledge, searchTermVector );
-                stressReducedDocumentTree.breadthFirstSearch( limitForLocalKnowledge, searchTermVector );
-                break;
+                return documentTree.breadthFirstSearch( limitForLocalKnowledge, searchTermVector ).get(0);
             case RANDOM_WALKER:
             default:
                 throw new UnsupportedOperationException();
@@ -84,11 +62,15 @@ public abstract class DocumentTreeSimulation <T> {
 
         for( int i = 0; i < maxCountOfCreatedSearches; i++ ) {
             System.out.println( "Suche " + i );
-            search(createTermVector( distribution,
-                                     maxCountOfTermsUsedToDefineVector,
-                                     maxCountOfTermsWithQuantifier),
-                    searchType,
-                    limitForLocalKnowledge );
+
+            List<Term<T>> searchTermVector = createTermVector( distribution,
+                                                               maxCountOfTermsUsedToDefineVector,
+                                                               maxCountOfTermsWithQuantifier);
+
+            Document bestMatch = searchOnOptimalDocumentTree( searchTermVector );
+            searchOnTree( documentTreeWithGlobalKnowledge, searchTermVector, searchType, 1000 );
+            searchOnTree( documentTreeWithLocalKnowledge, searchTermVector, searchType, limitForLocalKnowledge );
+            searchOnTree( stressReducedDocumentTree, searchTermVector, searchType, limitForLocalKnowledge );
 
             documentTreeWithLocalKnowledge.repositioning( numberOfSearchesBeforeRepositioning );
             documentTreeWithGlobalKnowledge.repositioning( numberOfSearchesBeforeRepositioning );
