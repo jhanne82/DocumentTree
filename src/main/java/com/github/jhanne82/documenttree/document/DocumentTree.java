@@ -58,10 +58,12 @@ public abstract class DocumentTree<T> {
                 if( nodeCount == maxVisitedNode ) {
                     break;
                 }
-                node.getDocument().addRelevance( calcRelevanceOfDocument( node.getDocument().getTermList(), searchTerm ) );
-                resultDocumentList.add( node.getDocument() );
-                nodesOnNextLevel.addAll( node.getChildLeaves() );
-                nodeCount++;
+                if( node != null ) {
+                    node.getDocument().addRelevance(calcRelevanceOfDocument(node.getDocument().getTermList(), searchTerm));
+                    resultDocumentList.add(node.getDocument());
+                    nodesOnNextLevel.addAll(node.getChildLeaves());
+                    nodeCount++;
+                }
             }
         }
 
