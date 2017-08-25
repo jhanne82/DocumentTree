@@ -85,8 +85,8 @@ public abstract class DocumentTreeSimulation <T> {
         for( int i = 0; i < maxCountOfCreatedSearches; i++ ) {
             System.out.println( "Suche " + i );
             search(createTermVector( distribution,
-                                      maxCountOfTermsUsedToDefineVector,
-                                      maxCountOfTermsWithQuantifier),
+                                     maxCountOfTermsUsedToDefineVector,
+                                     maxCountOfTermsWithQuantifier),
                     searchType,
                     limitForLocalKnowledge );
 
