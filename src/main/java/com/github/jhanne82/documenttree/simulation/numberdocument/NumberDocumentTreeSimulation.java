@@ -2,13 +2,24 @@ package com.github.jhanne82.documenttree.simulation.numberdocument;
 
 import com.github.jhanne82.documenttree.document.Document;
 import com.github.jhanne82.documenttree.document.Term;
+import com.github.jhanne82.documenttree.document.numberdocument.NumberDocumentTree;
+import com.github.jhanne82.documenttree.simulation.Distribution;
 import com.github.jhanne82.documenttree.simulation.DocumentTreeSimulation;
 import com.github.jhanne82.documenttree.utils.EulerianDistance;
+import com.github.jhanne82.documenttree.utils.RandomNumberGenerator;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class NumberDocumentTreeSimulation
     extends DocumentTreeSimulation <Double> {
+
+    private RandomNumberGenerator randomNumberGenerator;
+
+    public NumberDocumentTreeSimulation() {
+        super();
+        randomNumberGenerator = new RandomNumberGenerator();
+    }
 
 
     @Override
@@ -17,7 +28,7 @@ public class NumberDocumentTreeSimulation
         Document<Double> bestMatch = null;
         double relevanceOfBestMatch = 0;
 
-        for ( Document<Double> document : getOptimalDocumentTree() ) {
+        for ( Document<Double> document : optimalDocumentTree ) {
 
             double euleriaDistance = EulerianDistance.calEulerianDistance( document.getTermList(), searchTermVector );
             double relevance = EulerianDistance.transformEulerianDistanceToRelevanceValue( euleriaDistance );
@@ -30,5 +41,66 @@ public class NumberDocumentTreeSimulation
         }
 
         return bestMatch;
+    }
+
+    @Override
+    protected void setupRequiredDocumentTrees( Distribution distributionOfDocumentTerms,
+                                               int maxCountOfTerms,
+                                               int maxCountOfTermsWithQuantifier,
+                                               int maxCountOfDocuments,
+                                               boolean cluster) {
+
+        documentTreeWithGlobalKnowledge = new NumberDocumentTree();
+        documentTreeWithLocalKnowledge = new NumberDocumentTree();
+        stressReducedDocumentTree = new NumberDocumentTree();
+
+        optimalDocumentTree = createDocuments( distributionOfDocumentTerms,
+                maxCountOfTerms,
+                maxCountOfTermsWithQuantifier,
+                maxCountOfDocuments );
+
+        documentTreeWithGlobalKnowledge.level_order_insert( null, optimalDocumentTree, 0, maxCountOfDocuments );
+        documentTreeWithLocalKnowledge.level_order_insert( null, optimalDocumentTree, 0, maxCountOfDocuments );
+        stressReducedDocumentTree.level_order_insert( null, optimalDocumentTree, 0, maxCountOfDocuments );
+    }
+
+
+
+    @Override
+    protected List<Term<Double>> createTermVector( Distribution distribution,
+                                                   int maxCountOfTerms,
+                                                   int maxCountOfTermsWithQuantifier ) {
+
+        List<Term<Double>> termList = new ArrayList<>(maxCountOfTermsWithQuantifier );
+
+        for( int termsWithQuantifier = 0; termsWithQuantifier < maxCountOfTermsWithQuantifier; ) {
+            int index = randomNumberGenerator.getInt( maxCountOfTerms );
+
+            Term<Double> term = termList.stream().filter( t -> t.getIndex() == index ).findFirst().orElse( null );
+            if( term == null ) {
+                termList.add(new Term<>(index, randomNumberGenerator.getDouble(distribution, 10 )));
+                termsWithQuantifier++;
+            }
+        }
+
+        return termList;
+    }
+
+
+
+    private Document<Double>[] createDocuments( Distribution distribution,
+                                                int maxCountOfTerms,
+                                                int maxCountOfTermsWithQuantifier,
+                                                int maxCountOfDocuments ) {
+        Document<Double>[] documentArray = new Document[maxCountOfDocuments];
+
+        for( int i = 0; i < maxCountOfDocuments; i++ ) {
+            documentArray[i] = new Document<>( createTermVector( distribution,
+                                                                 maxCountOfTerms,
+                                                                 maxCountOfTermsWithQuantifier ),
+                                               "Document " + i );
+        }
+
+        return documentArray;
     }
 }

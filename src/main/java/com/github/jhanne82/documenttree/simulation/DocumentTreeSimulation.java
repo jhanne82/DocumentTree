@@ -10,50 +10,14 @@ public abstract class DocumentTreeSimulation <T> {
 
 
     
-    private Result resultOfGlobalKnowledge = new Result();
-    private Result resultOfLocalKnowledge = new Result();
+    private SimulationResult resultOfGlobalKnowledge = new SimulationResult();
+    private SimulationResult resultOfLocalKnowledge = new SimulationResult();
 
 
-
-    private DocumentTree<T> documentTreeWithGlobalKnowledge;
-    private DocumentTree<T> documentTreeWithLocalKnowledge;
-    private DocumentTree<T> stressReducedDocumentTree;
-    private Document<T>[]   optimalDocumentTree;
-
-
-
-    public void setDocumentTreeWithGlobalKnowledge( DocumentTree<T> documentTreeWithGlobalKnowledge ) {
-        this.documentTreeWithGlobalKnowledge = documentTreeWithGlobalKnowledge;
-    }
-
-
-    public void setDocumentTreeWithLocalKnowledge( DocumentTree<T> documentTreeWithLocalKnowledge ) {
-        this.documentTreeWithLocalKnowledge = documentTreeWithLocalKnowledge;
-    }
-
-
-
-    public DocumentTree<T> getStressReducedDocumentTree() {
-        return stressReducedDocumentTree;
-    }
-
-
-
-    public void setStressReducedDocumentTree( DocumentTree<T> stressReducedDocumentTree ) {
-        this.stressReducedDocumentTree = stressReducedDocumentTree;
-    }
-
-
-
-    public Document<T>[] getOptimalDocumentTree() {
-        return optimalDocumentTree;
-    }
-
-
-
-    public void setOptimalDocumentTree( Document<T>[] optimalDocumentTree ) {
-        this.optimalDocumentTree = optimalDocumentTree;
-    }
+    protected DocumentTree<T> documentTreeWithGlobalKnowledge;
+    protected DocumentTree<T> documentTreeWithLocalKnowledge;
+    protected DocumentTree<T> stressReducedDocumentTree;
+    protected Document<T>[] optimalDocumentTree;
 
 
 
@@ -96,4 +60,36 @@ public abstract class DocumentTreeSimulation <T> {
     protected abstract Document<T> searchOnOptimalDocumentTree( List<Term<T>> searchTermVector );
 
 
+    protected abstract void setupRequiredDocumentTrees( Distribution distributionOfDocumentTerms,
+                                                        int maxCountOfTerms,
+                                                        int maxCountOfTermsWithQuantifier,
+                                                        int maxCountOfDocuments,
+                                                        boolean cluster );
+
+
+    protected abstract List<Term<T>> createTermVector( Distribution distribution,
+                                                       int maxCountOfTerms,
+                                                       int maxCountOfTermsWithQuantifier );
+
+
+    public SimulationResult startSearchSimulation(Distribution distribution,
+                                                  SearchType searchType,
+                                                  int maxCountOfTermsUsedToDefineVector,
+                                                  int maxCountOfTermsWithQuantifier,
+                                                  int maxCountOfCreatedSearches,
+                                                  int limitForLocalKnowledge,
+                                                  int numberOfSearchesBeforeRepositioning) {
+
+        SimulationResult result = new SimulationResult();
+
+        for( int i = 0; i < maxCountOfCreatedSearches; i++ ) {
+            System.out.println( "Suche " + i );
+            search(createTermVector( distribution,
+                                      maxCountOfTermsUsedToDefineVector,
+                                      maxCountOfTermsWithQuantifier),
+                    searchType,
+                    limitForLocalKnowledge );
+        }
+        return result;
+    }
 }

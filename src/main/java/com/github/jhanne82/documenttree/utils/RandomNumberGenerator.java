@@ -2,34 +2,20 @@ package com.github.jhanne82.documenttree.utils;
 
 import com.github.jhanne82.documenttree.simulation.Distribution;
 
-import java.security.SecureRandom;
 import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class RandomNumberGenerator {
 
 
-    private Distribution distribution;
-    private int maxValue;
-
-
-    private Random random;
+    private Random random = new Random( System.currentTimeMillis());
 
 
 
-    public RandomNumberGenerator( Distribution distribution, int maxValue ) {
-        this.distribution = distribution;
-        this.maxValue = maxValue;
-
-        random = new Random( System.currentTimeMillis() );
-    }
-
-
-    public int getInt() {
+    public int getInt(  int maxValue ) {
         return random.nextInt( maxValue );
     }
 
-    public double getDouble() {
+    public double getDouble( Distribution distribution, int maxValue ) {
         double minValue = 0.1;
         switch ( distribution ) {
             case EQUALLY:

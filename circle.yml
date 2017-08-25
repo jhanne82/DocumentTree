@@ -1,6 +1,4 @@
 machine:
-  environment:
-    MAVEN_OPTS: "-Xms256m -Xmx3072m" 
   java:
     version: oraclejdk8
     
