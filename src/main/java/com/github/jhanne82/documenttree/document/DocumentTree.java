@@ -58,7 +58,7 @@ public abstract class DocumentTree<T> {
                 if( nodeCount == maxVisitedNode ) {
                     break;
                 }
-                if( node.getDocument() == null ) {
+                if( node == null ) {
                     System.out.println(" WARNING: node without document");
                     continue;
                 }
