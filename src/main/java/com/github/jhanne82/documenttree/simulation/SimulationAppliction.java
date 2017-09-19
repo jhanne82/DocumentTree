@@ -50,7 +50,7 @@ public class SimulationAppliction {
      */
     public void simulation_1_1() {
 
-        System.out.println( "Simulation Nr: 1.1 START...... " + (new SimpleDateFormat( "YYYY-MM-dd hh:mm:ss" ).format( new Date() )));
+        System.out.println( "Simulation Nr: 1.1 START...... " + (new SimpleDateFormat( "YYYY-MM-dd HH:mm:ss" ).format( new Date() )));
 
         SimulationSetup setup = new SimulationSetup( SearchType.BREADTH_FIRST,
                                                      Distribution.EQUALLY,
@@ -76,7 +76,7 @@ public class SimulationAppliction {
         System.out.println( "Ergebnis für local Knowledge:");
         System.out.println( result[1]);
 
-        System.out.println( "Simulation Nr: 1.1 ENDE...... " + (new SimpleDateFormat( "YYYY-MM-dd hh:mm:ss" ).format( new Date() )));
+        System.out.println( "Simulation Nr: 1.1 ENDE...... " + (new SimpleDateFormat( "YYYY-MM-dd HH:mm:ss" ).format( new Date() )));
 
     }
 
