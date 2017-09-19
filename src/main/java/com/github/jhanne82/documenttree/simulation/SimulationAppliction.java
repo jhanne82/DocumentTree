@@ -67,17 +67,50 @@ public class SimulationAppliction {
         documentTreeSimulation.setupRequiredDocumentTrees( setup );
 
         SimulationResult result[] = documentTreeSimulation.startSearchSimulation( setup );
+        printResult( result );
+
+        System.out.println( "Simulation Nr: 1.1 ENDE...... " + (new SimpleDateFormat( "YYYY-MM-dd HH:mm:ss" ).format( new Date() )));
+
+    }
+
+
+
+    public void simulation_1_2() {
+
+        System.out.println( "Simulation Nr: 1.2 START...... " + (new SimpleDateFormat( "YYYY-MM-dd HH:mm:ss" ).format( new Date() )));
+
+        SimulationSetup setup = new SimulationSetup( SearchType.BREADTH_FIRST,
+                                                     Distribution.EQUALLY,
+                                                     Distribution.GAUSSIAN,
+                                                     MAX_COUNT_OF_TERMS_USED_TO_DEFINE_VECTOR,
+                                                     MAX_COUNT_OF_TERMS_WITH_QUANTIFIER,
+                                                     MAX_COUNT_OF_CREATED_DOCUMENTS,
+                                                     MAX_COUNT_OF_CREATED_SEARCHES,
+                                                     LIMIT_FOR_LOCAL_KNOWLEDGE,
+                                                     NUMBER_OF_SEARCHES_BEFORE_REPOSITIONING,
+                                                     false );
+
+        DocumentTreeSimulation<Double> documentTreeSimulation = new NumberDocumentTreeSimulation();
+        documentTreeSimulation.setupRequiredDocumentTrees( setup );
+
+        SimulationResult result[] = documentTreeSimulation.startSearchSimulation( setup );
+        printResult( result );
+
+        System.out.println( "Simulation Nr: 1.2 ENDE...... " + (new SimpleDateFormat( "YYYY-MM-dd HH:mm:ss" ).format( new Date() )));
+
+    }
+
+
+
+    private void printResult( SimulationResult[] simulationResults ) {
 
         System.out.println( "Ergebnis für Global Knowledge:");
-        System.out.println( result[0]);
+        System.out.println( simulationResults[0]);
 
         System.out.println( "\n\n\n");
 
         System.out.println( "Ergebnis für local Knowledge:");
-        System.out.println( result[1]);
-
-        System.out.println( "Simulation Nr: 1.1 ENDE...... " + (new SimpleDateFormat( "YYYY-MM-dd HH:mm:ss" ).format( new Date() )));
-
+        System.out.println( simulationResults[1]);
     }
 
     
@@ -86,7 +119,7 @@ public class SimulationAppliction {
 
         SimulationAppliction simulation = new SimulationAppliction();
         simulation.simulation_1_1();
-
+        simulation.simulation_1_2();
     }
 
 }
