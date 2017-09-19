@@ -8,42 +8,48 @@ import java.util.Comparator;
 public class ResultDocumentList<T>
     extends ArrayList<Document<T>> {
 
-    public static final int MAX_RESULTS = 10;
+    private final int maxResults;
 
 
     public ResultDocumentList() {
-        super( MAX_RESULTS );
+        this( 10 );
+    }
+
+
+    public ResultDocumentList( int maxResult ) {
+        super( maxResult );
+        this.maxResults = maxResult;
     }
 
 
     @Override
-    public boolean add(Document<T> document) {
+    public boolean add(Document<T> documentToAdd) {
 
-        if( size() < MAX_RESULTS ) {
-            super.add( document );
+        if( size() < maxResults ) {
+            super.add( documentToAdd );
         } else {
-            for( int i = 0; i < MAX_RESULTS; i++ ) {
-                Document doc = get( i );
-                if( document.getAverageRelevance() > ( doc.getAverageRelevance() )  ) {
-                    add( i, document );
-                    remove( MAX_RESULTS - 1 );
+
+
+            for( int i = maxResults - 1; i>= 0; i-- ) {
+                Document existingDocument = get( i );
+                if( existingDocument.getLastCalculatedRelevance() < documentToAdd.getLastCalculatedRelevance() ) {
+                    remove( existingDocument );
+                    add( documentToAdd );
                     break;
                 }
-            }
 
-            sort(new Comparator<Document<T>>() {
-                @Override
-                public int compare(Document<T> o1, Document<T> o2) {
-                    if( o1.getAverageRelevance() < o2.getAverageRelevance() ) {
-                        return -1;
-                    }
-                    if( o1.getAverageRelevance() == o2.getAverageRelevance() ) {
-                        return 0;
-                    }
-                    return 1;
-                }
-            });
+            }
         }
+
+        sort( ( o1, o2 ) -> {
+            if( o1.getLastCalculatedRelevance() < o2.getLastCalculatedRelevance() ) {
+                return -1;
+            }
+            if( o1.getLastCalculatedRelevance() == o2.getLastCalculatedRelevance() ) {
+                return 0;
+            }
+            return 1;
+        } );
 
         return true;
     }

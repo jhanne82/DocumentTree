@@ -38,7 +38,7 @@ public abstract class DocumentTree<T> {
 
 
     public ResultDocumentList<T> breadthFirstSearch( int maxVisitedNode, List<Term<T>> searchTerm ) {
-        ResultDocumentList<T> resultDocumentList = new ResultDocumentList<>();
+        ResultDocumentList<T> resultDocumentList = new ResultDocumentList<>( 1 );
         ArrayList<DocumentNode<T>> nodesOnCurrentLevel = new ArrayList<>();
         ArrayList<DocumentNode<T>> nodesOnNextLevel    = new ArrayList<>();
 
@@ -75,7 +75,7 @@ public abstract class DocumentTree<T> {
     public ResultDocumentList<T> depthFirstSearch( int maxVisitedNode, List<Term<T>> searchTerm ) {
 
         currentlyVisitedNode = 0;
-        ResultDocumentList<T> resultDocumentList = new ResultDocumentList<>();
+        ResultDocumentList<T> resultDocumentList = new ResultDocumentList<>( 1 );
         depthFirstSearch( rootNode, maxVisitedNode, resultDocumentList, searchTerm );
         return resultDocumentList;
     }

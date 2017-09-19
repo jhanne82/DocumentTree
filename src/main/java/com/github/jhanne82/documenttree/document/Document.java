@@ -68,6 +68,15 @@ public class Document <T>
     }
 
 
+    public double getLastCalculatedRelevance() {
+        if( relevanceBuffer.isEmpty() ) {
+            return 0;
+        }
+
+        return ( double )relevanceBuffer.toArray()[ relevanceBuffer.size() - 1];
+    }
+
+
 
     public void addRelevance( double relevance ) {
         relevanceBuffer.add( relevance );
