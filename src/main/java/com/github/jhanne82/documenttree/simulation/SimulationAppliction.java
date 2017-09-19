@@ -2,6 +2,9 @@ package com.github.jhanne82.documenttree.simulation;
 
 import com.github.jhanne82.documenttree.simulation.numberdocument.NumberDocumentTreeSimulation;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class SimulationAppliction {
 
 
@@ -47,7 +50,7 @@ public class SimulationAppliction {
      */
     public void simulation_1_1() {
 
-        System.out.println("Simulation Nr: 1.1: Start");
+        System.out.println( "Simulation Nr: 1.1 START...... " + (new SimpleDateFormat( "YYYY-MM-dd hh:mm:ss" ).format( new Date() )));
 
         SimulationSetup setup = new SimulationSetup( SearchType.BREADTH_FIRST,
                                                      Distribution.EQUALLY,
@@ -63,17 +66,21 @@ public class SimulationAppliction {
         DocumentTreeSimulation<Double> documentTreeSimulation = new NumberDocumentTreeSimulation();
         documentTreeSimulation.setupRequiredDocumentTrees( setup );
 
-        SimulationResult result = documentTreeSimulation.startSearchSimulation( setup );
+        SimulationResult result[] = documentTreeSimulation.startSearchSimulation( setup );
 
-        System.out.println( result);
+        System.out.println( "Ergebnis für Global Knowledge:");
+        System.out.println( result[0]);
 
-        System.out.println("Simulation Nr: 1.1: Ende");
+        System.out.println( "\n\n\n");
+
+        System.out.println( "Ergebnis für local Knowledge:");
+        System.out.println( result[1]);
+
+        System.out.println( "Simulation Nr: 1.1 ENDE...... " + (new SimpleDateFormat( "YYYY-MM-dd hh:mm:ss" ).format( new Date() )));
 
     }
 
-
-
-
+    
 
     public static void main( String[] args ) {
 

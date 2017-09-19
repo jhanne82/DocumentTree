@@ -44,7 +44,5 @@ public class SimulationResult {
         str += "\n        Hit/MissRate: " + hitRate + "/" + missRate;
 
         return str;
-
-
     }
 }

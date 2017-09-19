@@ -40,31 +40,41 @@ public abstract class DocumentTreeSimulation <T> {
                                              int maxCountOfTermsWithQuantifier );
 
 
-    public SimulationResult startSearchSimulation( SimulationSetup setup ) {
+    public SimulationResult[] startSearchSimulation( SimulationSetup setup ) {
 
-        SimulationResult result = new SimulationResult( setup );
+        SimulationResult resultGlobalKnowledge = new SimulationResult( setup );
+        SimulationResult resultLocalKnowledge = new SimulationResult( setup );
 
         for( int i = 0; i < setup.countOfPerformedSearches; i++ ) {
-            System.out.println( "Suche " + i );
 
             T[] searchTermVector = createTermVector( setup.distributionForSearchVector,
-                                                               setup.countOfTermsUsedToDefineVector,
-                                                               setup.countOfTermsWithQuantifier);
+                                                     setup.countOfTermsUsedToDefineVector,
+                                                     setup.countOfTermsWithQuantifier);
 
             Document bestMatch = searchOnOptimalDocumentTree( searchTermVector );
-            Document foundDocument = searchOnTree( documentTreeWithGlobalKnowledge, searchTermVector, setup.searchType, setup.countOfCreatedDocuments );
-            searchOnTree( documentTreeWithLocalKnowledge, searchTermVector, setup.searchType, setup.limitForLocalKnowledge );
+            Document foundDocumentGlobal = searchOnTree( documentTreeWithGlobalKnowledge, searchTermVector, setup.searchType, setup.countOfCreatedDocuments );
+            Document foundDocumentLocal  = searchOnTree( documentTreeWithLocalKnowledge, searchTermVector, setup.searchType, setup.limitForLocalKnowledge );
             searchOnTree( stressReducedDocumentTree, searchTermVector, setup.searchType, setup.limitForLocalKnowledge );
 
             documentTreeWithLocalKnowledge.repositioning( setup.requiredSearchesOnDocumentToRespositioning );
             documentTreeWithGlobalKnowledge.repositioning( setup.requiredSearchesOnDocumentToRespositioning );
 
-            if( bestMatch.getDocumentName().equals( foundDocument.getDocumentName() ) ) {
-                result.setHitRate( result.getHitRate() + 1 );
-            } else {
-                result.setMissRate( result.getMissRate() + 1 );
-            }
+            calcHitMissRate( foundDocumentGlobal, bestMatch, resultGlobalKnowledge );
+            calcHitMissRate( foundDocumentLocal, bestMatch, resultLocalKnowledge );
+            
         }
-        return result;
+
+        return new SimulationResult[]{ resultGlobalKnowledge, resultLocalKnowledge };
+    }
+
+
+
+    private void calcHitMissRate( Document foundDocument, Document bestMatch, SimulationResult result ) {
+
+        if( bestMatch.getDocumentName().equals( foundDocument.getDocumentName() ) ) {
+            result.setHitRate( result.getHitRate() + 1 );
+        } else {
+            result.setMissRate( result.getMissRate() + 1 );
+        }
     }
 }
