@@ -1,7 +1,6 @@
 package com.github.jhanne82.documenttree.simulation.numberdocument;
 
 import com.github.jhanne82.documenttree.document.Document;
-import com.github.jhanne82.documenttree.document.Term;
 import com.github.jhanne82.documenttree.document.numberdocument.NumberDocumentTree;
 import com.github.jhanne82.documenttree.simulation.Distribution;
 import com.github.jhanne82.documenttree.simulation.DocumentTreeSimulation;
@@ -9,8 +8,6 @@ import com.github.jhanne82.documenttree.simulation.SimulationSetup;
 import com.github.jhanne82.documenttree.utils.EulerianDistance;
 import com.github.jhanne82.documenttree.utils.RandomNumberGenerator;
 
-import java.util.ArrayList;
-import java.util.List;
 
 public class NumberDocumentTreeSimulation
     extends DocumentTreeSimulation <Double> {
@@ -24,7 +21,7 @@ public class NumberDocumentTreeSimulation
 
 
     @Override
-    protected Document<Double> searchOnOptimalDocumentTree( List<Term<Double>> searchTermVector ) {
+    protected Document<Double> searchOnOptimalDocumentTree( Double[] searchTermVector ) {
 
         Document<Double> bestMatch = null;
         double relevanceOfBestMatch = 0;
@@ -64,18 +61,17 @@ public class NumberDocumentTreeSimulation
 
 
     @Override
-    protected List<Term<Double>> createTermVector( Distribution distribution,
+    protected Double[] createTermVector( Distribution distribution,
                                                    int maxCountOfTerms,
                                                    int maxCountOfTermsWithQuantifier ) {
 
-        List<Term<Double>> termList = new ArrayList<>(maxCountOfTermsWithQuantifier );
+        Double[] termList = new Double[maxCountOfTerms];
 
         for( int termsWithQuantifier = 0; termsWithQuantifier < maxCountOfTermsWithQuantifier; ) {
             int index = randomNumberGenerator.getInt( maxCountOfTerms );
 
-            Term<Double> term = termList.stream().filter( t -> t.getIndex() == index ).findFirst().orElse( null );
-            if( term == null ) {
-                termList.add(new Term<>(index, randomNumberGenerator.getDouble(distribution, 10 )));
+            if( termList[index] == null || termList[index] == 0 ) {
+                termList[index] = randomNumberGenerator.getDouble(distribution, 10 );
                 termsWithQuantifier++;
             }
         }

@@ -2,7 +2,6 @@ package com.github.jhanne82.documenttree.document;
 
 
 import java.util.ArrayList;
-import java.util.List;
 
 public abstract class DocumentTree<T> {
 
@@ -37,7 +36,7 @@ public abstract class DocumentTree<T> {
 
 
 
-    public ResultDocumentList<T> breadthFirstSearch( int maxVisitedNode, List<Term<T>> searchTerm ) {
+    public ResultDocumentList<T> breadthFirstSearch( int maxVisitedNode, T[] searchTerm ) {
         ResultDocumentList<T> resultDocumentList = new ResultDocumentList<>( 1 );
         ArrayList<DocumentNode<T>> nodesOnCurrentLevel = new ArrayList<>();
         ArrayList<DocumentNode<T>> nodesOnNextLevel    = new ArrayList<>();
@@ -72,7 +71,7 @@ public abstract class DocumentTree<T> {
 
 
     private static int currentlyVisitedNode = 0;
-    public ResultDocumentList<T> depthFirstSearch( int maxVisitedNode, List<Term<T>> searchTerm ) {
+    public ResultDocumentList<T> depthFirstSearch( int maxVisitedNode, T[] searchTerm ) {
 
         currentlyVisitedNode = 0;
         ResultDocumentList<T> resultDocumentList = new ResultDocumentList<>( 1 );
@@ -81,7 +80,7 @@ public abstract class DocumentTree<T> {
     }
 
 
-    private boolean depthFirstSearch( DocumentNode<T> node, int maxVisitedNode, ResultDocumentList<T> resultDocumentList, List<Term<T>> searchTerm ) {
+    private boolean depthFirstSearch( DocumentNode<T> node, int maxVisitedNode, ResultDocumentList<T> resultDocumentList, T[] searchTerm ) {
 
         if ( node == null) {
             return false;
@@ -100,7 +99,7 @@ public abstract class DocumentTree<T> {
     }
 
 
-    protected abstract double calcRelevanceOfDocument(List<Term<T>> documentTermVector, List<Term<T>> searchTermVector );
+    protected abstract double calcRelevanceOfDocument(T[] documentTermVector, T[] searchTermVector );
 
 
 

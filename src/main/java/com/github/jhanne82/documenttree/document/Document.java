@@ -13,18 +13,18 @@ public class Document <T>
     //private final T[] termVector;
     private final String documentName;
 
-    private final List<Term<T>> termList;
+    private final T[] termList;
 
     private int   timestampOfLastSearch;
 
 
 
-    public Document( List<Term<T>> termVectorList, String documentName ){
+    public Document( T[] termVectorList, String documentName ){
         this( termVectorList, 20, documentName );
     }
 
 
-    public Document( List<Term<T>> termVectorList, int bufferSize, String documentName ){
+    public Document( T[] termVectorList, int bufferSize, String documentName ){
         this.relevanceBuffer = new CircularFifoBuffer( bufferSize );
         this.termList = termVectorList;
         this.documentName = documentName;
@@ -42,7 +42,7 @@ public class Document <T>
     }
 
 
-    public List<Term<T>> getTermList() {
+    public T[] getTermList() {
         return this.termList;
     }
 
@@ -98,7 +98,7 @@ public class Document <T>
     @Override
     public Document<T> clone() {
 
-        return new Document<>(new ArrayList<>(termList), documentName );
+        return new Document<>(termList, documentName );
     }
 
 
