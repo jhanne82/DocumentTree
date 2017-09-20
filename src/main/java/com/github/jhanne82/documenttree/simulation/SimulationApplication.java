@@ -5,7 +5,7 @@ import com.github.jhanne82.documenttree.simulation.numberdocument.NumberDocument
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class SimulationAppliction {
+public class SimulationApplication {
 
 
     private final int MAX_COUNT_OF_CREATED_DOCUMENTS;
@@ -19,7 +19,7 @@ public class SimulationAppliction {
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat( "YYYY-MM-dd HH:mm:ss" );
 
 
-    public SimulationAppliction() {
+    public SimulationApplication() {
 
         MAX_COUNT_OF_CREATED_DOCUMENTS = 1000;
         MAX_COUNT_OF_CREATED_SEARCHES = 1000000;
@@ -30,19 +30,19 @@ public class SimulationAppliction {
     }
 
 
-    public SimulationAppliction( int maxCountOfCreatedDocuments,
+    public SimulationApplication(int maxCountOfCreatedDocuments,
                                  int maxCountOfCreatedSearches,
                                  int maxCountOfTermsUsedToDefineAVector,
                                  int maxCountOfTermsWithQuantifier,
                                  int limitForLocalKnowledge,
-                                 int numberOfSerchesBeforeRepositioning ) {
+                                 int numberOfSearchesBeforeRepositioning ) {
 
         this.MAX_COUNT_OF_CREATED_DOCUMENTS = maxCountOfCreatedDocuments;
         this.MAX_COUNT_OF_CREATED_SEARCHES = maxCountOfCreatedSearches;
         this.MAX_COUNT_OF_TERMS_USED_TO_DEFINE_VECTOR = maxCountOfTermsUsedToDefineAVector;
         this.MAX_COUNT_OF_TERMS_WITH_QUANTIFIER = maxCountOfTermsWithQuantifier;
         this.LIMIT_FOR_LOCAL_KNOWLEDGE = limitForLocalKnowledge;
-        this.NUMBER_OF_SEARCHES_BEFORE_REPOSITIONING = numberOfSerchesBeforeRepositioning;
+        this.NUMBER_OF_SEARCHES_BEFORE_REPOSITIONING = numberOfSearchesBeforeRepositioning;
     }
 
     /**
@@ -210,7 +210,7 @@ public class SimulationAppliction {
 
     public static void main( String[] args ) {
 
-        SimulationAppliction simulation = new SimulationAppliction();
+        SimulationApplication simulation = new SimulationApplication();
         simulation.simulation_1_1();
 //        simulation.simulation_1_2();
 //        simulation.simulation_1_3();
@@ -220,7 +220,7 @@ public class SimulationAppliction {
 //        simulation.simulation_1_7();
 //        simulation.simulation_1_8();
 //
-//        simulation.simulation_2_1();
+        simulation.simulation_2_1();
 //        simulation.simulation_2_2();
 //        simulation.simulation_2_3();
 //        simulation.simulation_2_4();

@@ -52,16 +52,16 @@ public abstract class DocumentTreeSimulation <T> {
                                                      setup.countOfTermsWithQuantifier);
 
             Document bestMatch = searchOnOptimalDocumentTree( searchTermVector );
-            Document foundDocumentGlobal = searchOnTree( documentTreeWithGlobalKnowledge, searchTermVector, setup.searchType, setup.countOfCreatedDocuments );
-            Document foundDocumentLocal  = searchOnTree( documentTreeWithLocalKnowledge, searchTermVector, setup.searchType, setup.limitForLocalKnowledge );
+            Document foundDocument = searchOnTree( documentTreeWithGlobalKnowledge, searchTermVector, setup.searchType, setup.countOfCreatedDocuments );
+            calcHitMissRate( foundDocument, bestMatch, resultGlobalKnowledge );
+
+            foundDocument  = searchOnTree( documentTreeWithLocalKnowledge, searchTermVector, setup.searchType, setup.limitForLocalKnowledge );
+            calcHitMissRate( foundDocument, bestMatch, resultLocalKnowledge );
+
             searchOnTree( stressReducedDocumentTree, searchTermVector, setup.searchType, setup.limitForLocalKnowledge );
 
             documentTreeWithLocalKnowledge.repositioning( setup.requiredSearchesOnDocumentToRespositioning );
             documentTreeWithGlobalKnowledge.repositioning( setup.requiredSearchesOnDocumentToRespositioning );
-
-            calcHitMissRate( foundDocumentGlobal, bestMatch, resultGlobalKnowledge );
-            calcHitMissRate( foundDocumentLocal, bestMatch, resultLocalKnowledge );
-            
         }
 
         return new SimulationResult[]{ resultGlobalKnowledge, resultLocalKnowledge };
