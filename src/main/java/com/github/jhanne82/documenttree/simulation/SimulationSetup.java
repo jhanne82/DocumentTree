@@ -38,4 +38,19 @@ public class SimulationSetup {
         this.requiredSearchesOnDocumentToRespositioning = requiredSearchesOnDocumentToRespositioning;
         this.cluster = cluster;
     }
+
+
+
+    @Override
+    public String toString() {
+
+        StringBuffer buffer = new StringBuffer();
+
+        buffer.append( String.format( "Search Type: %20s%n", searchType ) );  
+        buffer.append( String.format( "Search Distr.: %14s%n", distributionForSearchVector ) );
+        buffer.append( String.format( "Document Distr.: %12s%n", distributionForDocumentVector ) );
+        buffer.append( String.format( "Cluster: %18s%n", cluster ) );
+
+        return buffer.toString();
+    }
 }
