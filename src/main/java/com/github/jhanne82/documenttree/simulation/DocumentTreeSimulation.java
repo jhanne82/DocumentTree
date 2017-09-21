@@ -16,7 +16,6 @@ public abstract class DocumentTreeSimulation <T> {
 
 
     private Document<T> searchOnTree( DocumentTree<T> documentTree, T[] searchTermVector, SearchType searchType, int limitForLocalKnowledge ) {
-
         switch ( searchType ) {
             case DEPTH_FIRST:
                 return documentTree.depthFirstSearch( limitForLocalKnowledge, searchTermVector ).get(0);
@@ -60,8 +59,8 @@ public abstract class DocumentTreeSimulation <T> {
 
             searchOnTree( stressReducedDocumentTree, searchTermVector, setup.searchType, setup.limitForLocalKnowledge );
 
-            documentTreeWithLocalKnowledge.repositioning( setup.requiredSearchesOnDocumentToRespositioning );
             documentTreeWithGlobalKnowledge.repositioning( setup.requiredSearchesOnDocumentToRespositioning );
+            documentTreeWithLocalKnowledge.repositioning( setup.requiredSearchesOnDocumentToRespositioning );
         }
 
         return new SimulationResult[]{ resultGlobalKnowledge, resultLocalKnowledge };

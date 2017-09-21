@@ -3,7 +3,6 @@ package com.github.jhanne82.documenttree.document;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 
 public class ResultDocumentList<T>
     extends ArrayList<Document<T>> {
@@ -34,7 +33,7 @@ public class ResultDocumentList<T>
                 Document existingDocument = get( i );
                 if( existingDocument.getLastCalculatedRelevance() < documentToAdd.getLastCalculatedRelevance() ) {
                     remove( existingDocument );
-                    add( documentToAdd );
+                    super.add( documentToAdd );
                     break;
                 }
 

@@ -18,4 +18,15 @@ public class Simulation_Test {
         simulationAppliction.simulation_1_1();
     }
 
+
+    @Test
+    public void doSimulation_2_1() {
+
+        SimulationApplication simulationAppliction = new SimulationApplication( 100, 600,
+                100, 3,
+                50, 5);
+
+        simulationAppliction.simulation_2_1();
+    }
+
 }

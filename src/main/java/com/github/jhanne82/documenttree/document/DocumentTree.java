@@ -70,17 +70,18 @@ public abstract class DocumentTree<T> {
     }
 
 
-    private static int currentlyVisitedNode = 0;
+    private int currentlyVisitedNode;
+    private ResultDocumentList<T> resultDocumentList;
     public ResultDocumentList<T> depthFirstSearch( int maxVisitedNode, T[] searchTerm ) {
-
+        resultDocumentList = new ResultDocumentList<>( 1 );
         currentlyVisitedNode = 0;
-        ResultDocumentList<T> resultDocumentList = new ResultDocumentList<>( 1 );
-        depthFirstSearch( rootNode, maxVisitedNode, resultDocumentList, searchTerm );
+
+        depthFirstSearch( rootNode, maxVisitedNode, searchTerm );
         return resultDocumentList;
     }
 
 
-    private boolean depthFirstSearch( DocumentNode<T> node, int maxVisitedNode, ResultDocumentList<T> resultDocumentList, T[] searchTerm ) {
+    private boolean depthFirstSearch( DocumentNode<T> node, int maxVisitedNode, T[] searchTerm ) {
 
         if ( node == null) {
             return false;
@@ -94,8 +95,8 @@ public abstract class DocumentTree<T> {
             currentlyVisitedNode++;
         }
 
-        return (   depthFirstSearch( node.getLeftChild(), maxVisitedNode, resultDocumentList, searchTerm )
-                || depthFirstSearch( node.getRightChild(), maxVisitedNode, resultDocumentList, searchTerm ));
+        return (   depthFirstSearch( node.getLeftChild(), maxVisitedNode, searchTerm )
+                || depthFirstSearch( node.getRightChild(), maxVisitedNode, searchTerm ));
     }
 
 

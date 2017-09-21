@@ -24,7 +24,6 @@ public class NumberDocumentTreeSimulation
     protected Document<Double> searchOnOptimalDocumentTree( Double[] searchTermVector ) {
 
         Document<Double> bestMatch = null;
-        double relevanceOfBestMatch = 0;
 
         for ( Document<Double> document : optimalDocumentTree ) {
 
@@ -32,9 +31,8 @@ public class NumberDocumentTreeSimulation
             double relevance = EulerianDistance.transformEulerianDistanceToRelevanceValue( euleriaDistance );
             document.addRelevance( relevance );
 
-            if( bestMatch == null || relevance > relevanceOfBestMatch ) {
+            if( bestMatch == null || relevance > bestMatch.getLastCalculatedRelevance() ) {
                 bestMatch = document;
-                relevanceOfBestMatch = relevance;
             }
         }
 
