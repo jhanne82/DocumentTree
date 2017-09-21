@@ -15,12 +15,12 @@ public abstract class DocumentTreeSimulation <T> {
 
 
 
-    private Document<T> searchOnTree( DocumentTree<T> documentTree, T[] searchTermVector, SearchType searchType, int limitForLocalKnowledge ) {
+    private Document<T> searchOnTree( DocumentTree<T> documentTree, T[] searchTermVector, SearchType searchType, int limitForLocalKnowledge, int searchTimeStamp ) {
         switch ( searchType ) {
             case DEPTH_FIRST:
-                return documentTree.depthFirstSearch( limitForLocalKnowledge, searchTermVector ).get(0);
+                return documentTree.depthFirstSearch( limitForLocalKnowledge, searchTermVector, searchTimeStamp ).get(0);
             case BREADTH_FIRST:
-                return documentTree.breadthFirstSearch( limitForLocalKnowledge, searchTermVector ).get(0);
+                return documentTree.breadthFirstSearch( limitForLocalKnowledge, searchTermVector, searchTimeStamp ).get(0);
             case RANDOM_WALKER:
             default:
                 throw new UnsupportedOperationException();
@@ -51,16 +51,16 @@ public abstract class DocumentTreeSimulation <T> {
                                                      setup.countOfTermsWithQuantifier);
 
             Document bestMatch = searchOnOptimalDocumentTree( searchTermVector );
-            Document foundDocument = searchOnTree( documentTreeWithGlobalKnowledge, searchTermVector, setup.searchType, setup.countOfCreatedDocuments );
+            Document foundDocument = searchOnTree( documentTreeWithGlobalKnowledge, searchTermVector, setup.searchType, setup.countOfCreatedDocuments, i+1 );
             calcHitMissRate( foundDocument, bestMatch, resultGlobalKnowledge );
 
-            foundDocument  = searchOnTree( documentTreeWithLocalKnowledge, searchTermVector, setup.searchType, setup.limitForLocalKnowledge );
+            foundDocument  = searchOnTree( documentTreeWithLocalKnowledge, searchTermVector, setup.searchType, setup.limitForLocalKnowledge, i+1 );
             calcHitMissRate( foundDocument, bestMatch, resultLocalKnowledge );
 
-            searchOnTree( stressReducedDocumentTree, searchTermVector, setup.searchType, setup.limitForLocalKnowledge );
+            searchOnTree( stressReducedDocumentTree, searchTermVector, setup.searchType, setup.limitForLocalKnowledge, i+1 );
 
-            documentTreeWithGlobalKnowledge.repositioning( setup.requiredSearchesOnDocumentToRespositioning );
-            documentTreeWithLocalKnowledge.repositioning( setup.requiredSearchesOnDocumentToRespositioning );
+            documentTreeWithGlobalKnowledge.repositionOfDocuments( setup.requiredSearchesOnDocumentToRespositioning, i+1 );
+            documentTreeWithLocalKnowledge.repositionOfDocuments( setup.requiredSearchesOnDocumentToRespositioning, i+1 );
         }
 
         return new SimulationResult[]{ resultGlobalKnowledge, resultLocalKnowledge };

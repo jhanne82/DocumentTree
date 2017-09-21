@@ -6,7 +6,7 @@ public class EulerianDistance {
 
 
 
-    public static double calEulerianDistance(Double[] documentVector, Double[] searchVector ) {
+    private static double calEulerianDistance(Double[] documentVector, Double[] searchVector ) {
 
         double sum = 0;
 
@@ -21,13 +21,21 @@ public class EulerianDistance {
 
 
 
-    public static double transformEulerianDistanceToRelevanceValue( double eulerianDistance ) {
+    private static double transformEulerianDistanceToRelevanceValue( double eulerianDistance ) {
 
         // 1/euler -> 1/10=0,1  1/1=1
         if( eulerianDistance == 0 ) {
             return eulerianDistance;
         }
         return ( 1/ eulerianDistance );
+    }
+
+
+
+    public static double calcRelevance( Double[] documentVector, Double[] searchVector ) {
+
+        double distance = calEulerianDistance( documentVector, searchVector );
+        return transformEulerianDistanceToRelevanceValue( distance );
     }
 
 }

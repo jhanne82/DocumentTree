@@ -28,27 +28,37 @@ public class ResultDocumentList<T>
             super.add( documentToAdd );
         } else {
 
+            if( maxResults == 1 ) {
 
-            for( int i = maxResults - 1; i>= 0; i-- ) {
-                Document existingDocument = get( i );
-                if( existingDocument.getLastCalculatedRelevance() < documentToAdd.getLastCalculatedRelevance() ) {
-                    remove( existingDocument );
+                Document<T> alreadyStoredDocument = get( 0 );
+                if( documentToAdd.getLastCalculatedRelevance() > alreadyStoredDocument.getLastCalculatedRelevance() ) {
                     super.add( documentToAdd );
-                    break;
                 }
 
+            } else {
+                for( int i = maxResults - 1; i>= 0; i-- ) {
+                    Document existingDocument = get( i );
+                    if( existingDocument.getLastCalculatedRelevance() < documentToAdd.getLastCalculatedRelevance() ) {
+                        remove( existingDocument );
+                        super.add( documentToAdd );
+                        break;
+                    }
+
+                }
+
+                sort( ( o1, o2 ) -> {
+                    if( o1.getLastCalculatedRelevance() < o2.getLastCalculatedRelevance() ) {
+                        return -1;
+                    }
+                    if( o1.getLastCalculatedRelevance() == o2.getLastCalculatedRelevance() ) {
+                        return 0;
+                    }
+                    return 1;
+                } );
             }
         }
 
-        sort( ( o1, o2 ) -> {
-            if( o1.getLastCalculatedRelevance() < o2.getLastCalculatedRelevance() ) {
-                return -1;
-            }
-            if( o1.getLastCalculatedRelevance() == o2.getLastCalculatedRelevance() ) {
-                return 0;
-            }
-            return 1;
-        } );
+
 
         return true;
     }

@@ -10,7 +10,6 @@ public class NumberDocumentTree
 
     @Override
     protected double calcRelevanceOfDocument( Double[] documentTermVector, Double[] searchTermVector ) {
-        double eulerianDistance = EulerianDistance.calEulerianDistance( documentTermVector, searchTermVector );
-        return EulerianDistance.transformEulerianDistanceToRelevanceValue( eulerianDistance );
+        return EulerianDistance.calcRelevance( documentTermVector, searchTermVector );
     }
 }

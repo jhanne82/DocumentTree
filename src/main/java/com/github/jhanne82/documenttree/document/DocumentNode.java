@@ -21,18 +21,6 @@ public class DocumentNode<T> {
 
 
 
-   public DocumentNode( Document<T> document, DocumentNode<T> left, DocumentNode<T> right ) {
-      this.document = document;
-      this.left = left;
-      addChildLeaf( left );
-      this.right = right;
-      addChildLeaf( right);
-   }
-
-
-   public DocumentNode(){}
-
-
    public void setParent( DocumentNode<T> parent ) {
       this.parent = parent;
    }
@@ -86,6 +74,13 @@ public class DocumentNode<T> {
    public Document<T> getDocument() {
       return this.document;
    }
+
+
+
+   public void setDocument( Document<T> document ) {
+      this.document = document;
+   }
+
 
 
    public boolean isRootNode() {

@@ -1,7 +1,11 @@
 package com.github.jhanne82.documenttree.document;
 
 
+import com.google.common.collect.ImmutableList;
+
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
 
 public abstract class DocumentTree<T> {
 
@@ -36,7 +40,7 @@ public abstract class DocumentTree<T> {
 
 
 
-    public ResultDocumentList<T> breadthFirstSearch( int maxVisitedNode, T[] searchTerm ) {
+    public ResultDocumentList<T> breadthFirstSearch( int maxVisitedNode, T[] searchTerm, int searchTimeStamp ) {
         ResultDocumentList<T> resultDocumentList = new ResultDocumentList<>( 1 );
         ArrayList<DocumentNode<T>> nodesOnCurrentLevel = new ArrayList<>();
         ArrayList<DocumentNode<T>> nodesOnNextLevel    = new ArrayList<>();
@@ -59,6 +63,7 @@ public abstract class DocumentTree<T> {
                 }
                 if( node != null ) {
                     node.getDocument().addRelevance(calcRelevanceOfDocument(node.getDocument().getTermList(), searchTerm));
+                    node.getDocument().setTimestampOfLastSearch( searchTimeStamp );
                     resultDocumentList.add(node.getDocument());
                     nodesOnNextLevel.addAll(node.getChildLeaves());
                     nodeCount++;
@@ -70,46 +75,52 @@ public abstract class DocumentTree<T> {
     }
 
 
-    private int currentlyVisitedNode;
-    private ResultDocumentList<T> resultDocumentList;
-    public ResultDocumentList<T> depthFirstSearch( int maxVisitedNode, T[] searchTerm ) {
-        resultDocumentList = new ResultDocumentList<>( 1 );
-        currentlyVisitedNode = 0;
 
-        depthFirstSearch( rootNode, maxVisitedNode, searchTerm );
+    public ResultDocumentList<T> depthFirstSearch( int maxVisitedNode, T[] searchTerm, int searchTimeStamp ) {
+        ResultDocumentList resultDocumentList = new ResultDocumentList<>( 1 );
+        int currentlyVisitedNode = 0;
+
+        Stack<DocumentNode<T>> s = new Stack<>();
+        s.push(rootNode);
+
+        while (!s.isEmpty() && currentlyVisitedNode < maxVisitedNode ) {
+            DocumentNode<T> node = s.pop();
+            node.getDocument().addRelevance( calcRelevanceOfDocument( node.getDocument().getTermList(), searchTerm ) );
+            node.getDocument().setTimestampOfLastSearch( searchTimeStamp );
+            resultDocumentList.add( node.getDocument() );
+            currentlyVisitedNode++;
+
+            getDFSChildNodes(node, s, searchTimeStamp );
+        }
+
         return resultDocumentList;
     }
 
+    private void getDFSChildNodes(DocumentNode<T> n, Stack stack, int searchTimeStamp) {
 
-    private boolean depthFirstSearch( DocumentNode<T> node, int maxVisitedNode, T[] searchTerm ) {
 
-        if ( node == null) {
-            return false;
+        if (n.getLeftChild() != null && n.getLeftChild().getDocument().getTimestampOfLastSearch() != searchTimeStamp) {
+            stack.push(n.getLeftChild());
+            n.getLeftChild().getDocument().setTimestampOfLastSearch( searchTimeStamp );
         }
-
-        if (currentlyVisitedNode == maxVisitedNode ) {
-            return true;
-        } else {
-            node.getDocument().addRelevance( calcRelevanceOfDocument( node.getDocument().getTermList(), searchTerm ) );
-            resultDocumentList.add( node.getDocument() );
-            currentlyVisitedNode++;
+        if (n.getRightChild() != null && n.getRightChild().getDocument().getTimestampOfLastSearch() != searchTimeStamp ) {
+            stack.push(n.getRightChild());
+            n.getRightChild().getDocument().setTimestampOfLastSearch( searchTimeStamp );
         }
-
-        return (   depthFirstSearch( node.getLeftChild(), maxVisitedNode, searchTerm )
-                || depthFirstSearch( node.getRightChild(), maxVisitedNode, searchTerm ));
     }
+
 
 
     protected abstract double calcRelevanceOfDocument(T[] documentTermVector, T[] searchTermVector );
 
 
 
-    public void repositioning( int numberOfRelevenceCalculationToRepositiong ) {
-        repositioning( rootNode, numberOfRelevenceCalculationToRepositiong );
+    public void repositioning( int numberOfRelevenceCalculationToRepositiong, int timestampOfLastSearch ) {
+        repositioning( rootNode, numberOfRelevenceCalculationToRepositiong, timestampOfLastSearch );
     }
 
 
-    private boolean repositioning( DocumentNode<T> node, int numberOfRelevenceCalculationToRepositiong ) {
+    private boolean repositioning( DocumentNode<T> node, int numberOfRelevenceCalculationToRepositiong, int timestampOfLastSearch ) {
 
         if ( node == null) {
             return false;
@@ -131,10 +142,8 @@ public abstract class DocumentTree<T> {
                 }
             }
         }
-
-
-        return    repositioning( node.getLeftChild(), numberOfRelevenceCalculationToRepositiong )
-               || repositioning( node.getRightChild(), numberOfRelevenceCalculationToRepositiong );
+        return    repositioning( node.getLeftChild(), numberOfRelevenceCalculationToRepositiong, timestampOfLastSearch )
+               || repositioning( node.getRightChild(), numberOfRelevenceCalculationToRepositiong, timestampOfLastSearch );
     }
 
 
@@ -151,6 +160,59 @@ public abstract class DocumentTree<T> {
 
         a.setLeftChild( b.getLeftChild() );
         b.setLeftChild( tmpLeftChild );
+
+        a.getDocument().clearRelevanceBuffer();
+        b.getDocument().clearRelevanceBuffer();
+
+    }
+
+
+
+    public void repositionOfDocuments( int numberOfRelevenceCalculationToRepositiong, int timestampOfLastSearch ) {
+
+
+        ArrayList<DocumentNode<T>> nodesOnNextLevel    = new ArrayList<>();
+
+        nodesOnNextLevel.add( rootNode );
+
+        // maxVisitedNode means no Abbruchkriterium
+        while ( !nodesOnNextLevel.isEmpty() ) {
+
+            // ChildLeaves von vorherigen Nodes werden zu aktuellen Nodes
+            List<DocumentNode<T>> nodesOnCurrentLevel = ImmutableList.copyOf( nodesOnNextLevel );
+            nodesOnNextLevel.clear();
+
+            for( DocumentNode<T> node : nodesOnCurrentLevel ) {
+
+                if( node != null ) {
+                    if (node.getDocument().getCountOfStoredRelevances() >= numberOfRelevenceCalculationToRepositiong) {
+
+                        if ( node.getLeftChild() != null
+                             && node.getLeftChild().getDocument().getCountOfStoredRelevances()
+                                >= numberOfRelevenceCalculationToRepositiong
+                             && node.getLeftChild().getDocument().getAverageRelevance() > node.getDocument()
+                                                                                              .getAverageRelevance() ) {
+                            switchDocuments( node, node.getLeftChild() );
+
+                        } else if ( node.getRightChild() != null
+                                    && node.getRightChild().getDocument().getCountOfStoredRelevances() > numberOfRelevenceCalculationToRepositiong
+                                    && node.getRightChild().getDocument().getAverageRelevance() > node.getDocument().getAverageRelevance() ) {
+                            switchDocuments( node, node.getRightChild() );
+                        }
+                    }
+                    nodesOnNextLevel.addAll( node.getChildLeaves() );
+                }
+            }
+        }
+    }
+
+
+
+    private void switchDocuments( DocumentNode<T> a, DocumentNode<T> b ) {
+
+        Document<T> tmpDoc = a.getDocument();
+        a.setDocument( b.getDocument() );
+        b.setDocument( tmpDoc );
 
         a.getDocument().clearRelevanceBuffer();
         b.getDocument().clearRelevanceBuffer();

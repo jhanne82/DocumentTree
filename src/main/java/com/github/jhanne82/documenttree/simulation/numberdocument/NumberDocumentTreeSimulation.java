@@ -27,11 +27,10 @@ public class NumberDocumentTreeSimulation
 
         for ( Document<Double> document : optimalDocumentTree ) {
 
-            double euleriaDistance = EulerianDistance.calEulerianDistance( document.getTermList(), searchTermVector );
-            double relevance = EulerianDistance.transformEulerianDistanceToRelevanceValue( euleriaDistance );
-            document.addRelevance( relevance );
+            document.addRelevance( EulerianDistance.calcRelevance( document.getTermList(), searchTermVector ) );
 
-            if( bestMatch == null || relevance > bestMatch.getLastCalculatedRelevance() ) {
+            if(    bestMatch == null
+                || document.getLastCalculatedRelevance() > bestMatch.getLastCalculatedRelevance() ) {
                 bestMatch = document;
             }
         }
