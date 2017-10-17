@@ -18,9 +18,9 @@ public abstract class DocumentTreeSimulation <T> {
     private Document<T> searchOnTree( DocumentTree<T> documentTree, T[] searchTermVector, SearchType searchType, int limitForLocalKnowledge, int searchTimeStamp ) {
         switch ( searchType ) {
             case DEPTH_FIRST:
-                return documentTree.depthFirstSearch( limitForLocalKnowledge, searchTermVector, searchTimeStamp ).get(0);
+                return documentTree.depthFirstSearch( limitForLocalKnowledge, searchTermVector, searchTimeStamp ).getBestResult();
             case BREADTH_FIRST:
-                return documentTree.breadthFirstSearch( limitForLocalKnowledge, searchTermVector, searchTimeStamp ).get(0);
+                return documentTree.breadthFirstSearch( limitForLocalKnowledge, searchTermVector, searchTimeStamp ).getBestResult();
             case RANDOM_WALKER:
             default:
                 throw new UnsupportedOperationException();

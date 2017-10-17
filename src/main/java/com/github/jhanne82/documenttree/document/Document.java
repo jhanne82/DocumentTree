@@ -3,11 +3,8 @@ package com.github.jhanne82.documenttree.document;
 
 import org.apache.commons.collections.buffer.CircularFifoBuffer;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Document <T>
-    implements Cloneable {
+    implements Cloneable, Comparable<Document<T>> {
 
     private final CircularFifoBuffer relevanceBuffer;
     //private final T[] termVector;
@@ -55,6 +52,10 @@ public class Document <T>
 
     
     public double getAverageRelevance() {
+
+        if( relevanceBuffer.isEmpty() ) {
+            return 0.0;
+        }
 
         double averageRelevance = 0;
 
@@ -105,5 +106,23 @@ public class Document <T>
     @Override
     public String toString() {
         return documentName + " (" + getAverageRelevance() + ")";
+    }
+
+
+
+    @Override
+    public int compareTo( Document<T> o ) {
+
+        if( o == null ) {
+            return -1;
+        }
+
+        if( this.getLastCalculatedRelevance() < o.getLastCalculatedRelevance() ) {
+            return -1;
+        }
+        if( this.getLastCalculatedRelevance() == o.getLastCalculatedRelevance() ) {
+            return 0;
+        }
+        return 1;
     }
 }

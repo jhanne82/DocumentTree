@@ -3,12 +3,14 @@ package com.github.jhanne82.documenttree.document.numberdocument;
 import com.github.jhanne82.documenttree.document.Document;
 import com.github.jhanne82.documenttree.document.DocumentNode;
 import com.github.jhanne82.documenttree.document.DocumentTree;
+import com.github.jhanne82.documenttree.document.ResultDocumentList;
 import com.github.jhanne82.documenttree.utils.EulerianDistance;
 import org.junit.Before;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertNull;
 import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertTrue;
 import static org.mockito.Mockito.spy;
 
 
@@ -22,10 +24,10 @@ public class NumberDocumentTreeTest {
 
         tree = spy( new NumberDocumentTree() );
         documents = new Document[]{ new Document<>( new Double[]{0.3, 0.1, 0.2}, "Doc1" ),
-                                    new Document<>( new Double[]{0.3, 0.3, 0.2}, "Doc2" ),
-                                    new Document<>( new Double[]{0.3, 0.2, 0.2}, "Doc3" ),
-                                    new Document<>( new Double[]{0.3, 0.0, 0.2}, "Doc4" ),
-                                    new Document<>( new Double[]{0.0, 0.1, 0.0}, "Doc5" )};
+                                    new Document<>( new Double[]{0.3, 0.3, 0.3}, "Doc2" ),
+                                    new Document<>( new Double[]{0.3, 0.2, 0.25}, "Doc3" ),
+                                    new Document<>( new Double[]{0.3, 0.0, 0.1}, "Doc4" ),
+                                    new Document<>( new Double[]{0.0, 0.1, 0.05}, "Doc5" )};
 
 
     }
@@ -59,7 +61,7 @@ public class NumberDocumentTreeTest {
 
         Double[] searchVector = new Double[]{ 0.1, 0.1, 0.1 };
 
-        tree.depthFirstSearch( 5, searchVector, 20 );
+        ResultDocumentList list = tree.depthFirstSearch( 5, searchVector, 20 );
 
         assertEquals( "Doc1", tree.getRootNode().getDocument().getDocumentName() );
         assertEquals( 20, tree.getRootNode().getDocument().getTimestampOfLastSearch() );
@@ -95,14 +97,14 @@ public class NumberDocumentTreeTest {
 
 
     @Test
-    public void depthFirstSearch2() {
+    public void depthFirstSearchWithLocalKnowledge() {
 
 
         tree.level_order_insert( null, documents, 0, documents.length );
 
         Double[] searchVector = new Double[]{ 0.1, 0.1, 0.1 };
 
-        tree.depthFirstSearch( 3, searchVector, 20 );
+        ResultDocumentList list = tree.depthFirstSearch( 3, searchVector, 20 );
 
         assertEquals( "Doc1", tree.getRootNode().getDocument().getDocumentName() );
         assertEquals( 20, tree.getRootNode().getDocument().getTimestampOfLastSearch() );
@@ -130,7 +132,7 @@ public class NumberDocumentTreeTest {
         Double[] searchVector = new Double[]{ 0.2, 0.15, 0.0 };
 
 
-        tree.breadthFirstSearch( 5, searchVector, 25 );
+        ResultDocumentList list = tree.breadthFirstSearch( 5, searchVector, 25 );
 
         assertEquals( "Doc1", tree.getRootNode().getDocument().getDocumentName() );
         assertEquals( 25, tree.getRootNode().getDocument().getTimestampOfLastSearch() );
@@ -143,6 +145,7 @@ public class NumberDocumentTreeTest {
         assertEquals( EulerianDistance.calcRelevance( ( Double[] )tree.getRootNode().getLeftChild().getDocument().getTermList(),
                                                       searchVector ),
                       tree.getRootNode().getLeftChild().getDocument().getLastCalculatedRelevance() );
+
 
         assertEquals( "Doc3", tree.getRootNode().getRightChild().getDocument().getDocumentName() );
         assertEquals( 25, tree.getRootNode().getRightChild().getDocument().getTimestampOfLastSearch() );
@@ -161,7 +164,93 @@ public class NumberDocumentTreeTest {
         assertEquals( EulerianDistance.calcRelevance( ( Double[] )tree.getRootNode().getLeftChild().getRightChild().getDocument().getTermList(),
                                                       searchVector ),
                       tree.getRootNode().getLeftChild().getRightChild().getDocument().getLastCalculatedRelevance() );
-
     }
+
+
+    @Test
+    public void breathFirstSearchWithLocalKnowledge(){
+        tree.level_order_insert( null, documents, 0, documents.length );
+
+        Double[] searchVector = new Double[]{ 0.2, 0.15, 0.0 };
+
+        tree.breadthFirstSearch( 3, searchVector, 30 );
+
+        assertEquals( "Doc1", tree.getRootNode().getDocument().getDocumentName() );
+        assertEquals( 30, tree.getRootNode().getDocument().getTimestampOfLastSearch() );
+
+        assertEquals( "Doc2", tree.getRootNode().getLeftChild().getDocument().getDocumentName() );
+        assertEquals( 30, tree.getRootNode().getLeftChild().getDocument().getTimestampOfLastSearch() );
+
+        assertEquals( "Doc3", tree.getRootNode().getRightChild().getDocument().getDocumentName() );
+        assertEquals( 30, tree.getRootNode().getRightChild().getDocument().getTimestampOfLastSearch() );
+
+        assertEquals( "Doc4", tree.getRootNode().getLeftChild().getLeftChild().getDocument().getDocumentName() );
+        assertEquals( 0, tree.getRootNode().getLeftChild().getLeftChild().getDocument().getTimestampOfLastSearch() );
+
+        assertEquals( "Doc5", tree.getRootNode().getLeftChild().getRightChild().getDocument().getDocumentName() );
+        assertEquals( 0, tree.getRootNode().getLeftChild().getRightChild().getDocument().getTimestampOfLastSearch() );
+    }
+
+
+
+    @Test
+    public void repositioning() {
+
+        tree.level_order_insert( null, documents, 0, documents.length );
+
+        Double[] searchVector = new Double[]{ 0.2, 0.15, 0.0 };
+
+        tree.breadthFirstSearch( 5, searchVector, 30 );
+
+        assertEquals( "Doc1", tree.getRootNode().getDocument().getDocumentName() );
+        assertEquals( "Doc2", tree.getRootNode().getLeftChild().getDocument().getDocumentName() );
+        assertEquals( "Doc3", tree.getRootNode().getRightChild().getDocument().getDocumentName() );
+        assertEquals( "Doc4", tree.getRootNode().getLeftChild().getLeftChild().getDocument().getDocumentName() );
+        assertEquals( "Doc5", tree.getRootNode().getLeftChild().getRightChild().getDocument().getDocumentName() );
+
+        tree.repositionOfDocuments( 1, 30 );
+
+        assertEquals( "Doc1", tree.getRootNode().getDocument().getDocumentName() );
+        assertTrue( tree.getRootNode().getDocument().getAverageRelevance() > 0 );
+
+        assertEquals( "Doc4", tree.getRootNode().getLeftChild().getDocument().getDocumentName() );
+        assertTrue( tree.getRootNode().getLeftChild().getDocument().getAverageRelevance() == 0 );
+
+        assertEquals( "Doc3", tree.getRootNode().getRightChild().getDocument().getDocumentName() );
+        assertTrue( tree.getRootNode().getRightChild().getDocument().getAverageRelevance() > 0 );
+
+        assertEquals( "Doc2", tree.getRootNode().getLeftChild().getLeftChild().getDocument().getDocumentName() );
+        assertTrue( tree.getRootNode().getLeftChild().getLeftChild().getDocument().getAverageRelevance() == 0 );
+
+        assertEquals( "Doc5", tree.getRootNode().getLeftChild().getRightChild().getDocument().getDocumentName() );
+        assertTrue( tree.getRootNode().getLeftChild().getRightChild().getDocument().getAverageRelevance() > 0 );
+    }
+
+
+    @Test
+    public void repositioningWithLocalKnowledge() {
+
+        tree.level_order_insert( null, documents, 0, documents.length );
+
+        Double[] searchVector = new Double[]{ 0.2, 0.15, 0.0 };
+
+        tree.breadthFirstSearch( 3, searchVector, 30 );
+        tree.breadthFirstSearch( 3, searchVector, 30 );
+
+        assertEquals( "Doc1", tree.getRootNode().getDocument().getDocumentName() );
+        assertEquals( "Doc2", tree.getRootNode().getLeftChild().getDocument().getDocumentName() );
+        assertEquals( "Doc3", tree.getRootNode().getRightChild().getDocument().getDocumentName() );
+        assertEquals( "Doc4", tree.getRootNode().getLeftChild().getLeftChild().getDocument().getDocumentName() );
+        assertEquals( "Doc5", tree.getRootNode().getLeftChild().getRightChild().getDocument().getDocumentName() );
+
+        tree.repositionOfDocuments( 1, 30 );
+
+        assertEquals( "Doc1", tree.getRootNode().getDocument().getDocumentName() );
+        assertEquals( "Doc2", tree.getRootNode().getLeftChild().getDocument().getDocumentName() );
+        assertEquals( "Doc3", tree.getRootNode().getRightChild().getDocument().getDocumentName() );
+        assertEquals( "Doc4", tree.getRootNode().getLeftChild().getLeftChild().getDocument().getDocumentName() );
+        assertEquals( "Doc5", tree.getRootNode().getLeftChild().getRightChild().getDocument().getDocumentName() );
+    }
+
 
 }

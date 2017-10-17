@@ -85,6 +85,7 @@ public abstract class DocumentTree<T> {
         return resultDocumentList;
     }
 
+    
 
     private boolean depthFirstSearch( DocumentNode<T> node, int maxVisitedNode, T[] searchTerm, int searchTimeStamp ) {
 
@@ -108,59 +109,6 @@ public abstract class DocumentTree<T> {
 
 
     protected abstract double calcRelevanceOfDocument(T[] documentTermVector, T[] searchTermVector );
-
-
-
-    public void repositioning( int numberOfRelevenceCalculationToRepositiong, int timestampOfLastSearch ) {
-        repositioning( rootNode, numberOfRelevenceCalculationToRepositiong, timestampOfLastSearch );
-    }
-
-
-    private boolean repositioning( DocumentNode<T> node, int numberOfRelevenceCalculationToRepositiong, int timestampOfLastSearch ) {
-
-        if ( node == null) {
-            return false;
-        }
-
-        if( node.getDocument().getCountOfStoredRelevances() >= numberOfRelevenceCalculationToRepositiong ) {
-
-            DocumentNode<T> leftChild = node.getLeftChild();
-            if(    leftChild != null
-                && node.getDocument().getAverageRelevance() < leftChild.getDocument().getAverageRelevance() ) {
-                switchNodes( node, leftChild );
-
-            } else {
-                DocumentNode<T> rightChild = node.getLeftChild();
-
-                if(    rightChild != null
-                    && node.getDocument().getAverageRelevance() < rightChild.getDocument().getAverageRelevance() ) {
-                    switchNodes( node, rightChild );
-                }
-            }
-        }
-        return    repositioning( node.getLeftChild(), numberOfRelevenceCalculationToRepositiong, timestampOfLastSearch )
-               || repositioning( node.getRightChild(), numberOfRelevenceCalculationToRepositiong, timestampOfLastSearch );
-    }
-
-
-    private void switchNodes( DocumentNode<T> a, DocumentNode<T> b ) {
-        DocumentNode<T> tmpParent = a.getParent();
-        b.setParent( tmpParent );
-        a.setParent( b );
-
-        DocumentNode<T> tmpRightChild = a.getRightChild();
-        DocumentNode<T> tmpLeftChild  = a.getLeftChild();
-
-        a.setRightChild( b.getRightChild() );
-        b.setRightChild( tmpRightChild );
-
-        a.setLeftChild( b.getLeftChild() );
-        b.setLeftChild( tmpLeftChild );
-
-        a.getDocument().clearRelevanceBuffer();
-        b.getDocument().clearRelevanceBuffer();
-
-    }
 
 
 
