@@ -14,6 +14,7 @@ public class SimulationApplication {
     private final int MAX_COUNT_OF_TERMS_WITH_QUANTIFIER;
     private final int LIMIT_FOR_LOCAL_KNOWLEDGE;
     private final int NUMBER_OF_SEARCHES_BEFORE_REPOSITIONING;
+    private final int TRESHOLD;
 
 
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat( "YYYY-MM-dd HH:mm:ss" );
@@ -27,6 +28,7 @@ public class SimulationApplication {
         MAX_COUNT_OF_TERMS_WITH_QUANTIFIER = 3;
         LIMIT_FOR_LOCAL_KNOWLEDGE = 300;
         NUMBER_OF_SEARCHES_BEFORE_REPOSITIONING = 20;
+        TRESHOLD = 100;
     }
 
 
@@ -35,7 +37,8 @@ public class SimulationApplication {
                                  int maxCountOfTermsUsedToDefineAVector,
                                  int maxCountOfTermsWithQuantifier,
                                  int limitForLocalKnowledge,
-                                 int numberOfSearchesBeforeRepositioning ) {
+                                 int numberOfSearchesBeforeRepositioning,
+                                 int treshold ) {
 
         this.MAX_COUNT_OF_CREATED_DOCUMENTS = maxCountOfCreatedDocuments;
         this.MAX_COUNT_OF_CREATED_SEARCHES = maxCountOfCreatedSearches;
@@ -43,6 +46,7 @@ public class SimulationApplication {
         this.MAX_COUNT_OF_TERMS_WITH_QUANTIFIER = maxCountOfTermsWithQuantifier;
         this.LIMIT_FOR_LOCAL_KNOWLEDGE = limitForLocalKnowledge;
         this.NUMBER_OF_SEARCHES_BEFORE_REPOSITIONING = numberOfSearchesBeforeRepositioning;
+        this.TRESHOLD = treshold;
     }
 
     /**
@@ -181,6 +185,7 @@ public class SimulationApplication {
                                                      MAX_COUNT_OF_CREATED_SEARCHES,
                                                      LIMIT_FOR_LOCAL_KNOWLEDGE,
                                                      NUMBER_OF_SEARCHES_BEFORE_REPOSITIONING,
+                                                     TRESHOLD,
                                                      cluster );
 
         DocumentTreeSimulation<Double> documentTreeSimulation = new NumberDocumentTreeSimulation();

@@ -112,7 +112,7 @@ public abstract class DocumentTree<T> {
 
 
 
-    public void repositionOfDocuments( int numberOfRelevenceCalculationToRepositiong, int timestampOfLastSearch ) {
+    public void repositionOfDocuments( int numberOfRelevenceCalculationToRepositiong, int timestampOfLastSearch, int treshold ) {
 
 
         ArrayList<DocumentNode<T>> nodesOnNextLevel    = new ArrayList<>();
@@ -143,6 +143,9 @@ public abstract class DocumentTree<T> {
                                     && node.getRightChild().getDocument().getAverageRelevance() > node.getDocument().getAverageRelevance() ) {
                             switchDocuments( node, node.getRightChild() );
                         }
+                    } else if( timestampOfLastSearch - node.getDocument().getTimestampOfLastSearch() >= treshold
+                               && node.getDocument().getTimestampOfLastSearch() < node.getParent().getDocument().getTimestampOfLastSearch()) {
+                        switchDocuments( node, node.getParent() );
                     }
                     nodesOnNextLevel.addAll( node.getChildLeaves() );
                 }

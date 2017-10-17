@@ -13,6 +13,7 @@ public class SimulationSetup {
     public final int countOfPerformedSearches;
     public final int limitForLocalKnowledge;
     public final int requiredSearchesOnDocumentToRespositioning;
+    public final int treshold;
 
 
 
@@ -25,6 +26,7 @@ public class SimulationSetup {
                             int countOfPerformedSearches,
                             int limitForLocalKnowledge,
                             int requiredSearchesOnDocumentToRespositioning,
+                            int treshold,
                             boolean cluster ) {
 
         this.searchType = searchType;
@@ -36,6 +38,7 @@ public class SimulationSetup {
         this.countOfPerformedSearches = countOfPerformedSearches;
         this.limitForLocalKnowledge = limitForLocalKnowledge;
         this.requiredSearchesOnDocumentToRespositioning = requiredSearchesOnDocumentToRespositioning;
+        this.treshold = treshold;
         this.cluster = cluster;
     }
 

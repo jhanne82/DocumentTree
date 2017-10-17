@@ -208,7 +208,7 @@ public class NumberDocumentTreeTest {
         assertEquals( "Doc4", tree.getRootNode().getLeftChild().getLeftChild().getDocument().getDocumentName() );
         assertEquals( "Doc5", tree.getRootNode().getLeftChild().getRightChild().getDocument().getDocumentName() );
 
-        tree.repositionOfDocuments( 1, 30 );
+        tree.repositionOfDocuments( 1, 30,1 );
 
         assertEquals( "Doc1", tree.getRootNode().getDocument().getDocumentName() );
         assertTrue( tree.getRootNode().getDocument().getAverageRelevance() > 0 );
@@ -235,7 +235,7 @@ public class NumberDocumentTreeTest {
         Double[] searchVector = new Double[]{ 0.2, 0.15, 0.0 };
 
         tree.breadthFirstSearch( 3, searchVector, 30 );
-        tree.breadthFirstSearch( 3, searchVector, 30 );
+        tree.breadthFirstSearch( 3, searchVector, 31 );
 
         assertEquals( "Doc1", tree.getRootNode().getDocument().getDocumentName() );
         assertEquals( "Doc2", tree.getRootNode().getLeftChild().getDocument().getDocumentName() );
@@ -243,12 +243,12 @@ public class NumberDocumentTreeTest {
         assertEquals( "Doc4", tree.getRootNode().getLeftChild().getLeftChild().getDocument().getDocumentName() );
         assertEquals( "Doc5", tree.getRootNode().getLeftChild().getRightChild().getDocument().getDocumentName() );
 
-        tree.repositionOfDocuments( 1, 30 );
+        tree.repositionOfDocuments( 1, 31,1 );
 
         assertEquals( "Doc1", tree.getRootNode().getDocument().getDocumentName() );
-        assertEquals( "Doc2", tree.getRootNode().getLeftChild().getDocument().getDocumentName() );
+        assertEquals( "Doc4", tree.getRootNode().getLeftChild().getDocument().getDocumentName() );
         assertEquals( "Doc3", tree.getRootNode().getRightChild().getDocument().getDocumentName() );
-        assertEquals( "Doc4", tree.getRootNode().getLeftChild().getLeftChild().getDocument().getDocumentName() );
+        assertEquals( "Doc2", tree.getRootNode().getLeftChild().getLeftChild().getDocument().getDocumentName() );
         assertEquals( "Doc5", tree.getRootNode().getLeftChild().getRightChild().getDocument().getDocumentName() );
     }
 

@@ -13,7 +13,7 @@ public class Simulation_Test {
 
         SimulationApplication simulationAppliction = new SimulationApplication( 100, 600,
                                                                               100, 3,
-                                                                              50, 5);
+                                                                              50, 5,10);
 
         simulationAppliction.simulation_1_1();
     }
@@ -24,7 +24,7 @@ public class Simulation_Test {
 
         SimulationApplication simulationAppliction = new SimulationApplication( 100, 600,
                 100, 3,
-                50, 5);
+                50, 5, 10 );
 
         simulationAppliction.simulation_2_1();
     }
