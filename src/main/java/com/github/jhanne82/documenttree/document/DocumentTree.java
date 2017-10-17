@@ -5,7 +5,6 @@ import com.google.common.collect.ImmutableList;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 
 public abstract class DocumentTree<T> {
 
@@ -76,37 +75,34 @@ public abstract class DocumentTree<T> {
 
 
 
+    private int currentlyVisitedNode;
+    private ResultDocumentList<T> resultDocumentList;
     public ResultDocumentList<T> depthFirstSearch( int maxVisitedNode, T[] searchTerm, int searchTimeStamp ) {
-        ResultDocumentList resultDocumentList = new ResultDocumentList<>( 1 );
-        int currentlyVisitedNode = 0;
+        resultDocumentList = new ResultDocumentList<>( 1 );
+        currentlyVisitedNode = 0;
 
-        Stack<DocumentNode<T>> s = new Stack<>();
-        s.push(rootNode);
+        depthFirstSearch( rootNode, maxVisitedNode, searchTerm, searchTimeStamp  );
+        return resultDocumentList;
+    }
 
-        while (!s.isEmpty() && currentlyVisitedNode < maxVisitedNode ) {
-            DocumentNode<T> node = s.pop();
+
+    private boolean depthFirstSearch( DocumentNode<T> node, int maxVisitedNode, T[] searchTerm, int searchTimeStamp ) {
+
+        if ( node == null) {
+            return false;
+        }
+
+        if (currentlyVisitedNode == maxVisitedNode ) {
+            return true;
+        } else {
             node.getDocument().addRelevance( calcRelevanceOfDocument( node.getDocument().getTermList(), searchTerm ) );
             node.getDocument().setTimestampOfLastSearch( searchTimeStamp );
             resultDocumentList.add( node.getDocument() );
             currentlyVisitedNode++;
-
-            getDFSChildNodes(node, s, searchTimeStamp );
         }
 
-        return resultDocumentList;
-    }
-
-    private void getDFSChildNodes(DocumentNode<T> n, Stack stack, int searchTimeStamp) {
-
-
-        if (n.getLeftChild() != null && n.getLeftChild().getDocument().getTimestampOfLastSearch() != searchTimeStamp) {
-            stack.push(n.getLeftChild());
-            n.getLeftChild().getDocument().setTimestampOfLastSearch( searchTimeStamp );
-        }
-        if (n.getRightChild() != null && n.getRightChild().getDocument().getTimestampOfLastSearch() != searchTimeStamp ) {
-            stack.push(n.getRightChild());
-            n.getRightChild().getDocument().setTimestampOfLastSearch( searchTimeStamp );
-        }
+        return (   depthFirstSearch( node.getLeftChild(), maxVisitedNode, searchTerm, searchTimeStamp )
+                || depthFirstSearch( node.getRightChild(), maxVisitedNode, searchTerm, searchTimeStamp ));
     }
 
 
@@ -217,6 +213,12 @@ public abstract class DocumentTree<T> {
         a.getDocument().clearRelevanceBuffer();
         b.getDocument().clearRelevanceBuffer();
 
+    }
+
+
+
+    public DocumentNode<T> getRootNode() {
+        return rootNode;
     }
 
 
