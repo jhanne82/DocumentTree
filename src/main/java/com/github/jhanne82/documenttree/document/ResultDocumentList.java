@@ -3,50 +3,46 @@ package com.github.jhanne82.documenttree.document;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
-public class ResultDocumentList<T>
-    extends ArrayList<Document<T>> {
+public class ResultDocumentList<T> {
 
-    private final int maxResults;
-
-
-    public ResultDocumentList() {
-        this( 10 );
-    }
+    private final int     maxResults;
+    private final List<Document<T>> resultList;
 
 
     public ResultDocumentList( int maxResult ) {
-        super( maxResult );
+        resultList = new ArrayList<>( maxResult );
         this.maxResults = maxResult;
     }
 
 
-    @Override
     public boolean add(Document<T> documentToAdd) {
 
-        if( size() < maxResults ) {
-            super.add( documentToAdd );
+        if( resultList.size() < maxResults ) {
+            resultList.add( documentToAdd );
         } else {
 
             if( maxResults == 1 ) {
 
-                Document<T> alreadyStoredDocument = get( 0 );
+                Document<T> alreadyStoredDocument = resultList.get( 0 );
                 if( documentToAdd.getLastCalculatedRelevance() > alreadyStoredDocument.getLastCalculatedRelevance() ) {
-                    super.add( documentToAdd );
+                    resultList.clear();
+                    resultList.add( documentToAdd );
                 }
 
             } else {
                 for( int i = maxResults - 1; i>= 0; i-- ) {
-                    Document existingDocument = get( i );
+                    Document existingDocument = resultList.get( i );
                     if( existingDocument.getLastCalculatedRelevance() < documentToAdd.getLastCalculatedRelevance() ) {
-                        remove( existingDocument );
-                        super.add( documentToAdd );
+                        resultList.remove( existingDocument );
+                        resultList.add( documentToAdd );
                         break;
                     }
 
                 }
 
-                sort( ( o1, o2 ) -> {
+                resultList.sort( (o1, o2) -> {
                     if( o1.getLastCalculatedRelevance() < o2.getLastCalculatedRelevance() ) {
                         return -1;
                     }
@@ -54,18 +50,28 @@ public class ResultDocumentList<T>
                         return 0;
                     }
                     return 1;
-                } );
+                });
+
             }
         }
-
-
-
         return true;
+    }
+
+
+    public Document<T> get( int index ) {
+
+        return resultList.get( index );
+    }
+
+
+
+    public int size() {
+        return resultList.size();
     }
 
 
     @Override
     public String toString() {
-        return Arrays.toString( this.toArray() );
+        return Arrays.toString( resultList.toArray() );
     }
 }
