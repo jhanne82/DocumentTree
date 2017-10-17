@@ -6,8 +6,7 @@ import java.util.TreeSet;
 public class ResultDocumentList<T> {
 
     private final int     maxResults;
-    private final TreeSet<Document<T>> resultTree;
-    private int numberOfDocumentTillMostRelevant = 0;
+    private final TreeSet<Result<T>> resultTree;
 
 
     public ResultDocumentList( int maxResult ) {
@@ -16,33 +15,29 @@ public class ResultDocumentList<T> {
     }
 
 
-    public void add(Document<T> documentToAdd) {
+    public void add(Document<T> documentToAdd, int searchesTillDocument) {
 
         if( resultTree.size() < maxResults ) {
-            resultTree.add( documentToAdd );
-            numberOfDocumentTillMostRelevant++;
+            resultTree.add( new Result( documentToAdd, searchesTillDocument ) );
         } else {
 
-            if( resultTree.first().getLastCalculatedRelevance() < documentToAdd.getLastCalculatedRelevance() ) {
-                numberOfDocumentTillMostRelevant++;
-            }
-            Document lastStoredResult = resultTree.last();
-            if( lastStoredResult.getLastCalculatedRelevance() < documentToAdd.getLastCalculatedRelevance() ) {
+            Result lastStoredResult = resultTree.last();
+            if( lastStoredResult.document.getLastCalculatedRelevance() < documentToAdd.getLastCalculatedRelevance() ) {
                 resultTree.remove( lastStoredResult );
-                resultTree.add( documentToAdd );
+                resultTree.add( new Result( documentToAdd, searchesTillDocument ) );
             }
         }
     }
 
 
     public Document<T> getBestResult() {
-        return resultTree.first();
+        return resultTree.first().document;
     }
 
 
 
     public int numberOfSearchesTillOptimum() {
-        return numberOfDocumentTillMostRelevant;
+        return resultTree.first().requiredSearchesTillDocument;
     }
 
 
@@ -50,5 +45,35 @@ public class ResultDocumentList<T> {
     @Override
     public String toString() {
         return resultTree.toString();
+    }
+
+
+
+    private class Result<T>
+        implements Comparable<Result<T>>{
+
+        int requiredSearchesTillDocument = 0;
+        Document<T> document;
+
+
+        Result( Document<T> document, int requiredSearchesTillDocument ) {
+            this.document = document;
+            this.requiredSearchesTillDocument = requiredSearchesTillDocument;
+        }
+
+        @Override
+        public int compareTo(Result<T> o) {
+            if( o == null || o.document == null ) {
+                return -1;
+            }
+
+            if( this.document.getLastCalculatedRelevance() < o.document.getLastCalculatedRelevance() ) {
+                return -1;
+            }
+            if( this.document.getLastCalculatedRelevance() == o.document.getLastCalculatedRelevance() ) {
+                return 0;
+            }
+            return 1;
+        }
     }
 }

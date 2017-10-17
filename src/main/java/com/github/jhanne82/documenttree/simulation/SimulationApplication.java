@@ -93,11 +93,16 @@ public class SimulationApplication {
         buffer.append( String.format( "Hit/Miss Rate: %10d/%d %17d/%d%n",
                                       simulationResults[0].getHitRate(), simulationResults[0].getMissRate(),
                                       simulationResults[1].getHitRate(), simulationResults[1].getMissRate() ) );
+
         buffer.append('\n');
         buffer.append("Required Searches to optimal Document \n");
-        buffer.append("global: " +  Arrays.toString( simulationResults[0].getRequiredSearches().toArray()));
-        buffer.append("local: " +  Arrays.toString( simulationResults[1].getRequiredSearches().toArray()));
+        buffer.append("global: " +  Arrays.toString( simulationResults[0].getRequiredSearches().toArray())); buffer.append( '\n');
+        buffer.append("local: " +  Arrays.toString( simulationResults[1].getRequiredSearches().toArray()));  buffer.append( '\n');
 
+        buffer.append('\n');
+        buffer.append("Required Repositionings \n");
+        buffer.append("global: " +  Arrays.toString( simulationResults[0].getRequiredRepositionings().toArray())); buffer.append( '\n');
+        buffer.append("local: " +  Arrays.toString( simulationResults[1].getRequiredRepositionings().toArray()));  buffer.append( '\n');
 
         System.out.println( buffer.toString() );
     }

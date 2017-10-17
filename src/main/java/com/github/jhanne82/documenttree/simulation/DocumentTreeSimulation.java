@@ -53,19 +53,17 @@ public abstract class DocumentTreeSimulation <T> {
 
             Document bestMatch = searchOnOptimalDocumentTree( searchTermVector );
             ResultDocumentList<T> result = searchOnTree( documentTreeWithGlobalKnowledge, searchTermVector, setup.searchType, setup.countOfCreatedDocuments, i+1 );
-            if( calcHitMissRate( result.getBestResult(), bestMatch, resultGlobalKnowledge ) ) {
-                resultGlobalKnowledge.addRequiredSearches( result.numberOfSearchesTillOptimum() );
-            }
+            calcHitMissRate( result.getBestResult(), bestMatch, resultGlobalKnowledge );
+            resultGlobalKnowledge.addRequiredSearches( result.numberOfSearchesTillOptimum() );
 
             result  = searchOnTree( documentTreeWithLocalKnowledge, searchTermVector, setup.searchType, setup.limitForLocalKnowledge, i+1 );
-            if( calcHitMissRate( result.getBestResult(), bestMatch, resultLocalKnowledge ) ) {
-                resultLocalKnowledge.addRequiredSearches(result.numberOfSearchesTillOptimum());
-            }
+            calcHitMissRate( result.getBestResult(), bestMatch, resultLocalKnowledge );
+            resultLocalKnowledge.addRequiredSearches(result.numberOfSearchesTillOptimum());
 
             searchOnTree( stressReducedDocumentTree, searchTermVector, setup.searchType, setup.limitForLocalKnowledge, i+1 );
 
-            documentTreeWithGlobalKnowledge.repositionOfDocuments( setup.requiredSearchesOnDocumentToRespositioning, i+1, setup.treshold );
-            documentTreeWithLocalKnowledge.repositionOfDocuments( setup.requiredSearchesOnDocumentToRespositioning, i+1, setup.treshold );
+            resultGlobalKnowledge.addRequiredRepositioning( documentTreeWithGlobalKnowledge.repositionOfDocuments( setup.requiredSearchesOnDocumentToRespositioning, i+1, setup.treshold ) );
+            resultLocalKnowledge.addRequiredRepositioning( documentTreeWithLocalKnowledge.repositionOfDocuments( setup.requiredSearchesOnDocumentToRespositioning, i+1, setup.treshold ));
         }
 
         return new SimulationResult[]{ resultGlobalKnowledge, resultLocalKnowledge };
@@ -73,14 +71,12 @@ public abstract class DocumentTreeSimulation <T> {
 
 
 
-    private boolean calcHitMissRate( Document foundDocument, Document bestMatch, SimulationResult result ) {
+    private void calcHitMissRate( Document foundDocument, Document bestMatch, SimulationResult result ) {
 
         if( bestMatch.getDocumentName().equals( foundDocument.getDocumentName() ) ) {
             result.setHitRate( result.getHitRate() + 1 );
-            return true;
         } else {
             result.setMissRate( result.getMissRate() + 1 );
-            return false;
         }
     }
 }

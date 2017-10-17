@@ -9,7 +9,7 @@ public class SimulationResult {
     private final SimulationSetup simulationSetup;
 
     // Bewertungskriterien
-    private List<Integer> averageSearchTime;
+    private List<Integer> requiresSearches;
     private int missRate = 0;
     private int hitRate = 0;
     private List<Integer> averageCountOfRepositioning;
@@ -33,19 +33,22 @@ public class SimulationResult {
 
 
 
+    public List<Integer> getRequiredSearches() { return requiresSearches; }
     public void addRequiredSearches( int requiredSearches ) {
-        if( null == averageSearchTime ) {
-            averageSearchTime = new ArrayList<>();
+        if( null == requiresSearches ) {
+            requiresSearches = new ArrayList<>();
         }
-        averageSearchTime.add( requiredSearches );
+        requiresSearches.add( requiredSearches );
     }
 
 
-
-    public List<Integer> getRequiredSearches() {
-        return averageSearchTime;
+    public List<Integer> getRequiredRepositionings() { return averageCountOfRepositioning; }
+    public void addRequiredRepositioning( int requiredRepositioning ) {
+        if( null == averageCountOfRepositioning ) {
+            averageCountOfRepositioning = new ArrayList<>();
+        }
+        averageCountOfRepositioning.add( requiredRepositioning );
     }
-
 
 
     public SimulationSetup getSimulationSetup() {

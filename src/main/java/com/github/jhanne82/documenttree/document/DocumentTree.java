@@ -63,7 +63,7 @@ public abstract class DocumentTree<T> {
                 if( node != null ) {
                     node.getDocument().addRelevance(calcRelevanceOfDocument(node.getDocument().getTermList(), searchTerm));
                     node.getDocument().setTimestampOfLastSearch( searchTimeStamp );
-                    resultDocumentList.add(node.getDocument());
+                    resultDocumentList.add(node.getDocument(), nodeCount);
                     nodesOnNextLevel.addAll(node.getChildLeaves());
                     nodeCount++;
                 }
@@ -98,7 +98,7 @@ public abstract class DocumentTree<T> {
         } else {
             node.getDocument().addRelevance( calcRelevanceOfDocument( node.getDocument().getTermList(), searchTerm ) );
             node.getDocument().setTimestampOfLastSearch( searchTimeStamp );
-            resultDocumentList.add( node.getDocument() );
+            resultDocumentList.add( node.getDocument(), currentlyVisitedNode );
             currentlyVisitedNode++;
         }
 
@@ -112,10 +112,10 @@ public abstract class DocumentTree<T> {
 
 
 
-    public void repositionOfDocuments( int numberOfRelevenceCalculationToRepositiong, int timestampOfLastSearch, int treshold ) {
-
+    public int repositionOfDocuments( int numberOfRelevenceCalculationToRepositiong, int timestampOfLastSearch, int treshold ) {
 
         ArrayList<DocumentNode<T>> nodesOnNextLevel    = new ArrayList<>();
+        int countOfRepositionings = 0;
 
         nodesOnNextLevel.add( rootNode );
 
@@ -137,20 +137,24 @@ public abstract class DocumentTree<T> {
                              && node.getLeftChild().getDocument().getAverageRelevance() > node.getDocument()
                                                                                               .getAverageRelevance() ) {
                             switchDocuments( node, node.getLeftChild() );
+                            countOfRepositionings++;
 
                         } else if ( node.getRightChild() != null
                                     && node.getRightChild().getDocument().getCountOfStoredRelevances() > numberOfRelevenceCalculationToRepositiong
                                     && node.getRightChild().getDocument().getAverageRelevance() > node.getDocument().getAverageRelevance() ) {
                             switchDocuments( node, node.getRightChild() );
+                            countOfRepositionings++;
                         }
                     } else if( timestampOfLastSearch - node.getDocument().getTimestampOfLastSearch() >= treshold
                                && node.getDocument().getTimestampOfLastSearch() < node.getParent().getDocument().getTimestampOfLastSearch()) {
                         switchDocuments( node, node.getParent() );
+                        countOfRepositionings++;
                     }
                     nodesOnNextLevel.addAll( node.getChildLeaves() );
                 }
             }
         }
+        return countOfRepositionings;
     }
 
 
