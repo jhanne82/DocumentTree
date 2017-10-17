@@ -7,7 +7,7 @@ public class ResultDocumentList<T> {
 
     private final int     maxResults;
     private final TreeSet<Document<T>> resultTree;
-    private int addedDocuments = 0;
+    private int numberOfDocumentTillMostRelevant = 0;
 
 
     public ResultDocumentList( int maxResult ) {
@@ -20,16 +20,18 @@ public class ResultDocumentList<T> {
 
         if( resultTree.size() < maxResults ) {
             resultTree.add( documentToAdd );
+            numberOfDocumentTillMostRelevant++;
         } else {
 
+            if( resultTree.first().getLastCalculatedRelevance() < documentToAdd.getLastCalculatedRelevance() ) {
+                numberOfDocumentTillMostRelevant++;
+            }
             Document lastStoredResult = resultTree.last();
             if( lastStoredResult.getLastCalculatedRelevance() < documentToAdd.getLastCalculatedRelevance() ) {
                 resultTree.remove( lastStoredResult );
                 resultTree.add( documentToAdd );
             }
         }
-
-        addedDocuments++;
     }
 
 
@@ -40,7 +42,7 @@ public class ResultDocumentList<T> {
 
 
     public int numberOfSearchesTillOptimum() {
-        return addedDocuments;
+        return numberOfDocumentTillMostRelevant;
     }
 
 
