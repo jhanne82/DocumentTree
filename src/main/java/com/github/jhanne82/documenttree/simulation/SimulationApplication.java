@@ -6,8 +6,6 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class SimulationApplication {
 
@@ -60,7 +58,7 @@ public class SimulationApplication {
                             Distribution distributionForSearch,
                             boolean cluster ) {
 
-        System.out.println( "Simulation Nr: START...... " + dateFormat.format( new Date() ) );
+        System.out.println( "Simulation START...... " + dateFormat.format( new Date() ) );
 
         SimulationSetup setup = new SimulationSetup( searchType,
                                                      distributionForDocument,
@@ -79,6 +77,9 @@ public class SimulationApplication {
 
         SimulationResult result[] = documentTreeSimulation.startSearchSimulation( setup );
         printResult( result, false );
+
+        System.out.println( "Simulation END " + dateFormat.format( new Date() ) );
+
     }
 
 
@@ -92,6 +93,11 @@ public class SimulationApplication {
         buffer.append( String.format( "Hit/Miss Rate: %10d/%d %17d/%d%n",
                                       simulationResults[0].getHitRate(), simulationResults[0].getMissRate(),
                                       simulationResults[1].getHitRate(), simulationResults[1].getMissRate() ) );
+        buffer.append('\n');
+        buffer.append("Required Searches to optimal Document \n");
+        buffer.append("global: " +  Arrays.toString( simulationResults[0].getRequiredSearches().toArray()));
+        buffer.append("local: " +  Arrays.toString( simulationResults[1].getRequiredSearches().toArray()));
+
 
         System.out.println( buffer.toString() );
     }
@@ -107,7 +113,7 @@ public class SimulationApplication {
 //                                                   ,new Parameter( SearchType.DEPTH_FIRST, Distribution.EXPONENTIALLY, Distribution.GAUSSIAN, false )
 //                                                   ,new Parameter( SearchType.DEPTH_FIRST, Distribution.EXPONENTIALLY, Distribution.EXPONENTIALLY, false )
 
-                                                   ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EQUALLY, Distribution.EQUALLY, false  )
+                                                  ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EQUALLY, Distribution.EQUALLY, false  )
 //                                                   ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EQUALLY, Distribution.GAUSSIAN, false )
 //                                                   ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EQUALLY, Distribution.EXPONENTIALLY, false )
 //                                                   ,new Parameter( SearchType.BREADTH_FIRST, Distribution.GAUSSIAN, Distribution.EQUALLY, false )
@@ -116,19 +122,34 @@ public class SimulationApplication {
 //                                                   ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EXPONENTIALLY, Distribution.EQUALLY, false )
 //                                                   ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EXPONENTIALLY, Distribution.GAUSSIAN, false )
 //                                                   ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EXPONENTIALLY, Distribution.EXPONENTIALLY, false )
+
+//                                                  ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EQUALLY, Distribution.EQUALLY, false  )
+//                                                   ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EQUALLY, Distribution.GAUSSIAN, false )
+//                                                   ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EQUALLY, Distribution.EXPONENTIALLY, false )
+//                                                   ,new Parameter( SearchType.RANDOM_WALKER, Distribution.GAUSSIAN, Distribution.EQUALLY, false )
+//                                                   ,new Parameter( SearchType.RANDOM_WALKER, Distribution.GAUSSIAN, Distribution.GAUSSIAN, false )
+//                                                   ,new Parameter( SearchType.RANDOM_WALKER, Distribution.GAUSSIAN, Distribution.EXPONENTIALLY, false )
+//                                                   ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EXPONENTIALLY, Distribution.EQUALLY, false )
+//                                                   ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EXPONENTIALLY, Distribution.GAUSSIAN, false )
+//                                                   ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EXPONENTIALLY, Distribution.EXPONENTIALLY, false )
     );
 
 
     private void startSimulationWithThreads() {
 
-        ExecutorService service = Executors.newFixedThreadPool( 10);
+        /*ExecutorService service = Executors.newFixedThreadPool( 10);
 
         parameterList.forEach( i -> service.submit( () -> {
 
             SimulationApplication simulation = new SimulationApplication();
             simulation.simulation( i.searchType, i.distributionForDocument, i.distributionForSearch, i.cluster );
-        } ) );
+        } ) );    */
 
+        parameterList.forEach( i ->  {
+
+            SimulationApplication simulation = new SimulationApplication();
+            simulation.simulation( i.searchType, i.distributionForDocument, i.distributionForSearch, i.cluster );
+        }  );
     }
 
     

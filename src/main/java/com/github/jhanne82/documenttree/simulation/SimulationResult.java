@@ -1,15 +1,18 @@
 package com.github.jhanne82.documenttree.simulation;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SimulationResult {
 
 
     private final SimulationSetup simulationSetup;
 
     // Bewertungskriterien
-    private int averageSearchTime = 0;
+    private List<Integer> averageSearchTime;
     private int missRate = 0;
     private int hitRate = 0;
-    private int averageCountOfRepositioning = 0;
+    private List<Integer> averageCountOfRepositioning;
     private int conformityOfOptimalDocumentTree = 0;
     private int conformityOfStressReducedDocumentTree = 0;
     private int distanceToOptimalPosition = 0;
@@ -27,6 +30,21 @@ public class SimulationResult {
 
     public int getMissRate() { return missRate; }
     public void setMissRate( int missRate ) { this.missRate = missRate; }
+
+
+
+    public void addRequiredSearches( int requiredSearches ) {
+        if( null == averageSearchTime ) {
+            averageSearchTime = new ArrayList<>();
+        }
+        averageSearchTime.add( requiredSearches );
+    }
+
+
+
+    public List<Integer> getRequiredSearches() {
+        return averageSearchTime;
+    }
 
 
 

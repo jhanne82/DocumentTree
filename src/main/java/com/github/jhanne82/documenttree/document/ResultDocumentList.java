@@ -7,6 +7,7 @@ public class ResultDocumentList<T> {
 
     private final int     maxResults;
     private final TreeSet<Document<T>> resultTree;
+    private int addedDocuments = 0;
 
 
     public ResultDocumentList( int maxResult ) {
@@ -27,6 +28,8 @@ public class ResultDocumentList<T> {
                 resultTree.add( documentToAdd );
             }
         }
+
+        addedDocuments++;
     }
 
 
@@ -34,6 +37,11 @@ public class ResultDocumentList<T> {
         return resultTree.first();
     }
 
+
+
+    public int numberOfSearchesTillOptimum() {
+        return addedDocuments;
+    }
 
 
 

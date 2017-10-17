@@ -2,6 +2,7 @@ package com.github.jhanne82.documenttree.simulation;
 
 import com.github.jhanne82.documenttree.document.Document;
 import com.github.jhanne82.documenttree.document.DocumentTree;
+import com.github.jhanne82.documenttree.document.ResultDocumentList;
 
 
 public abstract class DocumentTreeSimulation <T> {
@@ -15,12 +16,12 @@ public abstract class DocumentTreeSimulation <T> {
 
 
 
-    private Document<T> searchOnTree( DocumentTree<T> documentTree, T[] searchTermVector, SearchType searchType, int limitForLocalKnowledge, int searchTimeStamp ) {
+    private ResultDocumentList<T> searchOnTree(DocumentTree<T> documentTree, T[] searchTermVector, SearchType searchType, int limitForLocalKnowledge, int searchTimeStamp ) {
         switch ( searchType ) {
             case DEPTH_FIRST:
-                return documentTree.depthFirstSearch( limitForLocalKnowledge, searchTermVector, searchTimeStamp ).getBestResult();
+                return documentTree.depthFirstSearch( limitForLocalKnowledge, searchTermVector, searchTimeStamp );
             case BREADTH_FIRST:
-                return documentTree.breadthFirstSearch( limitForLocalKnowledge, searchTermVector, searchTimeStamp ).getBestResult();
+                return documentTree.breadthFirstSearch( limitForLocalKnowledge, searchTermVector, searchTimeStamp );
             case RANDOM_WALKER:
             default:
                 throw new UnsupportedOperationException();
@@ -51,11 +52,15 @@ public abstract class DocumentTreeSimulation <T> {
                                                      setup.countOfTermsWithQuantifier);
 
             Document bestMatch = searchOnOptimalDocumentTree( searchTermVector );
-            Document foundDocument = searchOnTree( documentTreeWithGlobalKnowledge, searchTermVector, setup.searchType, setup.countOfCreatedDocuments, i+1 );
-            calcHitMissRate( foundDocument, bestMatch, resultGlobalKnowledge );
+            ResultDocumentList<T> result = searchOnTree( documentTreeWithGlobalKnowledge, searchTermVector, setup.searchType, setup.countOfCreatedDocuments, i+1 );
+            if( calcHitMissRate( result.getBestResult(), bestMatch, resultGlobalKnowledge ) ) {
+                resultGlobalKnowledge.addRequiredSearches( result.numberOfSearchesTillOptimum() );
+            }
 
-            foundDocument  = searchOnTree( documentTreeWithLocalKnowledge, searchTermVector, setup.searchType, setup.limitForLocalKnowledge, i+1 );
-            calcHitMissRate( foundDocument, bestMatch, resultLocalKnowledge );
+            result  = searchOnTree( documentTreeWithLocalKnowledge, searchTermVector, setup.searchType, setup.limitForLocalKnowledge, i+1 );
+            if( calcHitMissRate( result.getBestResult(), bestMatch, resultLocalKnowledge ) ) {
+                resultLocalKnowledge.addRequiredSearches(result.numberOfSearchesTillOptimum());
+            }
 
             searchOnTree( stressReducedDocumentTree, searchTermVector, setup.searchType, setup.limitForLocalKnowledge, i+1 );
 
@@ -68,12 +73,14 @@ public abstract class DocumentTreeSimulation <T> {
 
 
 
-    private void calcHitMissRate( Document foundDocument, Document bestMatch, SimulationResult result ) {
+    private boolean calcHitMissRate( Document foundDocument, Document bestMatch, SimulationResult result ) {
 
         if( bestMatch.getDocumentName().equals( foundDocument.getDocumentName() ) ) {
             result.setHitRate( result.getHitRate() + 1 );
+            return true;
         } else {
             result.setMissRate( result.getMissRate() + 1 );
+            return false;
         }
     }
 }
