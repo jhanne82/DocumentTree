@@ -3,7 +3,11 @@ package com.github.jhanne82.documenttree.simulation;
 import com.github.jhanne82.documenttree.simulation.numberdocument.NumberDocumentTreeSimulation;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class SimulationApplication {
 
@@ -49,132 +53,14 @@ public class SimulationApplication {
         this.TRESHOLD = treshold;
     }
 
-    /**
-     * verwendetes Suchverfahren: Breitensuche
-     * Clusterbildung: Nein
-     * Verteilung der Dokumententerme: Gleichverteilt
-     * Verteilung der Suchterme: Gleichverteilt
-     */
-    public void simulation_1_1() {
-        System.out.println( "Simulation Nr: 1.1 START...... " + dateFormat.format( new Date() ) );
-        simulation( SearchType.DEPTH_FIRST, Distribution.EQUALLY, Distribution.EQUALLY, false );
-    }
 
 
+    public void simulation( SearchType searchType,
+                            Distribution distributionForDocument,
+                            Distribution distributionForSearch,
+                            boolean cluster ) {
 
-    public void simulation_1_2() {
-        System.out.println( "Simulation Nr: 1.2 START...... " + dateFormat.format( new Date() ) );
-        simulation( SearchType.DEPTH_FIRST, Distribution.EQUALLY, Distribution.GAUSSIAN, false );
-    }
-
-
-    public void simulation_1_3() {
-        System.out.println( "Simulation Nr: 1.3 START...... " + dateFormat.format( new Date() ) );
-        simulation( SearchType.DEPTH_FIRST, Distribution.EQUALLY, Distribution.EXPONENTIALLY, false );
-    }
-
-
-
-    public void simulation_1_4() {
-        System.out.println( "Simulation Nr: 1.4 START...... " + dateFormat.format( new Date() ) );
-        simulation( SearchType.DEPTH_FIRST, Distribution.GAUSSIAN, Distribution.EQUALLY, false );
-    }
-
-
-
-    public void simulation_1_5() {
-        System.out.println( "Simulation Nr: 1.5 START...... " + dateFormat.format( new Date() ) );
-        simulation( SearchType.DEPTH_FIRST, Distribution.GAUSSIAN, Distribution.GAUSSIAN, false );
-    }
-
-
-
-    public void simulation_1_6() {
-        System.out.println( "Simulation Nr: 1.6 START...... " + dateFormat.format( new Date() ) );
-        simulation( SearchType.DEPTH_FIRST, Distribution.GAUSSIAN, Distribution.EXPONENTIALLY, false );
-    }
-
-
-
-    public void simulation_1_7() {
-        System.out.println( "Simulation Nr: 1.7 START...... " + dateFormat.format( new Date() ) );
-        simulation( SearchType.DEPTH_FIRST, Distribution.EXPONENTIALLY, Distribution.EQUALLY, false );
-    }
-
-
-
-    public void simulation_1_8() {
-        System.out.println( "Simulation Nr: 1.8 START...... " + dateFormat.format( new Date() ) );
-        simulation( SearchType.DEPTH_FIRST, Distribution.EXPONENTIALLY, Distribution.GAUSSIAN, false );
-    }
-
-
-    public void simulation_2_1() {
-        System.out.println( "Simulation Nr: 2.1 START...... " + dateFormat.format( new Date() ) );
-        simulation( SearchType.BREADTH_FIRST, Distribution.EQUALLY, Distribution.EQUALLY, false );
-    }
-
-
-
-    public void simulation_2_2() {
-        System.out.println( "Simulation Nr: 2.2 START...... " + dateFormat.format( new Date() ) );
-        simulation( SearchType.BREADTH_FIRST, Distribution.EQUALLY, Distribution.GAUSSIAN, false );
-    }
-
-
-    public void simulation_2_3() {
-        System.out.println( "Simulation Nr: 2.3 START...... " + dateFormat.format( new Date() ) );
-        simulation( SearchType.BREADTH_FIRST, Distribution.EQUALLY, Distribution.EXPONENTIALLY, false );
-    }
-
-
-
-    public void simulation_2_4() {
-        System.out.println( "Simulation Nr: 2.4 START...... " + dateFormat.format( new Date() ) );
-        simulation( SearchType.BREADTH_FIRST, Distribution.GAUSSIAN, Distribution.EQUALLY, false );
-    }
-
-
-
-    public void simulation_2_5() {
-        System.out.println( "Simulation Nr: 2.5 START...... " + dateFormat.format( new Date() ) );
-        simulation( SearchType.BREADTH_FIRST, Distribution.GAUSSIAN, Distribution.GAUSSIAN, false );
-    }
-
-
-
-    public void simulation_2_6() {
-        System.out.println( "Simulation Nr: 2.6 START...... " + dateFormat.format( new Date() ) );
-        simulation( SearchType.BREADTH_FIRST, Distribution.GAUSSIAN, Distribution.EXPONENTIALLY, false );
-    }
-
-
-
-    public void simulation_2_7() {
-        System.out.println( "Simulation Nr: 2.7 START...... " + dateFormat.format( new Date() ) );
-        simulation( SearchType.DEPTH_FIRST, Distribution.EXPONENTIALLY, Distribution.EQUALLY, false );
-    }
-
-
-
-    public void simulation_2_8() {
-        System.out.println( "Simulation Nr: 2.8 START...... " + dateFormat.format( new Date() ) );
-        simulation( SearchType.BREADTH_FIRST, Distribution.EXPONENTIALLY, Distribution.GAUSSIAN, false );
-    }
-
-
-
-    public void simulation_2_9() {
-        System.out.println( "Simulation Nr: 2.9 START...... " + dateFormat.format( new Date() ) );
-        simulation( SearchType.BREADTH_FIRST, Distribution.EXPONENTIALLY, Distribution.EXPONENTIALLY, false );
-    }
-
-
-
-    private void simulation( SearchType   searchType,
-                             Distribution distributionForDocument,
-                             Distribution distributionForSearch,
-                             boolean      cluster ) {
+        System.out.println( "Simulation Nr: START...... " + dateFormat.format( new Date() ) );
 
         SimulationSetup setup = new SimulationSetup( searchType,
                                                      distributionForDocument,
@@ -192,13 +78,12 @@ public class SimulationApplication {
         documentTreeSimulation.setupRequiredDocumentTrees( setup );
 
         SimulationResult result[] = documentTreeSimulation.startSearchSimulation( setup );
-        printResult( result );
+        printResult( result, false );
     }
 
 
 
-    private void printResult( SimulationResult[] simulationResults ) {
-
+    private void printResult( SimulationResult[] simulationResults, boolean printInFile ) {
 
         StringBuffer buffer = new StringBuffer();
         buffer.append( simulationResults[0].getSimulationSetup().toString() );
@@ -211,29 +96,68 @@ public class SimulationApplication {
         System.out.println( buffer.toString() );
     }
 
+
+    List<Parameter> parameterList = Arrays.asList( new Parameter( SearchType.DEPTH_FIRST, Distribution.EQUALLY, Distribution.EQUALLY, false  )
+//                                                   ,new Parameter( SearchType.DEPTH_FIRST, Distribution.EQUALLY, Distribution.GAUSSIAN, false )
+//                                                   ,new Parameter( SearchType.DEPTH_FIRST, Distribution.EQUALLY, Distribution.EXPONENTIALLY, false )
+//                                                   ,new Parameter( SearchType.DEPTH_FIRST, Distribution.GAUSSIAN, Distribution.EQUALLY, false )
+//                                                   ,new Parameter( SearchType.DEPTH_FIRST, Distribution.GAUSSIAN, Distribution.GAUSSIAN, false )
+//                                                   ,new Parameter( SearchType.DEPTH_FIRST, Distribution.GAUSSIAN, Distribution.EXPONENTIALLY, false )
+//                                                   ,new Parameter( SearchType.DEPTH_FIRST, Distribution.EXPONENTIALLY, Distribution.EQUALLY, false )
+//                                                   ,new Parameter( SearchType.DEPTH_FIRST, Distribution.EXPONENTIALLY, Distribution.GAUSSIAN, false )
+//                                                   ,new Parameter( SearchType.DEPTH_FIRST, Distribution.EXPONENTIALLY, Distribution.EXPONENTIALLY, false )
+
+                                                   ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EQUALLY, Distribution.EQUALLY, false  )
+//                                                   ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EQUALLY, Distribution.GAUSSIAN, false )
+//                                                   ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EQUALLY, Distribution.EXPONENTIALLY, false )
+//                                                   ,new Parameter( SearchType.BREADTH_FIRST, Distribution.GAUSSIAN, Distribution.EQUALLY, false )
+//                                                   ,new Parameter( SearchType.BREADTH_FIRST, Distribution.GAUSSIAN, Distribution.GAUSSIAN, false )
+//                                                   ,new Parameter( SearchType.BREADTH_FIRST, Distribution.GAUSSIAN, Distribution.EXPONENTIALLY, false )
+//                                                   ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EXPONENTIALLY, Distribution.EQUALLY, false )
+//                                                   ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EXPONENTIALLY, Distribution.GAUSSIAN, false )
+//                                                   ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EXPONENTIALLY, Distribution.EXPONENTIALLY, false )
+    );
+
+
+    private void startSimulationWithThreads() {
+
+        ExecutorService service = Executors.newFixedThreadPool( 10);
+
+        parameterList.forEach( i -> service.submit( () -> {
+
+            SimulationApplication simulation = new SimulationApplication();
+            simulation.simulation( i.searchType, i.distributionForDocument, i.distributionForSearch, i.cluster );
+        } ) );
+
+    }
+
     
 
     public static void main( String[] args ) {
 
         SimulationApplication simulation = new SimulationApplication();
-        simulation.simulation_1_1();
-//        simulation.simulation_1_2();
-//        simulation.simulation_1_3();
-//        simulation.simulation_1_4();
-//        simulation.simulation_1_5();
-//        simulation.simulation_1_6();
-//        simulation.simulation_1_7();
-//        simulation.simulation_1_8();
-//
-        simulation.simulation_2_1();
-//        simulation.simulation_2_2();
-//        simulation.simulation_2_3();
-//        simulation.simulation_2_4();
-//        simulation.simulation_2_5();
-//        simulation.simulation_2_6();
-//        simulation.simulation_2_7();
-//        simulation.simulation_2_8();
+        simulation.startSimulationWithThreads();
+    }
 
+
+
+    private class Parameter {
+
+        SearchType   searchType;
+        Distribution distributionForDocument;
+        Distribution distributionForSearch;
+        boolean      cluster;
+
+        Parameter( SearchType   searchType,
+                   Distribution distributionForDocument,
+                   Distribution distributionForSearch,
+                   boolean      cluster  ) {
+
+            this.searchType = searchType;
+            this.distributionForDocument = distributionForDocument;
+            this.distributionForSearch = distributionForSearch;
+            this.cluster = cluster;
+        }
     }
 
 }
