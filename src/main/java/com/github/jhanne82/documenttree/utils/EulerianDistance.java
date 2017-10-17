@@ -6,14 +6,14 @@ public class EulerianDistance {
 
 
 
-    private static double calEulerianDistance(Double[] documentVector, Double[] searchVector ) {
+    protected static double calEulerianDistance(Double[] documentVector, Double[] searchVector ) {
 
         double sum = 0;
 
         for( int i = 0; i < documentVector.length; i++ ) {
             double documentTermContent = documentVector[i] == null ? 0 : documentVector[i];
             double searchTermContent = searchVector[i] == null ? 0 : searchVector[i];
-            sum = Math.pow( documentTermContent - searchTermContent, 2 );
+            sum += Math.pow( documentTermContent - searchTermContent, 2 );
         }
 
         return Math.sqrt( sum );
