@@ -1,6 +1,8 @@
 package com.github.jhanne82.documenttree.simulation;
 
-import com.github.jhanne82.documenttree.simulation.numberdocument.NumberDocumentTreeSimulation;
+import com.github.jhanne82.documenttree.simulation.number.NumberDocumentTreeSimulation;
+import com.github.jhanne82.documenttree.simulation.utils.SimulationResult;
+import com.github.jhanne82.documenttree.simulation.utils.SimulationSetup;
 
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -58,7 +60,8 @@ public class SimulationApplication {
     public void simulation( SearchType searchType,
                             Distribution distributionForDocument,
                             Distribution distributionForSearch,
-                            boolean cluster ) {
+                            boolean cluster,
+                            boolean printInFile ) {
 
         System.out.println( "Simulation START...... " + dateFormat.format( new Date() ) );
 
@@ -78,7 +81,7 @@ public class SimulationApplication {
         documentTreeSimulation.setupRequiredDocumentTrees( setup );
 
         SimulationResult result[] = documentTreeSimulation.startSearchSimulation( setup );
-        printResult( result, false );
+        printResult( result, printInFile );
 
         System.out.println( "Simulation END " + dateFormat.format( new Date() ) );
 
@@ -96,15 +99,15 @@ public class SimulationApplication {
                                       simulationResults[0].getHitRate(), simulationResults[0].getMissRate(),
                                       simulationResults[1].getHitRate(), simulationResults[1].getMissRate() ) );
 
-        buffer.append('\n');
-        buffer.append("Required Searches to optimal Document \n");
-        buffer.append("global: " +  Arrays.toString( simulationResults[0].getRequiredSearches().toArray())); buffer.append( '\n');
-        buffer.append("local: " +  Arrays.toString( simulationResults[1].getRequiredSearches().toArray()));  buffer.append( '\n');
-
-        buffer.append('\n');
-        buffer.append("Required Repositionings \n");
-        buffer.append("global: " +  Arrays.toString( simulationResults[0].getRequiredRepositionings().toArray())); buffer.append( '\n');
-        buffer.append("local: " +  Arrays.toString( simulationResults[1].getRequiredRepositionings().toArray()));  buffer.append( '\n');
+//        buffer.append('\n');
+//        buffer.append("Required Searches to optimal Document \n");
+//        buffer.append("global: " +  Arrays.toString( simulationResults[0].getRequiredSearches().toArray())); buffer.append( '\n');
+//        buffer.append("local: " +  Arrays.toString( simulationResults[1].getRequiredSearches().toArray()));  buffer.append( '\n');
+//
+//        buffer.append('\n');
+//        buffer.append("Required Repositionings \n");
+//        buffer.append("global: " +  Arrays.toString( simulationResults[0].getRequiredRepositionings().toArray())); buffer.append( '\n');
+//        buffer.append("local: " +  Arrays.toString( simulationResults[1].getRequiredRepositionings().toArray()));  buffer.append( '\n');
 
         System.out.println( buffer.toString() );
     }
@@ -149,7 +152,7 @@ public class SimulationApplication {
 //                                                   ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EXPONENTIALLY, Distribution.EXPONENTIALLY, true )
 
 
-//                                                   ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EQUALLY, Distribution.EQUALLY, false  )
+                                                   ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EQUALLY, Distribution.EQUALLY, false  )
 //                                                   ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EQUALLY, Distribution.GAUSSIAN, false )
 //                                                   ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EQUALLY, Distribution.EXPONENTIALLY, false )
 //                                                   ,new Parameter( SearchType.RANDOM_WALKER, Distribution.GAUSSIAN, Distribution.EQUALLY, false )
@@ -177,7 +180,7 @@ public class SimulationApplication {
         parameterList.forEach( i -> service.submit( () -> {
 
             SimulationApplication simulation = new SimulationApplication();
-            simulation.simulation( i.searchType, i.distributionForDocument, i.distributionForSearch, i.cluster );
+            simulation.simulation( i.searchType, i.distributionForDocument, i.distributionForSearch, i.cluster, true );
         } ) );
         service.shutdown();
 

@@ -17,7 +17,7 @@ public class Simulation_Test {
                                                                               100, 3,
                                                                               50, 5,10);
 
-        simulationAppliction.simulation( SearchType.DEPTH_FIRST, Distribution.EQUALLY, Distribution.EQUALLY, false );
+        simulationAppliction.simulation( SearchType.DEPTH_FIRST, Distribution.EQUALLY, Distribution.EQUALLY, false, false );
     }
 
     @Test
@@ -27,7 +27,7 @@ public class Simulation_Test {
                                                                                 100, 3,
                                                                                 50, 5,10);
 
-        simulationAppliction.simulation( SearchType.DEPTH_FIRST, Distribution.EQUALLY, Distribution.EQUALLY, true );
+        simulationAppliction.simulation( SearchType.RANDOM_WALKER, Distribution.EQUALLY, Distribution.EQUALLY, true, false );
     }
 
 
@@ -38,7 +38,7 @@ public class Simulation_Test {
                 100, 3,
                 50, 5, 10 );
 
-        simulationAppliction.simulation( SearchType.BREADTH_FIRST, Distribution.EQUALLY, Distribution.EQUALLY, false );
+        simulationAppliction.simulation( SearchType.BREADTH_FIRST, Distribution.EQUALLY, Distribution.EQUALLY, false, false );
     }
 
 }

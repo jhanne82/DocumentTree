@@ -1,6 +1,6 @@
-package com.github.jhanne82.documenttree.document.numberdocument;
+package com.github.jhanne82.documenttree.tree.number;
 
-import com.github.jhanne82.documenttree.document.DocumentTree;
+import com.github.jhanne82.documenttree.tree.DocumentTree;
 import com.github.jhanne82.documenttree.utils.EulerianDistance;
 
 

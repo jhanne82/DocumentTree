@@ -1,4 +1,4 @@
-package com.github.jhanne82.documenttree.simulation;
+package com.github.jhanne82.documenttree.simulation.utils;
 
 import java.util.ArrayList;
 import java.util.List;

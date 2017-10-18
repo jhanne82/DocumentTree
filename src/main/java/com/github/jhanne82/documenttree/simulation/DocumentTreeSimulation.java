@@ -1,8 +1,10 @@
 package com.github.jhanne82.documenttree.simulation;
 
 import com.github.jhanne82.documenttree.document.Document;
-import com.github.jhanne82.documenttree.document.DocumentTree;
-import com.github.jhanne82.documenttree.document.ResultDocumentList;
+import com.github.jhanne82.documenttree.simulation.utils.SimulationResult;
+import com.github.jhanne82.documenttree.simulation.utils.SimulationSetup;
+import com.github.jhanne82.documenttree.tree.DocumentTree;
+import com.github.jhanne82.documenttree.utils.ResultDocumentList;
 
 
 public abstract class DocumentTreeSimulation <T> {
@@ -23,6 +25,7 @@ public abstract class DocumentTreeSimulation <T> {
             case BREADTH_FIRST:
                 return documentTree.breadthFirstSearch( limitForLocalKnowledge, searchTermVector, searchTimeStamp );
             case RANDOM_WALKER:
+                return documentTree.randomWalkSearch( limitForLocalKnowledge, searchTermVector, searchTimeStamp );
             default:
                 throw new UnsupportedOperationException();
         }

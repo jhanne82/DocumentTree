@@ -1,5 +1,7 @@
-package com.github.jhanne82.documenttree.document;
+package com.github.jhanne82.documenttree.utils;
 
+
+import com.github.jhanne82.documenttree.document.Document;
 
 import java.util.TreeSet;
 
@@ -15,7 +17,7 @@ public class ResultDocumentList<T> {
     }
 
 
-    public void add(Document<T> documentToAdd, int searchesTillDocument) {
+    public void add( Document<T> documentToAdd, int searchesTillDocument) {
 
         if( resultTree.size() < maxResults ) {
             resultTree.add( new Result( documentToAdd, searchesTillDocument ) );

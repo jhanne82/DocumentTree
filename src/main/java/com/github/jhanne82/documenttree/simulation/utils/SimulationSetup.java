@@ -1,19 +1,22 @@
-package com.github.jhanne82.documenttree.simulation;
+package com.github.jhanne82.documenttree.simulation.utils;
+
+import com.github.jhanne82.documenttree.simulation.Distribution;
+import com.github.jhanne82.documenttree.simulation.SearchType;
 
 public class SimulationSetup {
 
 
-    public final SearchType searchType;
+    public final SearchType   searchType;
     public final Distribution distributionForSearchVector;
     public final Distribution distributionForDocumentVector;
-    public final boolean cluster;
-    public final int countOfTermsUsedToDefineVector;
-    public final int countOfTermsWithQuantifier;
-    public final int countOfCreatedDocuments;
-    public final int countOfPerformedSearches;
-    public final int limitForLocalKnowledge;
-    public final int requiredSearchesOnDocumentToRespositioning;
-    public final int treshold;
+    public final boolean      cluster;
+    public final int          countOfTermsUsedToDefineVector;
+    public final int          countOfTermsWithQuantifier;
+    public final int          countOfCreatedDocuments;
+    public final int          countOfPerformedSearches;
+    public final int          limitForLocalKnowledge;
+    public final int          requiredSearchesOnDocumentToRespositioning;
+    public final int          treshold;
 
 
 

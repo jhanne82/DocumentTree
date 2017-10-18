@@ -1,14 +1,30 @@
-package com.github.jhanne82.documenttree.document;
+package com.github.jhanne82.documenttree.tree;
 
 
+import com.github.jhanne82.documenttree.document.Document;
+import com.github.jhanne82.documenttree.utils.ResultDocumentList;
 import com.google.common.collect.ImmutableList;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public abstract class DocumentTree<T> {
 
-    private DocumentNode<T> rootNode;
+    private DocumentNode<T>       rootNode;
+    private int                   currentlyVisitedNode;
+    private ResultDocumentList<T> resultDocumentList;
+
+
+
+    protected abstract double calcRelevanceOfDocument(T[] documentTermVector, T[] searchTermVector );
+
+
+
+    public DocumentNode<T> getRootNode() {
+        return rootNode;
+    }
+
 
 
     public void level_order_insert( DocumentNode<T> root, Document<T>[] documents, int start, int size ) {
@@ -40,32 +56,31 @@ public abstract class DocumentTree<T> {
 
 
     public ResultDocumentList<T> breadthFirstSearch( int maxVisitedNode, T[] searchTerm, int searchTimeStamp ) {
-        ResultDocumentList<T> resultDocumentList = new ResultDocumentList<>( 1 );
-        ArrayList<DocumentNode<T>> nodesOnCurrentLevel = new ArrayList<>();
-        ArrayList<DocumentNode<T>> nodesOnNextLevel    = new ArrayList<>();
+        resultDocumentList = new ResultDocumentList<>( 1 );
+
+        List<DocumentNode<T>> nodesOnNextLevel = new ArrayList<>();
 
         nodesOnNextLevel.add( rootNode );
 
-        int nodeCount = 0;
+        currentlyVisitedNode = 0;
 
         // maxVisitedNode means no Abbruchkriterium
-        while ( !nodesOnNextLevel.isEmpty() && ( nodeCount < maxVisitedNode ) ) {
-            nodesOnCurrentLevel.clear();
-            
+        while ( !nodesOnNextLevel.isEmpty() && ( currentlyVisitedNode < maxVisitedNode ) ) {
+
             // ChildLeaves von vorherigen Nodes werden zu aktuellen Nodes
-            nodesOnCurrentLevel = (ArrayList<DocumentNode<T>>) nodesOnNextLevel.clone();
-            nodesOnNextLevel.clear();
+            List<DocumentNode<T>> nodesOnCurrentLevel = ImmutableList.copyOf( nodesOnNextLevel );
+            nodesOnNextLevel = new ArrayList<>();
 
             for( DocumentNode<T> node : nodesOnCurrentLevel ) {
-                if( nodeCount == maxVisitedNode ) {
+                if( currentlyVisitedNode == maxVisitedNode ) {
                     break;
                 }
                 if( node != null ) {
                     node.getDocument().addRelevance(calcRelevanceOfDocument(node.getDocument().getTermList(), searchTerm));
                     node.getDocument().setTimestampOfLastSearch( searchTimeStamp );
-                    resultDocumentList.add(node.getDocument(), nodeCount);
+                    resultDocumentList.add(node.getDocument(), currentlyVisitedNode);
                     nodesOnNextLevel.addAll(node.getChildLeaves());
-                    nodeCount++;
+                    currentlyVisitedNode++;
                 }
             }
         }
@@ -75,8 +90,6 @@ public abstract class DocumentTree<T> {
 
 
 
-    private int currentlyVisitedNode;
-    private ResultDocumentList<T> resultDocumentList;
     public ResultDocumentList<T> depthFirstSearch( int maxVisitedNode, T[] searchTerm, int searchTimeStamp ) {
         resultDocumentList = new ResultDocumentList<>( 1 );
         currentlyVisitedNode = 0;
@@ -108,9 +121,98 @@ public abstract class DocumentTree<T> {
 
 
 
-    protected abstract double calcRelevanceOfDocument(T[] documentTermVector, T[] searchTermVector );
+    public ResultDocumentList<T> randomWalkSearch( int maxVisitedNode, T[] searchTerm, int searchTimeStamp ) {
+        resultDocumentList = new ResultDocumentList<>( 1 );
+        currentlyVisitedNode = 0;
+
+        DocumentNode<T> currentlyConsideredNode = rootNode;
+
+        while ( currentlyConsideredNode != null && currentlyVisitedNode < maxVisitedNode ){
+            currentlyConsideredNode.getDocument().addRelevance( calcRelevanceOfDocument( currentlyConsideredNode.getDocument().getTermList(), searchTerm ) );
+            currentlyConsideredNode.getDocument().setTimestampOfLastSearch( searchTimeStamp );
+            resultDocumentList.add( currentlyConsideredNode.getDocument(), currentlyVisitedNode );
+            currentlyVisitedNode++;
+
+            currentlyConsideredNode = getNextRandomNode( currentlyConsideredNode, searchTimeStamp );
+
+        }
+        return resultDocumentList;
+    }
 
 
+
+    private DocumentNode<T> getNextRandomNode( DocumentNode<T> node, int searchTimeStamp ) {
+
+        DocumentNode<T> tmpNode = node;
+        DocumentNode<T> returnNode;
+
+        boolean useBreadthFirstSearch = (new Random()).nextBoolean();
+
+        if( useBreadthFirstSearch ){
+            returnNode = getNextPossibleChildNodeFromBreadth( node, searchTimeStamp );
+            while( returnNode == null && tmpNode.getParent() != null ) {
+                returnNode = getNextPossibleChildNodeFromBreadth( tmpNode.getParent(), searchTimeStamp );
+                tmpNode = tmpNode.getParent();
+            }
+            return returnNode;
+
+        } else {
+            returnNode = getNextPossibleChildNodeFromDepth( node, searchTimeStamp );
+            while( returnNode == null && tmpNode.getParent() != null ) {
+                returnNode = getNextPossibleChildNodeFromDepth( tmpNode.getParent(), searchTimeStamp );
+                tmpNode = tmpNode.getParent();
+            }
+            return returnNode;
+        }
+    }
+
+
+
+    private DocumentNode<T> getNextPossibleChildNodeFromBreadth( DocumentNode<T> node, int searchTimeStamp ) {
+
+        List<DocumentNode<T>> nodesOnNextLevel = new ArrayList<>();
+
+        nodesOnNextLevel.add( node );
+
+
+        // maxVisitedNode means no Abbruchkriterium
+        while ( !nodesOnNextLevel.isEmpty() ) {
+
+            // ChildLeaves von vorherigen Nodes werden zu aktuellen Nodes
+            List<DocumentNode<T>> nodesOnCurrentLevel = ImmutableList.copyOf( nodesOnNextLevel );
+            nodesOnNextLevel = new ArrayList<>();
+
+            for( DocumentNode<T> nodeOnCurrentLevel : nodesOnCurrentLevel ) {
+                if( nodeOnCurrentLevel.getDocument().getTimestampOfLastSearch() != searchTimeStamp ) {
+                    return nodeOnCurrentLevel;
+                }
+                nodesOnNextLevel.addAll(nodeOnCurrentLevel.getChildLeaves());
+            }
+        }
+        return null;
+    }
+
+
+    private DocumentNode<T> getNextPossibleChildNodeFromDepth( DocumentNode<T> node, int searchTimeStamp ) {
+
+        if ( node == null) {
+            return null;
+        }
+
+        if( node.getDocument().getTimestampOfLastSearch() != searchTimeStamp ) {
+            return node;
+        }
+
+        DocumentNode<T> bcb = getNextPossibleChildNodeFromDepth( node.getLeftChild(), searchTimeStamp );
+
+        if( bcb == null ) {
+            bcb = getNextPossibleChildNodeFromDepth( node.getRightChild(), searchTimeStamp );
+        }
+
+        return bcb;
+    }
+
+    
 
     public int repositionOfDocuments( int numberOfRelevenceCalculationToRepositiong, int timestampOfLastSearch, int treshold ) {
 
@@ -124,7 +226,7 @@ public abstract class DocumentTree<T> {
 
             // ChildLeaves von vorherigen Nodes werden zu aktuellen Nodes
             List<DocumentNode<T>> nodesOnCurrentLevel = ImmutableList.copyOf( nodesOnNextLevel );
-            nodesOnNextLevel.clear();
+            nodesOnNextLevel = new ArrayList<>();
 
             for( DocumentNode<T> node : nodesOnCurrentLevel ) {
 
@@ -168,12 +270,6 @@ public abstract class DocumentTree<T> {
         a.getDocument().clearRelevanceBuffer();
         b.getDocument().clearRelevanceBuffer();
 
-    }
-
-
-
-    public DocumentNode<T> getRootNode() {
-        return rootNode;
     }
 
 

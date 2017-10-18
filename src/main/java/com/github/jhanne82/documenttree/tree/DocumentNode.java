@@ -1,5 +1,7 @@
-package com.github.jhanne82.documenttree.document;
+package com.github.jhanne82.documenttree.tree;
 
+
+import com.github.jhanne82.documenttree.document.Document;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -12,7 +14,7 @@ public class DocumentNode<T> {
    private DocumentNode<T>       parent = null;
    private DocumentNode<T>       left = null;
    private DocumentNode<T>       right = null;
-   private Document<T>           document;
+   private Document<T> document;
 
 
    public DocumentNode( Document<T> document ) {
@@ -21,7 +23,7 @@ public class DocumentNode<T> {
 
 
 
-   public void setParent( DocumentNode<T> parent ) {
+   private void setParent( DocumentNode<T> parent ) {
       this.parent = parent;
    }
 
@@ -63,7 +65,7 @@ public class DocumentNode<T> {
 
 
 
-   public void addChildLeaf( DocumentNode<T> childLeaf ) {
+   private void addChildLeaf( DocumentNode<T> childLeaf ) {
       if( childLeaf != null ) {
          childLeaf.setParent( this );
       }
@@ -83,12 +85,4 @@ public class DocumentNode<T> {
 
 
 
-   public boolean isRootNode() {
-      return this.parent == null;
-   }
-
-
-   public boolean isLeaf() {
-      return this.leaves.isEmpty();
-   }
 }
