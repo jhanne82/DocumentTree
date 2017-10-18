@@ -37,7 +37,8 @@ public abstract class DocumentTreeSimulation <T> {
 
     protected abstract T[] createTermVector( Distribution distribution,
                                              int maxCountOfTerms,
-                                             int maxCountOfTermsWithQuantifier );
+                                             int maxCountOfTermsWithQuantifier,
+                                             boolean cluster );
 
 
     public SimulationResult[] startSearchSimulation( SimulationSetup setup ) {
@@ -49,7 +50,8 @@ public abstract class DocumentTreeSimulation <T> {
 
             T[] searchTermVector = createTermVector( setup.distributionForSearchVector,
                                                      setup.countOfTermsUsedToDefineVector,
-                                                     setup.countOfTermsWithQuantifier);
+                                                     setup.countOfTermsWithQuantifier,
+                                                     setup.cluster );
 
             Document bestMatch = searchOnOptimalDocumentTree( searchTermVector );
             ResultDocumentList<T> result = searchOnTree( documentTreeWithGlobalKnowledge, searchTermVector, setup.searchType, setup.countOfCreatedDocuments, i+1 );

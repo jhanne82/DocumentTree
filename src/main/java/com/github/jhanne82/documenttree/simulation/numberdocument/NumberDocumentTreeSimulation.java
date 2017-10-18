@@ -8,11 +8,15 @@ import com.github.jhanne82.documenttree.simulation.SimulationSetup;
 import com.github.jhanne82.documenttree.utils.EulerianDistance;
 import com.github.jhanne82.documenttree.utils.RandomNumberGenerator;
 
+import java.util.HashMap;
+import java.util.Map;
+
 
 public class NumberDocumentTreeSimulation
     extends DocumentTreeSimulation <Double> {
 
     private RandomNumberGenerator randomNumberGenerator;
+    private Map<Double, Double>   clusterMap;
 
     public NumberDocumentTreeSimulation() {
         super();
@@ -48,7 +52,8 @@ public class NumberDocumentTreeSimulation
         optimalDocumentTree = createDocuments( setup.distributionForDocumentVector,
                                                setup.countOfTermsUsedToDefineVector,
                                                setup.countOfTermsWithQuantifier,
-                                               setup.countOfCreatedDocuments );
+                                               setup.countOfCreatedDocuments,
+                                               setup.cluster);
 
         documentTreeWithGlobalKnowledge.level_order_insert( null, optimalDocumentTree, 0, setup.countOfCreatedDocuments );
         documentTreeWithLocalKnowledge.level_order_insert( null, optimalDocumentTree, 0, setup.countOfCreatedDocuments );
@@ -59,8 +64,13 @@ public class NumberDocumentTreeSimulation
 
     @Override
     protected Double[] createTermVector( Distribution distribution,
-                                                   int maxCountOfTerms,
-                                                   int maxCountOfTermsWithQuantifier ) {
+                                         int maxCountOfTerms,
+                                         int maxCountOfTermsWithQuantifier,
+                                         boolean cluster ) {
+
+        if( cluster && clusterMap == null ) {
+            createClusterMap();
+        }
 
         Double[] termList = new Double[maxCountOfTerms];
 
@@ -68,7 +78,11 @@ public class NumberDocumentTreeSimulation
             int index = randomNumberGenerator.getInt( maxCountOfTerms );
 
             if( termList[index] == null || termList[index] == 0 ) {
-                termList[index] = randomNumberGenerator.getDouble(distribution, 10 );
+                double term = randomNumberGenerator.getDouble(distribution, 10 );
+                if( cluster && clusterMap.containsKey( term ) ) {
+                    term = clusterMap.get( term );
+                }
+                termList[index] = term;
                 termsWithQuantifier++;
             }
         }
@@ -77,17 +91,36 @@ public class NumberDocumentTreeSimulation
     }
 
 
+    private void createClusterMap() {
+        clusterMap = new HashMap<>();
+
+        for( int i = 0; i< 3; i++ ) {
+            double bunch = randomNumberGenerator.getDouble( Distribution.EQUALLY, 10 );
+
+            for (int j = 0; j < 3; j++ ) {
+                double singleItem = randomNumberGenerator.getDouble( Distribution.EQUALLY, 10 );
+                while( singleItem == bunch ) {
+                    singleItem = randomNumberGenerator.getDouble( Distribution.EQUALLY, 10 );
+                }
+                clusterMap.put( singleItem, bunch );
+            }
+        }
+    }
+
+
 
     private Document<Double>[] createDocuments( Distribution distribution,
                                                 int maxCountOfTerms,
                                                 int maxCountOfTermsWithQuantifier,
-                                                int maxCountOfDocuments ) {
+                                                int maxCountOfDocuments,
+                                                boolean cluster ) {
         Document<Double>[] documentArray = new Document[maxCountOfDocuments];
 
         for( int i = 0; i < maxCountOfDocuments; i++ ) {
             documentArray[i] = new Document<>( createTermVector( distribution,
                                                                  maxCountOfTerms,
-                                                                 maxCountOfTermsWithQuantifier ),
+                                                                 maxCountOfTermsWithQuantifier,
+                                                                 cluster ),
                                                "Document " + i );
         }
 

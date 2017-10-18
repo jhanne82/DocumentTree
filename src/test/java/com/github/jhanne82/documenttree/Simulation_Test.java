@@ -20,6 +20,16 @@ public class Simulation_Test {
         simulationAppliction.simulation( SearchType.DEPTH_FIRST, Distribution.EQUALLY, Distribution.EQUALLY, false );
     }
 
+    @Test
+    public void doSimulation_1_2() {
+
+        SimulationApplication simulationAppliction = new SimulationApplication( 100, 600,
+                                                                                100, 3,
+                                                                                50, 5,10);
+
+        simulationAppliction.simulation( SearchType.DEPTH_FIRST, Distribution.EQUALLY, Distribution.EQUALLY, true );
+    }
+
 
     @Test
     public void doSimulation_2_1() {
