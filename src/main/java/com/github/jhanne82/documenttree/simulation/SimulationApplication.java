@@ -6,6 +6,8 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class SimulationApplication {
 
@@ -142,19 +144,15 @@ public class SimulationApplication {
 
     private void startSimulationWithThreads() {
 
-        /*ExecutorService service = Executors.newFixedThreadPool( 10);
+        ExecutorService service = Executors.newFixedThreadPool( 10);
 
         parameterList.forEach( i -> service.submit( () -> {
 
             SimulationApplication simulation = new SimulationApplication();
             simulation.simulation( i.searchType, i.distributionForDocument, i.distributionForSearch, i.cluster );
-        } ) );    */
+        } ) );
+        service.shutdown();
 
-        parameterList.forEach( i ->  {
-
-            SimulationApplication simulation = new SimulationApplication();
-            simulation.simulation( i.searchType, i.distributionForDocument, i.distributionForSearch, i.cluster );
-        }  );
     }
 
     
