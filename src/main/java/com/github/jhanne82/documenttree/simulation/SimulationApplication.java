@@ -98,6 +98,9 @@ public class SimulationApplication {
         buffer.append( String.format( "Hit/Miss Rate: %10d/%d %17d/%d%n",
                                       simulationResults[0].getHitRate(), simulationResults[0].getMissRate(),
                                       simulationResults[1].getHitRate(), simulationResults[1].getMissRate() ) );
+        buffer.append( String.format( "NodesOnCorrectLevel: %10d %17d%n",
+                                      simulationResults[0].getDocumentOnCorrectLevel(),
+                                      simulationResults[1].getDocumentOnCorrectLevel() ) );
 
 //        buffer.append('\n');
 //        buffer.append("Required Searches to optimal Document \n");

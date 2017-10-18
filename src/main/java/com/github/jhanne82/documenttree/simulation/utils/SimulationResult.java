@@ -13,8 +13,7 @@ public class SimulationResult {
     private int missRate = 0;
     private int hitRate = 0;
     private List<Integer> averageCountOfRepositioning;
-    private int conformityOfOptimalDocumentTree = 0;
-    private int conformityOfStressReducedDocumentTree = 0;
+    private int documentOnCorrectLevel = 0;
     private int distanceToOptimalPosition = 0;
 
 
@@ -30,6 +29,10 @@ public class SimulationResult {
 
     public int getMissRate() { return missRate; }
     public void setMissRate( int missRate ) { this.missRate = missRate; }
+
+
+    public int getDocumentOnCorrectLevel() { return documentOnCorrectLevel; }
+    public void setDocumentOnCorrectLevel( int documentOnCorrectLevel ) { this.documentOnCorrectLevel = documentOnCorrectLevel; }
 
 
 
