@@ -3,7 +3,13 @@ package com.github.jhanne82.documenttree.simulation;
 import com.github.jhanne82.documenttree.simulation.number.NumberDocumentTreeSimulation;
 import com.github.jhanne82.documenttree.simulation.utils.SimulationResult;
 import com.github.jhanne82.documenttree.simulation.utils.SimulationSetup;
+import org.apache.commons.io.FileUtils;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -13,6 +19,10 @@ import java.util.concurrent.Executors;
 
 public class SimulationApplication {
 
+
+    private static final int GLOBAL = 0;
+    private static final int LOCAL  = 1;
+    private static final int STRESS_REDUCED = 2;
 
     private final int MAX_COUNT_OF_CREATED_DOCUMENTS;
     private final int MAX_COUNT_OF_CREATED_SEARCHES;
@@ -26,15 +36,11 @@ public class SimulationApplication {
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat( "YYYY-MM-dd HH:mm:ss" );
 
 
-    public SimulationApplication() {
+    private SimulationApplication() {
 
-        MAX_COUNT_OF_CREATED_DOCUMENTS = 1000;
-        MAX_COUNT_OF_CREATED_SEARCHES = 1000000;
-        MAX_COUNT_OF_TERMS_USED_TO_DEFINE_VECTOR = 1000;
-        MAX_COUNT_OF_TERMS_WITH_QUANTIFIER = 3;
-        LIMIT_FOR_LOCAL_KNOWLEDGE = 300;
-        NUMBER_OF_SEARCHES_BEFORE_REPOSITIONING = 20;
-        TRESHOLD = 100;
+        this( 1000, 1000000,
+              1000, 3,
+              300, 20, 100 );
     }
 
 
@@ -91,88 +97,160 @@ public class SimulationApplication {
 
     private void printResult( SimulationResult[] simulationResults, boolean printInFile ) {
 
-        StringBuffer buffer = new StringBuffer();
-        buffer.append( simulationResults[0].getSimulationSetup().toString() );
-        buffer.append( '\n' );
-        buffer.append( String.format( "%39s %20s%n", "global Knowledge", "local Knowledge" ) );
-        buffer.append( String.format( "Hit/Miss Rate: %10d/%d %17d/%d%n",
-                                      simulationResults[0].getHitRate(), simulationResults[0].getMissRate(),
-                                      simulationResults[1].getHitRate(), simulationResults[1].getMissRate() ) );
-        buffer.append( String.format( "NodesOnCorrectLevel: %10d %17d%n",
-                                      simulationResults[0].getDocumentOnCorrectLevel(),
-                                      simulationResults[1].getDocumentOnCorrectLevel() ) );
+        if( printInFile ) {
+            try {
+                writeResultsIntoFiles( simulationResults );
+            } catch ( IOException e ) {
+                e.printStackTrace();
+            }
+        } else {
+            String str = simulationResults[ 0 ].getSimulationSetup().toString() +
+                         '\n' +
+                         String.format( "%39s %20s%n", "global Knowledge", "local Knowledge" ) +
+                         String.format( "Hit/Miss Rate: %10d/%d %17d/%d%n",
+                                        simulationResults[ 0 ].getHitRate(), simulationResults[ 0 ].getMissRate(),
+                                        simulationResults[ 1 ].getHitRate(), simulationResults[ 1 ].getMissRate() ) +
+                         String.format( "NodesOnCorrectLevel: %10d %17d%n",
+                                        simulationResults[ 0 ].getDocumentOnCorrectLevel(),
+                                        simulationResults[ 1 ].getDocumentOnCorrectLevel() );
 
-//        buffer.append('\n');
-//        buffer.append("Required Searches to optimal Document \n");
-//        buffer.append("global: " +  Arrays.toString( simulationResults[0].getRequiredSearches().toArray())); buffer.append( '\n');
-//        buffer.append("local: " +  Arrays.toString( simulationResults[1].getRequiredSearches().toArray()));  buffer.append( '\n');
-//
-//        buffer.append('\n');
-//        buffer.append("Required Repositionings \n");
-//        buffer.append("global: " +  Arrays.toString( simulationResults[0].getRequiredRepositionings().toArray())); buffer.append( '\n');
-//        buffer.append("local: " +  Arrays.toString( simulationResults[1].getRequiredRepositionings().toArray()));  buffer.append( '\n');
+            System.out.println( str );
+        }
 
-        System.out.println( buffer.toString() );
     }
 
 
-    List<Parameter> parameterList = Arrays.asList( new Parameter( SearchType.DEPTH_FIRST, Distribution.EQUALLY, Distribution.EQUALLY, false  )
-//                                                   ,new Parameter( SearchType.DEPTH_FIRST, Distribution.EQUALLY, Distribution.GAUSSIAN, false )
-//                                                   ,new Parameter( SearchType.DEPTH_FIRST, Distribution.EQUALLY, Distribution.EXPONENTIALLY, false )
-//                                                   ,new Parameter( SearchType.DEPTH_FIRST, Distribution.GAUSSIAN, Distribution.EQUALLY, false )
-//                                                   ,new Parameter( SearchType.DEPTH_FIRST, Distribution.GAUSSIAN, Distribution.GAUSSIAN, false )
-//                                                   ,new Parameter( SearchType.DEPTH_FIRST, Distribution.GAUSSIAN, Distribution.EXPONENTIALLY, false )
-//                                                   ,new Parameter( SearchType.DEPTH_FIRST, Distribution.EXPONENTIALLY, Distribution.EQUALLY, false )
-//                                                   ,new Parameter( SearchType.DEPTH_FIRST, Distribution.EXPONENTIALLY, Distribution.GAUSSIAN, false )
-//                                                   ,new Parameter( SearchType.DEPTH_FIRST, Distribution.EXPONENTIALLY, Distribution.EXPONENTIALLY, false )
-                                                   ,new Parameter( SearchType.DEPTH_FIRST, Distribution.EQUALLY, Distribution.EQUALLY, true  )
-//                                                   ,new Parameter( SearchType.DEPTH_FIRST, Distribution.EQUALLY, Distribution.GAUSSIAN, true )
-//                                                   ,new Parameter( SearchType.DEPTH_FIRST, Distribution.EQUALLY, Distribution.EXPONENTIALLY, true )
-//                                                   ,new Parameter( SearchType.DEPTH_FIRST, Distribution.GAUSSIAN, Distribution.EQUALLY, true )
-//                                                   ,new Parameter( SearchType.DEPTH_FIRST, Distribution.GAUSSIAN, Distribution.GAUSSIAN, true )
-//                                                   ,new Parameter( SearchType.DEPTH_FIRST, Distribution.GAUSSIAN, Distribution.EXPONENTIALLY, true )
-//                                                   ,new Parameter( SearchType.DEPTH_FIRST, Distribution.EXPONENTIALLY, Distribution.EQUALLY, true )
-//                                                   ,new Parameter( SearchType.DEPTH_FIRST, Distribution.EXPONENTIALLY, Distribution.GAUSSIAN, true )
-//                                                   ,new Parameter( SearchType.DEPTH_FIRST, Distribution.EXPONENTIALLY, Distribution.EXPONENTIALLY, true )
+    private void writeResultsIntoFiles( SimulationResult[] results )
+            throws IOException {
+
+        String userHome = System.getProperty( "user.home" );
+        String globalPath = userHome + File.separator  + "Results_DocumentTree" + File.separator  + "globalKnowledge";
+        String localPath  = userHome + File.separator  + "Results_DocumentTree" + File.separator  + "localKnowledge";
+        String stressPath = userHome + File.separator  + "Results_DocumentTree" + File.separator  + "stressReduced";
+
+        FileUtils.forceMkdir( new File( globalPath ) );
+        FileUtils.forceMkdir( new File( localPath ) );
+        FileUtils.forceMkdir( new File( stressPath ) );
+
+        writeResultIntoFiles( globalPath, results[GLOBAL] );
+        writeResultIntoFiles( localPath, results[LOCAL] );
+        writeResultIntoFiles( stressPath, results[STRESS_REDUCED] );
+    }
+
+
+
+    private void writeResultIntoFiles( String path, SimulationResult result )
+            throws IOException {
+
+        SimulationSetup setup = result.getSimulationSetup();
+
+        if( setup.cluster ) {
+            path += File.separator + "clustered";
+        } else {
+            path += File.separator + "not_clustered";
+        }
+
+        path = path + File.separator + setup.searchType
+                    + File.separator + setup.distributionForDocumentVector
+                    + File.separator + setup.distributionForSearchVector;
+
+        FileUtils.forceMkdir( new File( path ) );
+
+        File file = new File(path + File.separator + "HitMissRate.txt" );
+        FileWriter fw = new FileWriter(file.getAbsoluteFile(), true);
+        BufferedWriter bw = new BufferedWriter(fw);
+        PrintWriter out = new PrintWriter( bw);
+        out.println( result.getHitRate() + "/" + result.getMissRate() );
+        out.close();
+
+        file = new File(path + File.separator + "RequiredSearches.txt" );
+        fw = new FileWriter(file.getAbsoluteFile(), true);
+        bw = new BufferedWriter(fw);
+        out = new PrintWriter( bw);
+        out.println( Arrays.toString( result.getRequiredSearches().toArray() ) );
+        out.close();
+
+        file = new File(path + File.separator + "RequiredRepositionings.txt" );
+        fw = new FileWriter(file.getAbsoluteFile(), true);
+        bw = new BufferedWriter(fw);
+        out = new PrintWriter( bw);
+        out.println( Arrays.toString( result.getRequiredRepositionings().toArray() ) );
+        out.close();
+
+        file = new File(path + File.separator + "DocumentsOnCorrectLevelInTree.txt" );
+        fw = new FileWriter(file.getAbsoluteFile(), true);
+        bw = new BufferedWriter(fw);
+        out = new PrintWriter( bw);
+        out.println( result.getDocumentOnCorrectLevel() );
+        out.close();
+
+        file = new File(path + File.separator + "DistanceToCorrectLevel.txt" );
+        fw = new FileWriter(file.getAbsoluteFile(), true);
+        bw = new BufferedWriter(fw);
+        out = new PrintWriter( bw);
+        out.println(  Arrays.toString( result.getDistanceToOptimalPosition().toArray() ));
+        out.close();
+
+    }
+
+
+
+    private List<Parameter> parameterList = Arrays.asList( new Parameter( SearchType.DEPTH_FIRST, Distribution.EQUALLY, Distribution.EQUALLY, false  )
+                                                  ,new Parameter( SearchType.DEPTH_FIRST, Distribution.EQUALLY, Distribution.GAUSSIAN, false )
+                                                  ,new Parameter( SearchType.DEPTH_FIRST, Distribution.EQUALLY, Distribution.EXPONENTIALLY, false )
+                                                  ,new Parameter( SearchType.DEPTH_FIRST, Distribution.GAUSSIAN, Distribution.EQUALLY, false )
+                                                  ,new Parameter( SearchType.DEPTH_FIRST, Distribution.GAUSSIAN, Distribution.GAUSSIAN, false )
+                                                  ,new Parameter( SearchType.DEPTH_FIRST, Distribution.GAUSSIAN, Distribution.EXPONENTIALLY, false )
+                                                  ,new Parameter( SearchType.DEPTH_FIRST, Distribution.EXPONENTIALLY, Distribution.EQUALLY, false )
+                                                  ,new Parameter( SearchType.DEPTH_FIRST, Distribution.EXPONENTIALLY, Distribution.GAUSSIAN, false )
+                                                  ,new Parameter( SearchType.DEPTH_FIRST, Distribution.EXPONENTIALLY, Distribution.EXPONENTIALLY, false )
+                                                  ,new Parameter( SearchType.DEPTH_FIRST, Distribution.EQUALLY, Distribution.EQUALLY, true  )
+                                                  ,new Parameter( SearchType.DEPTH_FIRST, Distribution.EQUALLY, Distribution.GAUSSIAN, true )
+                                                  ,new Parameter( SearchType.DEPTH_FIRST, Distribution.EQUALLY, Distribution.EXPONENTIALLY, true )
+                                                  ,new Parameter( SearchType.DEPTH_FIRST, Distribution.GAUSSIAN, Distribution.EQUALLY, true )
+                                                  ,new Parameter( SearchType.DEPTH_FIRST, Distribution.GAUSSIAN, Distribution.GAUSSIAN, true )
+                                                  ,new Parameter( SearchType.DEPTH_FIRST, Distribution.GAUSSIAN, Distribution.EXPONENTIALLY, true )
+                                                  ,new Parameter( SearchType.DEPTH_FIRST, Distribution.EXPONENTIALLY, Distribution.EQUALLY, true )
+                                                  ,new Parameter( SearchType.DEPTH_FIRST, Distribution.EXPONENTIALLY, Distribution.GAUSSIAN, true )
+                                                  ,new Parameter( SearchType.DEPTH_FIRST, Distribution.EXPONENTIALLY, Distribution.EXPONENTIALLY, true )
 
                                                   ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EQUALLY, Distribution.EQUALLY, false  )
-//                                                   ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EQUALLY, Distribution.GAUSSIAN, false )
-//                                                   ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EQUALLY, Distribution.EXPONENTIALLY, false )
-//                                                   ,new Parameter( SearchType.BREADTH_FIRST, Distribution.GAUSSIAN, Distribution.EQUALLY, false )
-//                                                   ,new Parameter( SearchType.BREADTH_FIRST, Distribution.GAUSSIAN, Distribution.GAUSSIAN, false )
-//                                                   ,new Parameter( SearchType.BREADTH_FIRST, Distribution.GAUSSIAN, Distribution.EXPONENTIALLY, false )
-//                                                   ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EXPONENTIALLY, Distribution.EQUALLY, false )
-//                                                   ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EXPONENTIALLY, Distribution.GAUSSIAN, false )
-//                                                   ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EXPONENTIALLY, Distribution.EXPONENTIALLY, false )
-                                                 ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EQUALLY, Distribution.EQUALLY, true  )
-//                                                   ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EQUALLY, Distribution.GAUSSIAN, true )
-//                                                   ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EQUALLY, Distribution.EXPONENTIALLY, true )
-//                                                   ,new Parameter( SearchType.BREADTH_FIRST, Distribution.GAUSSIAN, Distribution.EQUALLY, true )
-//                                                   ,new Parameter( SearchType.BREADTH_FIRST, Distribution.GAUSSIAN, Distribution.GAUSSIAN, true )
-//                                                   ,new Parameter( SearchType.BREADTH_FIRST, Distribution.GAUSSIAN, Distribution.EXPONENTIALLY, true )
-//                                                   ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EXPONENTIALLY, Distribution.EQUALLY, true )
-//                                                   ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EXPONENTIALLY, Distribution.GAUSSIAN, true )
-//                                                   ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EXPONENTIALLY, Distribution.EXPONENTIALLY, true )
+                                                  ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EQUALLY, Distribution.GAUSSIAN, false )
+                                                  ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EQUALLY, Distribution.EXPONENTIALLY, false )
+                                                  ,new Parameter( SearchType.BREADTH_FIRST, Distribution.GAUSSIAN, Distribution.EQUALLY, false )
+                                                  ,new Parameter( SearchType.BREADTH_FIRST, Distribution.GAUSSIAN, Distribution.GAUSSIAN, false )
+                                                  ,new Parameter( SearchType.BREADTH_FIRST, Distribution.GAUSSIAN, Distribution.EXPONENTIALLY, false )
+                                                  ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EXPONENTIALLY, Distribution.EQUALLY, false )
+                                                  ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EXPONENTIALLY, Distribution.GAUSSIAN, false )
+                                                  ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EXPONENTIALLY, Distribution.EXPONENTIALLY, false )
+                                                  ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EQUALLY, Distribution.EQUALLY, true  )
+                                                  ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EQUALLY, Distribution.GAUSSIAN, true )
+                                                  ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EQUALLY, Distribution.EXPONENTIALLY, true )
+                                                  ,new Parameter( SearchType.BREADTH_FIRST, Distribution.GAUSSIAN, Distribution.EQUALLY, true )
+                                                  ,new Parameter( SearchType.BREADTH_FIRST, Distribution.GAUSSIAN, Distribution.GAUSSIAN, true )
+                                                  ,new Parameter( SearchType.BREADTH_FIRST, Distribution.GAUSSIAN, Distribution.EXPONENTIALLY, true )
+                                                  ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EXPONENTIALLY, Distribution.EQUALLY, true )
+                                                  ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EXPONENTIALLY, Distribution.GAUSSIAN, true )
+                                                  ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EXPONENTIALLY, Distribution.EXPONENTIALLY, true )
 
-
-                                                   ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EQUALLY, Distribution.EQUALLY, false  )
-//                                                   ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EQUALLY, Distribution.GAUSSIAN, false )
-//                                                   ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EQUALLY, Distribution.EXPONENTIALLY, false )
-//                                                   ,new Parameter( SearchType.RANDOM_WALKER, Distribution.GAUSSIAN, Distribution.EQUALLY, false )
-//                                                   ,new Parameter( SearchType.RANDOM_WALKER, Distribution.GAUSSIAN, Distribution.GAUSSIAN, false )
-//                                                   ,new Parameter( SearchType.RANDOM_WALKER, Distribution.GAUSSIAN, Distribution.EXPONENTIALLY, false )
-//                                                   ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EXPONENTIALLY, Distribution.EQUALLY, false )
-//                                                   ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EXPONENTIALLY, Distribution.GAUSSIAN, false )
-//                                                   ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EXPONENTIALLY, Distribution.EXPONENTIALLY, false )
-//                                                   ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EQUALLY, Distribution.EQUALLY, true  )
-//                                                   ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EQUALLY, Distribution.GAUSSIAN, true )
-//                                                   ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EQUALLY, Distribution.EXPONENTIALLY, true )
-//                                                   ,new Parameter( SearchType.RANDOM_WALKER, Distribution.GAUSSIAN, Distribution.EQUALLY, true )
-//                                                   ,new Parameter( SearchType.RANDOM_WALKER, Distribution.GAUSSIAN, Distribution.GAUSSIAN, true )
-//                                                   ,new Parameter( SearchType.RANDOM_WALKER, Distribution.GAUSSIAN, Distribution.EXPONENTIALLY, true )
-//                                                   ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EXPONENTIALLY, Distribution.EQUALLY, true )
-//                                                   ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EXPONENTIALLY, Distribution.GAUSSIAN, true )
-//                                                   ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EXPONENTIALLY, Distribution.EXPONENTIALLY, true )
+                                                  ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EQUALLY, Distribution.EQUALLY, false  )
+                                                  ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EQUALLY, Distribution.GAUSSIAN, false )
+                                                  ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EQUALLY, Distribution.EXPONENTIALLY, false )
+                                                  ,new Parameter( SearchType.RANDOM_WALKER, Distribution.GAUSSIAN, Distribution.EQUALLY, false )
+                                                  ,new Parameter( SearchType.RANDOM_WALKER, Distribution.GAUSSIAN, Distribution.GAUSSIAN, false )
+                                                  ,new Parameter( SearchType.RANDOM_WALKER, Distribution.GAUSSIAN, Distribution.EXPONENTIALLY, false )
+                                                  ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EXPONENTIALLY, Distribution.EQUALLY, false )
+                                                  ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EXPONENTIALLY, Distribution.GAUSSIAN, false )
+                                                  ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EXPONENTIALLY, Distribution.EXPONENTIALLY, false )
+                                                  ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EQUALLY, Distribution.EQUALLY, true  )
+                                                  ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EQUALLY, Distribution.GAUSSIAN, true )
+                                                  ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EQUALLY, Distribution.EXPONENTIALLY, true )
+                                                  ,new Parameter( SearchType.RANDOM_WALKER, Distribution.GAUSSIAN, Distribution.EQUALLY, true )
+                                                  ,new Parameter( SearchType.RANDOM_WALKER, Distribution.GAUSSIAN, Distribution.GAUSSIAN, true )
+                                                  ,new Parameter( SearchType.RANDOM_WALKER, Distribution.GAUSSIAN, Distribution.EXPONENTIALLY, true )
+                                                  ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EXPONENTIALLY, Distribution.EQUALLY, true )
+                                                  ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EXPONENTIALLY, Distribution.GAUSSIAN, true )
+                                                  ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EXPONENTIALLY, Distribution.EXPONENTIALLY, true )
     );
 
 

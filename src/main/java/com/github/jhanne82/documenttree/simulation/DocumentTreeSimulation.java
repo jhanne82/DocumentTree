@@ -146,14 +146,12 @@ public abstract class DocumentTreeSimulation <T> {
             for( DocumentNode<T> node : nodesOnCurrentLevel ) {
 
                 int index = treeAsList.indexOf( node.getDocument() ) +1;
-                System.out.println( "Index: " + ( index +1) + "......Level:" + LongMath.log2( index +1, RoundingMode.DOWN ) );
 
                 int optimalLevel = LongMath.log2( index +1, RoundingMode.DOWN );
                 if( level == optimalLevel) {
                     documentsOnCorrectLevel++;
-                } else {
-                    result.addDistanceToOptimalPosition( Math.abs( level - optimalLevel ) );
                 }
+                result.addDistanceToOptimalPosition( Math.abs( level - optimalLevel ) );
 
                 nodesOnNextLevel.addAll(node.getChildLeaves());
             }
