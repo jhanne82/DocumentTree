@@ -14,7 +14,7 @@ public class SimulationResult {
     private int hitRate = 0;
     private List<Integer> averageCountOfRepositioning;
     private int documentOnCorrectLevel = 0;
-    private int distanceToOptimalPosition = 0;
+    private List<Integer> distanceToOptimalPosition;
 
 
 
@@ -45,6 +45,7 @@ public class SimulationResult {
     }
 
 
+
     public List<Integer> getRequiredRepositionings() { return averageCountOfRepositioning; }
     public void addRequiredRepositioning( int requiredRepositioning ) {
         if( null == averageCountOfRepositioning ) {
@@ -52,6 +53,17 @@ public class SimulationResult {
         }
         averageCountOfRepositioning.add( requiredRepositioning );
     }
+
+
+
+    public List<Integer> getDistanceToOptimalPosition() { return distanceToOptimalPosition; }
+    public void addDistanceToOptimalPosition( int distance ) {
+        if( null == distanceToOptimalPosition ) {
+            distanceToOptimalPosition = new ArrayList<>();
+        }
+        distanceToOptimalPosition.add( distance );
+    }
+
 
 
     public SimulationSetup getSimulationSetup() {

@@ -7,7 +7,9 @@ import com.github.jhanne82.documenttree.tree.DocumentNode;
 import com.github.jhanne82.documenttree.tree.DocumentTree;
 import com.github.jhanne82.documenttree.utils.ResultDocumentList;
 import com.google.common.collect.ImmutableList;
+import com.google.common.math.LongMath;
 
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -138,28 +140,25 @@ public abstract class DocumentTreeSimulation <T> {
 
         while ( !nodesOnNextLevel.isEmpty() ) {
 
-            int endIndex = (int)Math.pow( 2, level+1 );
-            endIndex = endIndex > treeAsList.size() ? treeAsList.size() : endIndex;
-
-            List<Document<T>> optimalDocumentsFromLevel = treeAsList.subList( (int)Math.pow( 2, level ), endIndex );
-
             List<DocumentNode<T>> nodesOnCurrentLevel = ImmutableList.copyOf( nodesOnNextLevel );
             nodesOnNextLevel = new ArrayList<>();
 
-            for( DocumentNode<T> nodeOnCurrentLevel : nodesOnCurrentLevel ) {
+            for( DocumentNode<T> node : nodesOnCurrentLevel ) {
 
-                Document doc = optimalDocumentsFromLevel.stream().filter( item -> item.getDocumentName()
-                                                                       .equals( nodeOnCurrentLevel.getDocument()
-                                                                                                  .getDocumentName() ) )
-                                         .findFirst().orElse( null );
-                if( doc != null ) {
+                int index = treeAsList.indexOf( node.getDocument() ) +1;
+                System.out.println( "Index: " + ( index +1) + "......Level:" + LongMath.log2( index +1, RoundingMode.DOWN ) );
+
+                int optimalLevel = LongMath.log2( index +1, RoundingMode.DOWN );
+                if( level == optimalLevel) {
                     documentsOnCorrectLevel++;
+                } else {
+                    result.addDistanceToOptimalPosition( Math.abs( level - optimalLevel ) );
                 }
-                nodesOnNextLevel.addAll(nodeOnCurrentLevel.getChildLeaves());
+
+                nodesOnNextLevel.addAll(node.getChildLeaves());
             }
             level++;
         }
         result.setDocumentOnCorrectLevel( documentsOnCorrectLevel );
-
     }
 }

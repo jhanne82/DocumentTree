@@ -111,6 +111,22 @@ public class Document <T>
 
 
     @Override
+    public boolean equals( Object o ) {
+        if ( this == o ) {
+            return true;
+        }
+        if ( !( o instanceof Document ) ) {
+            return false;
+        }
+
+        Document<?> document = ( Document<?> )o;
+
+        return documentName != null ? documentName.equals( document.documentName ) : document.documentName == null;
+    }
+    
+
+
+    @Override
     public int compareTo( Document<T> o ) {
 
         if( o == null ) {
