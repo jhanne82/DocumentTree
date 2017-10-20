@@ -26,18 +26,18 @@ public abstract class DocumentTreeSimulation <T> {
 
 
 
-    private ResultDocumentList<T> searchOnTree(DocumentTree<T> documentTree, T[] searchTermVector, SearchType searchType, int limitForLocalKnowledge, int searchTimeStamp ) {
-        switch ( searchType ) {
-            case DEPTH_FIRST:
-                return documentTree.depthFirstSearch( limitForLocalKnowledge, searchTermVector, searchTimeStamp );
-            case BREADTH_FIRST:
-                return documentTree.breadthFirstSearch( limitForLocalKnowledge, searchTermVector, searchTimeStamp );
-            case RANDOM_WALKER:
-                return documentTree.randomWalkSearch( limitForLocalKnowledge, searchTermVector, searchTimeStamp );
-            default:
-                throw new UnsupportedOperationException();
-        }
-    }
+//    private ResultDocumentList<T> searchOnTree(DocumentTree<T> documentTree, T[] searchTermVector, SearchType searchType, int limitForLocalKnowledge, int searchTimeStamp ) {
+//        switch ( searchType ) {
+//            case DEPTH_FIRST:
+//                return documentTree.depthFirstSearch( limitForLocalKnowledge, searchTermVector, searchTimeStamp );
+//            case BREADTH_FIRST:
+//                return documentTree.breadthFirstSearch( limitForLocalKnowledge, searchTermVector, searchTimeStamp );
+//            case RANDOM_WALKER:
+//                return documentTree.randomWalkSearch( limitForLocalKnowledge, searchTermVector, searchTimeStamp );
+//            default:
+//                throw new UnsupportedOperationException();
+//        }
+//    }
 
 
     protected abstract Document<T> searchOnOptimalDocumentTree( T[] searchTermVector );
@@ -65,54 +65,84 @@ public abstract class DocumentTreeSimulation <T> {
                                                      setup.countOfTermsWithQuantifier,
                                                      setup.cluster );
 
-            ResultDocumentList<T> resultList;
-            int requiredRepositionings;
+//            ResultDocumentList<T> resultList;
+//            int requiredRepositionings;
 
-            Document bestMatch = searchOnOptimalDocumentTree( searchTermVector );
+            Document<T> bestMatch = searchOnOptimalDocumentTree( searchTermVector );
 
-            resultList = searchOnTree( documentTreeWithGlobalKnowledge, searchTermVector, setup.searchType, setup.countOfCreatedDocuments, i+1 );
-            requiredRepositionings = documentTreeWithGlobalKnowledge.repositionOfDocuments( setup.requiredSearchesOnDocumentToRespositioning, i+1, setup.treshold );
-            storeSimulationResultAfterEverySearch( resultList, bestMatch, requiredRepositionings, resultGlobalKnowledge );
 
-            resultList  = searchOnTree( documentTreeWithLocalKnowledge, searchTermVector, setup.searchType, setup.limitForLocalKnowledge, i+1 );
-            requiredRepositionings = documentTreeWithLocalKnowledge.repositionOfDocuments( setup.requiredSearchesOnDocumentToRespositioning, i+1, setup.treshold );
-            storeSimulationResultAfterEverySearch( resultList, bestMatch, requiredRepositionings, resultLocalKnowledge );
+            List<TreeSearchSimulationThread> threads = Arrays.asList(
+                    new TreeSearchSimulationThread( searchTermVector, setup, i + 1, bestMatch, resultGlobalKnowledge, documentTreeWithGlobalKnowledge, false ),
+                    new TreeSearchSimulationThread( searchTermVector, setup, i + 1, bestMatch, resultLocalKnowledge, documentTreeWithLocalKnowledge, true ),
+                    new TreeSearchSimulationThread( searchTermVector, setup, i + 1, bestMatch, resultStressReducedTree, stressReducedDocumentTree, true ));
 
-            resultList = searchOnTree( stressReducedDocumentTree, searchTermVector, setup.searchType, setup.limitForLocalKnowledge, i+1 );
-            storeSimulationResultAfterEverySearch( resultList, bestMatch, 0, resultStressReducedTree  );
+            for( Thread thread : threads ) {
+                try {
+                    thread.start();
+                    thread.join();
+                } catch ( InterruptedException e ) {
+                    e.printStackTrace();
+                }
+            }
+
+
+//            resultList = searchOnTree( documentTreeWithGlobalKnowledge, searchTermVector, setup.searchType, setup.countOfCreatedDocuments, i+1 );
+//            requiredRepositionings = documentTreeWithGlobalKnowledge.repositionOfDocuments( setup.requiredSearchesOnDocumentToRespositioning, i+1, setup.treshold );
+//            storeSimulationResultAfterEverySearch( resultList, bestMatch, requiredRepositionings, resultGlobalKnowledge );
+//
+//            resultList  = searchOnTree( documentTreeWithLocalKnowledge, searchTermVector, setup.searchType, setup.limitForLocalKnowledge, i+1 );
+//            requiredRepositionings = documentTreeWithLocalKnowledge.repositionOfDocuments( setup.requiredSearchesOnDocumentToRespositioning, i+1, setup.treshold );
+//            storeSimulationResultAfterEverySearch( resultList, bestMatch, requiredRepositionings, resultLocalKnowledge );
+//
+//            resultList = searchOnTree( stressReducedDocumentTree, searchTermVector, setup.searchType, setup.limitForLocalKnowledge, i+1 );
+//            storeSimulationResultAfterEverySearch( resultList, bestMatch, 0, resultStressReducedTree  );
         }
 
-        List<Document<T>> optimalTreeAsList = generateSortetListFromOptimalTree();
 
-        computeDifferenceBetweenTrees( optimalTreeAsList, documentTreeWithGlobalKnowledge, resultGlobalKnowledge );
-        computeDifferenceBetweenTrees( optimalTreeAsList, documentTreeWithLocalKnowledge, resultLocalKnowledge );
-        computeDifferenceBetweenTrees( optimalTreeAsList, stressReducedDocumentTree, resultStressReducedTree );
+        List<Document<T>> optimalTreeAsList = generateSortedListFromOptimalTree();
+        List<CheckDifferencesThread> threads = Arrays.asList(
+                new CheckDifferencesThread( optimalTreeAsList, documentTreeWithGlobalKnowledge, resultGlobalKnowledge ),
+                new CheckDifferencesThread( optimalTreeAsList, documentTreeWithLocalKnowledge, resultLocalKnowledge ),
+                new CheckDifferencesThread( optimalTreeAsList, stressReducedDocumentTree, resultStressReducedTree ) );
+
+        for( Thread thread : threads ) {
+            try {
+                thread.start();
+                thread.join();
+            } catch ( InterruptedException e ) {
+                e.printStackTrace();
+            }
+        }
+
+//        computeDifferenceBetweenTrees( optimalTreeAsList, documentTreeWithGlobalKnowledge, resultGlobalKnowledge );
+//        computeDifferenceBetweenTrees( optimalTreeAsList, documentTreeWithLocalKnowledge, resultLocalKnowledge );
+//        computeDifferenceBetweenTrees( optimalTreeAsList, stressReducedDocumentTree, resultStressReducedTree );
         return new SimulationResult[]{ resultGlobalKnowledge, resultLocalKnowledge, resultStressReducedTree };
     }
 
 
 
-    private void storeSimulationResultAfterEverySearch( ResultDocumentList<T> resultList, Document bestMatch, int requiredRepositionings, SimulationResult simulationResult ) {
-
-        calcHitMissRate( resultList.getBestResult(), bestMatch, simulationResult );
-        simulationResult.addRequiredSearches(resultList.numberOfSearchesTillOptimum());
-        simulationResult.addRequiredRepositioning( requiredRepositionings );
-    }
-
-
-
-    private void calcHitMissRate( Document foundDocument, Document bestMatch, SimulationResult result ) {
-
-        if( bestMatch.getDocumentName().equals( foundDocument.getDocumentName() ) ) {
-            result.setHitRate( result.getHitRate() + 1 );
-        } else {
-            result.setMissRate( result.getMissRate() + 1 );
-        }
-    }
+//    private synchronized void storeSimulationResultAfterEverySearch( ResultDocumentList<T> resultList, Document bestMatch, int requiredRepositionings, SimulationResult simulationResult ) {
+//
+//        calcHitMissRate( resultList.getBestResult(), bestMatch, simulationResult );
+//        simulationResult.addRequiredSearches(resultList.numberOfSearchesTillOptimum());
+//        simulationResult.addRequiredRepositioning( requiredRepositionings );
+//    }
 
 
 
-    private List<Document<T>> generateSortetListFromOptimalTree() {
+//    private synchronized void calcHitMissRate( Document foundDocument, Document bestMatch, SimulationResult result ) {
+//
+//        if( bestMatch.getDocumentName().equals( foundDocument.getDocumentName() ) ) {
+//            result.setHitRate( result.getHitRate() + 1 );
+//        } else {
+//            result.setMissRate( result.getMissRate() + 1 );
+//        }
+//    }
+
+
+
+    private List<Document<T>> generateSortedListFromOptimalTree() {
         List<Document<T>> optimalTreeAsList = Arrays.asList( optimalDocumentTree );
         optimalTreeAsList.sort( (d1, d2) -> {
             if( d1.getAverageRelevance() == d2.getAverageRelevance() ) {
@@ -130,33 +160,162 @@ public abstract class DocumentTreeSimulation <T> {
 
 
 
-    private void computeDifferenceBetweenTrees( List<Document<T>> treeAsList, DocumentTree<T> tree, SimulationResult result ) {
+//    private synchronized void computeDifferenceBetweenTrees( List<Document<T>> treeAsList, DocumentTree<T> tree, SimulationResult result ) {
+//
+//        int documentsOnCorrectLevel=0;
+//        int level = 0;
+//
+//        List<DocumentNode<T>> nodesOnNextLevel = new ArrayList<>();
+//        nodesOnNextLevel.add( tree.getRootNode() );
+//
+//        while ( !nodesOnNextLevel.isEmpty() ) {
+//
+//            List<DocumentNode<T>> nodesOnCurrentLevel = ImmutableList.copyOf( nodesOnNextLevel );
+//            nodesOnNextLevel = new ArrayList<>();
+//
+//            for( DocumentNode<T> node : nodesOnCurrentLevel ) {
+//
+//                int index = treeAsList.indexOf( node.getDocument() ) +1;
+//
+//                int optimalLevel = LongMath.log2( index +1, RoundingMode.DOWN );
+//                if( level == optimalLevel) {
+//                    documentsOnCorrectLevel++;
+//                }
+//                result.addDistanceToOptimalPosition( Math.abs( level - optimalLevel ) );
+//
+//                nodesOnNextLevel.addAll(node.getChildLeaves());
+//            }
+//            level++;
+//        }
+//        result.setDocumentOnCorrectLevel( documentsOnCorrectLevel );
+//    }
 
-        int documentsOnCorrectLevel=0;
-        int level = 0;
 
-        List<DocumentNode<T>> nodesOnNextLevel = new ArrayList<>();
-        nodesOnNextLevel.add( tree.getRootNode() );
 
-        while ( !nodesOnNextLevel.isEmpty() ) {
+    private class TreeSearchSimulationThread
+        extends Thread {
 
-            List<DocumentNode<T>> nodesOnCurrentLevel = ImmutableList.copyOf( nodesOnNextLevel );
-            nodesOnNextLevel = new ArrayList<>();
 
-            for( DocumentNode<T> node : nodesOnCurrentLevel ) {
+        private final T[]              searchTermVector;
+        private final SimulationSetup  setup;
+        private final int              searchTimeStamp;
+        private final Document<T>      bestMatch;
+        private final SimulationResult result;
+        private final DocumentTree<T>  tree;
+        private final boolean isLocalKnowledge;
 
-                int index = treeAsList.indexOf( node.getDocument() ) +1;
-
-                int optimalLevel = LongMath.log2( index +1, RoundingMode.DOWN );
-                if( level == optimalLevel) {
-                    documentsOnCorrectLevel++;
-                }
-                result.addDistanceToOptimalPosition( Math.abs( level - optimalLevel ) );
-
-                nodesOnNextLevel.addAll(node.getChildLeaves());
-            }
-            level++;
+        TreeSearchSimulationThread( T[] searchTermVector, SimulationSetup setup, int searchTimeStamp, Document<T> bestMatch, SimulationResult result, DocumentTree<T> tree, boolean isLocalKnowledge ) {
+            this.searchTermVector = searchTermVector;
+            this.setup = setup;
+            this.searchTimeStamp = searchTimeStamp +1;
+            this.bestMatch = bestMatch;
+            this.result = result;
+            this.tree = tree;
+            this.isLocalKnowledge = isLocalKnowledge;
         }
-        result.setDocumentOnCorrectLevel( documentsOnCorrectLevel );
+
+
+
+        @Override
+        public void run() {
+            int limitForLocalKnowledge = setup.countOfCreatedDocuments;
+            if( isLocalKnowledge ) {
+                limitForLocalKnowledge = setup.limitForLocalKnowledge;
+            }
+            ResultDocumentList resultList = searchOnTree( tree, searchTermVector, setup.searchType, limitForLocalKnowledge, searchTimeStamp );
+            int requiredRepositionings = tree.repositionOfDocuments( setup.requiredSearchesOnDocumentToRespositioning, searchTimeStamp, setup.treshold );
+            storeSimulationResultAfterEverySearch( resultList, bestMatch, requiredRepositionings, result );
+        }
+
+
+
+        private ResultDocumentList<T> searchOnTree(DocumentTree<T> documentTree, T[] searchTermVector, SearchType searchType, int limitForLocalKnowledge, int searchTimeStamp ) {
+
+
+            switch ( searchType ) {
+                case DEPTH_FIRST:
+                    return documentTree.depthFirstSearch( limitForLocalKnowledge, searchTermVector, searchTimeStamp );
+                case BREADTH_FIRST:
+                    return documentTree.breadthFirstSearch( limitForLocalKnowledge, searchTermVector, searchTimeStamp );
+                case RANDOM_WALKER:
+                    return documentTree.randomWalkSearch( limitForLocalKnowledge, searchTermVector, searchTimeStamp );
+                default:
+                    throw new UnsupportedOperationException();
+            }
+        }
+
+
+        private void storeSimulationResultAfterEverySearch( ResultDocumentList<T> resultList, Document bestMatch, int requiredRepositionings, SimulationResult simulationResult ) {
+
+            calcHitMissRate( resultList.getBestResult(), bestMatch, simulationResult );
+            simulationResult.addRequiredSearches(resultList.numberOfSearchesTillOptimum());
+            simulationResult.addRequiredRepositioning( requiredRepositionings );
+        }
+
+
+        private void calcHitMissRate( Document foundDocument, Document bestMatch, SimulationResult result ) {
+
+            if( bestMatch.getDocumentName().equals( foundDocument.getDocumentName() ) ) {
+                result.setHitRate( result.getHitRate() + 1 );
+            } else {
+                result.setMissRate( result.getMissRate() + 1 );
+            }
+        }
+    }
+
+
+
+    private class CheckDifferencesThread
+        extends Thread {
+
+
+        private List<Document<T>> sortedList;
+        private DocumentTree<T> tree;
+        private SimulationResult result;
+
+
+        CheckDifferencesThread( List<Document<T>> sortedList, DocumentTree<T> tree, SimulationResult result ) {
+            this.sortedList = sortedList;
+            this.tree = tree;
+            this.result = result;
+        }
+
+
+        @Override
+        public void run() {
+            computeDifferenceBetweenTrees( sortedList, tree, result );
+
+        }
+
+
+        private void computeDifferenceBetweenTrees( List<Document<T>> treeAsList, DocumentTree<T> tree, SimulationResult result ) {
+
+            int documentsOnCorrectLevel=0;
+            int level = 0;
+
+            List<DocumentNode<T>> nodesOnNextLevel = new ArrayList<>();
+            nodesOnNextLevel.add( tree.getRootNode() );
+
+            while ( !nodesOnNextLevel.isEmpty() ) {
+
+                List<DocumentNode<T>> nodesOnCurrentLevel = ImmutableList.copyOf( nodesOnNextLevel );
+                nodesOnNextLevel = new ArrayList<>();
+
+                for( DocumentNode<T> node : nodesOnCurrentLevel ) {
+
+                    int index = treeAsList.indexOf( node.getDocument() ) +1;
+
+                    int optimalLevel = LongMath.log2( index +1, RoundingMode.DOWN );
+                    if( level == optimalLevel) {
+                        documentsOnCorrectLevel++;
+                    }
+                    result.addDistanceToOptimalPosition( Math.abs( level - optimalLevel ) );
+
+                    nodesOnNextLevel.addAll(node.getChildLeaves());
+                }
+                level++;
+            }
+            result.setDocumentOnCorrectLevel( documentsOnCorrectLevel );
+        }
     }
 }

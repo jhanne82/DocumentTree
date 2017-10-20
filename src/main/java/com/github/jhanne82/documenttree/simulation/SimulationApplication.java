@@ -14,11 +14,17 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
+
+/**
+ * Class to start the complete simulation of the searches on trees
+ * with different search algorithm and access to the nodes.
+ *
+ * @author Jasmin Hannemann
+ */
 public class SimulationApplication {
 
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat( "YYYY-MM-dd HH:mm:ss" );
 
     private static final int GLOBAL = 0;
     private static final int LOCAL  = 1;
@@ -30,12 +36,76 @@ public class SimulationApplication {
     private final int MAX_COUNT_OF_TERMS_WITH_QUANTIFIER;
     private final int LIMIT_FOR_LOCAL_KNOWLEDGE;
     private final int NUMBER_OF_SEARCHES_BEFORE_REPOSITIONING;
-    private final int TRESHOLD;
+    private final int THRESHOLD;
 
 
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat( "YYYY-MM-dd HH:mm:ss" );
+
+    // define the simulation like previously described in master thesis section "Simulation Setup"
+    private final List<Parameter> parameterList = Arrays.asList(
+             new Parameter( SearchType.DEPTH_FIRST, Distribution.EQUALLY, Distribution.EQUALLY, false  )
+            ,new Parameter( SearchType.DEPTH_FIRST, Distribution.EQUALLY, Distribution.GAUSSIAN, false )
+            ,new Parameter( SearchType.DEPTH_FIRST, Distribution.EQUALLY, Distribution.EXPONENTIALLY, false )
+            ,new Parameter( SearchType.DEPTH_FIRST, Distribution.GAUSSIAN, Distribution.EQUALLY, false )
+            ,new Parameter( SearchType.DEPTH_FIRST, Distribution.GAUSSIAN, Distribution.GAUSSIAN, false )
+            ,new Parameter( SearchType.DEPTH_FIRST, Distribution.GAUSSIAN, Distribution.EXPONENTIALLY, false )
+            ,new Parameter( SearchType.DEPTH_FIRST, Distribution.EXPONENTIALLY, Distribution.EQUALLY, false )
+            ,new Parameter( SearchType.DEPTH_FIRST, Distribution.EXPONENTIALLY, Distribution.GAUSSIAN, false )
+            ,new Parameter( SearchType.DEPTH_FIRST, Distribution.EXPONENTIALLY, Distribution.EXPONENTIALLY, false )
+            ,new Parameter( SearchType.DEPTH_FIRST, Distribution.EQUALLY, Distribution.EQUALLY, true  )
+            ,new Parameter( SearchType.DEPTH_FIRST, Distribution.EQUALLY, Distribution.GAUSSIAN, true )
+            ,new Parameter( SearchType.DEPTH_FIRST, Distribution.EQUALLY, Distribution.EXPONENTIALLY, true )
+            ,new Parameter( SearchType.DEPTH_FIRST, Distribution.GAUSSIAN, Distribution.EQUALLY, true )
+            ,new Parameter( SearchType.DEPTH_FIRST, Distribution.GAUSSIAN, Distribution.GAUSSIAN, true )
+            ,new Parameter( SearchType.DEPTH_FIRST, Distribution.GAUSSIAN, Distribution.EXPONENTIALLY, true )
+            ,new Parameter( SearchType.DEPTH_FIRST, Distribution.EXPONENTIALLY, Distribution.EQUALLY, true )
+            ,new Parameter( SearchType.DEPTH_FIRST, Distribution.EXPONENTIALLY, Distribution.GAUSSIAN, true )
+            ,new Parameter( SearchType.DEPTH_FIRST, Distribution.EXPONENTIALLY, Distribution.EXPONENTIALLY, true )
+
+            ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EQUALLY, Distribution.EQUALLY, false  )
+            ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EQUALLY, Distribution.GAUSSIAN, false )
+            ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EQUALLY, Distribution.EXPONENTIALLY, false )
+            ,new Parameter( SearchType.BREADTH_FIRST, Distribution.GAUSSIAN, Distribution.EQUALLY, false )
+            ,new Parameter( SearchType.BREADTH_FIRST, Distribution.GAUSSIAN, Distribution.GAUSSIAN, false )
+            ,new Parameter( SearchType.BREADTH_FIRST, Distribution.GAUSSIAN, Distribution.EXPONENTIALLY, false )
+            ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EXPONENTIALLY, Distribution.EQUALLY, false )
+            ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EXPONENTIALLY, Distribution.GAUSSIAN, false )
+            ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EXPONENTIALLY, Distribution.EXPONENTIALLY, false )
+            ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EQUALLY, Distribution.EQUALLY, true  )
+            ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EQUALLY, Distribution.GAUSSIAN, true )
+            ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EQUALLY, Distribution.EXPONENTIALLY, true )
+            ,new Parameter( SearchType.BREADTH_FIRST, Distribution.GAUSSIAN, Distribution.EQUALLY, true )
+            ,new Parameter( SearchType.BREADTH_FIRST, Distribution.GAUSSIAN, Distribution.GAUSSIAN, true )
+            ,new Parameter( SearchType.BREADTH_FIRST, Distribution.GAUSSIAN, Distribution.EXPONENTIALLY, true )
+            ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EXPONENTIALLY, Distribution.EQUALLY, true )
+            ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EXPONENTIALLY, Distribution.GAUSSIAN, true )
+            ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EXPONENTIALLY, Distribution.EXPONENTIALLY, true )
+
+            ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EQUALLY, Distribution.EQUALLY, false  )
+            ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EQUALLY, Distribution.GAUSSIAN, false )
+            ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EQUALLY, Distribution.EXPONENTIALLY, false )
+            ,new Parameter( SearchType.RANDOM_WALKER, Distribution.GAUSSIAN, Distribution.EQUALLY, false )
+            ,new Parameter( SearchType.RANDOM_WALKER, Distribution.GAUSSIAN, Distribution.GAUSSIAN, false )
+            ,new Parameter( SearchType.RANDOM_WALKER, Distribution.GAUSSIAN, Distribution.EXPONENTIALLY, false )
+            ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EXPONENTIALLY, Distribution.EQUALLY, false )
+            ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EXPONENTIALLY, Distribution.GAUSSIAN, false )
+            ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EXPONENTIALLY, Distribution.EXPONENTIALLY, false )
+            ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EQUALLY, Distribution.EQUALLY, true  )
+            ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EQUALLY, Distribution.GAUSSIAN, true )
+            ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EQUALLY, Distribution.EXPONENTIALLY, true )
+            ,new Parameter( SearchType.RANDOM_WALKER, Distribution.GAUSSIAN, Distribution.EQUALLY, true )
+            ,new Parameter( SearchType.RANDOM_WALKER, Distribution.GAUSSIAN, Distribution.GAUSSIAN, true )
+            ,new Parameter( SearchType.RANDOM_WALKER, Distribution.GAUSSIAN, Distribution.EXPONENTIALLY, true )
+            ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EXPONENTIALLY, Distribution.EQUALLY, true )
+            ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EXPONENTIALLY, Distribution.GAUSSIAN, true )
+            ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EXPONENTIALLY, Distribution.EXPONENTIALLY, true )
+    );
 
 
+
+    /**
+     * Private standard constructor which defines the default parameter
+     * like defined in my master thesis section "Simulation Setup".
+     */
     private SimulationApplication() {
 
         this( 1000, 1000000,
@@ -44,13 +114,25 @@ public class SimulationApplication {
     }
 
 
+
+    /**
+     * Constructor with params to define the setup of the simulation which should be started.
+     *
+     * @param maxCountOfCreatedDocuments - defines the number of documents on which should be searched
+     * @param maxCountOfCreatedSearches  - defines the number searches which will be executed
+     * @param maxCountOfTermsUsedToDefineAVector - defines how many terms are used to describe a document/search
+     * @param maxCountOfTermsWithQuantifier - defines how many terms should be not null to desribe a document/search
+     * @param limitForLocalKnowledge - defines the limit on how many documents should be searched until search will be aborted for local knowledge
+     * @param numberOfSearchesBeforeRepositioning - defines the number of searches on the document before it can change the position in the tree
+     * @param threshold - defines the threshold on searches which were not performed on a document until the document can be moved up in the tree
+     */
     public SimulationApplication(int maxCountOfCreatedDocuments,
                                  int maxCountOfCreatedSearches,
                                  int maxCountOfTermsUsedToDefineAVector,
                                  int maxCountOfTermsWithQuantifier,
                                  int limitForLocalKnowledge,
                                  int numberOfSearchesBeforeRepositioning,
-                                 int treshold ) {
+                                 int threshold ) {
 
         this.MAX_COUNT_OF_CREATED_DOCUMENTS = maxCountOfCreatedDocuments;
         this.MAX_COUNT_OF_CREATED_SEARCHES = maxCountOfCreatedSearches;
@@ -58,11 +140,20 @@ public class SimulationApplication {
         this.MAX_COUNT_OF_TERMS_WITH_QUANTIFIER = maxCountOfTermsWithQuantifier;
         this.LIMIT_FOR_LOCAL_KNOWLEDGE = limitForLocalKnowledge;
         this.NUMBER_OF_SEARCHES_BEFORE_REPOSITIONING = numberOfSearchesBeforeRepositioning;
-        this.TRESHOLD = treshold;
+        this.THRESHOLD = threshold;
     }
 
 
 
+    /**
+     * Method will start the simulation with the given simulation parameter.
+     *
+     * @param searchType - specifies the used search which will be performed on the trees. See SearchType.
+     * @param distributionForDocument - specifies the used distribution when creating the termins which defines the documents
+     * @param distributionForSearch - specifies the used distribution when creating the termins which defines the search
+     * @param cluster - boolean parameter to define if cluster will be used to simulate the impact of the usage of synonyms
+     * @param printInFile - boolean parameter to define if a short result will print on screen or the complete result of the simulation will write into files of the home directory
+     */
     public void simulation( SearchType searchType,
                             Distribution distributionForDocument,
                             Distribution distributionForSearch,
@@ -80,7 +171,7 @@ public class SimulationApplication {
                                                      MAX_COUNT_OF_CREATED_SEARCHES,
                                                      LIMIT_FOR_LOCAL_KNOWLEDGE,
                                                      NUMBER_OF_SEARCHES_BEFORE_REPOSITIONING,
-                                                     TRESHOLD,
+                                                     THRESHOLD,
                                                      cluster );
 
         DocumentTreeSimulation<Double> documentTreeSimulation = new NumberDocumentTreeSimulation();
@@ -90,6 +181,27 @@ public class SimulationApplication {
         printResult( result, printInFile );
 
         System.out.println( "Simulation END " + dateFormat.format( new Date() ) );
+
+    }
+
+
+
+    private void startSimulationWithThreads() {
+
+//        ExecutorService service = Executors.newFixedThreadPool( 3 );
+//
+//        parameterList.forEach( i -> service.submit( () -> {
+//
+//            SimulationApplication simulation = new SimulationApplication();
+//            simulation.simulation( i.searchType, i.distributionForDocument, i.distributionForSearch, i.cluster, true );
+//        } ) );
+//        service.shutdown();
+//        
+
+        parameterList.forEach( i -> {
+            SimulationApplication simulation = new SimulationApplication();
+            simulation.simulation( i.searchType, i.distributionForDocument, i.distributionForSearch, i.cluster, true );
+        } );
 
     }
 
@@ -116,8 +228,8 @@ public class SimulationApplication {
 
             System.out.println( str );
         }
-
     }
+
 
 
     private void writeResultsIntoFiles( SimulationResult[] results )
@@ -156,118 +268,30 @@ public class SimulationApplication {
 
         FileUtils.forceMkdir( new File( path ) );
 
-        File file = new File(path + File.separator + "HitMissRate.txt" );
-        FileWriter fw = new FileWriter(file.getAbsoluteFile(), true);
-        BufferedWriter bw = new BufferedWriter(fw);
-        PrintWriter out = new PrintWriter( bw);
-        out.println( result.getHitRate() + "/" + result.getMissRate() );
-        out.close();
-
-        file = new File(path + File.separator + "RequiredSearches.txt" );
-        fw = new FileWriter(file.getAbsoluteFile(), true);
-        bw = new BufferedWriter(fw);
-        out = new PrintWriter( bw);
-        out.println( Arrays.toString( result.getRequiredSearches().toArray() ) );
-        out.close();
-
-        file = new File(path + File.separator + "RequiredRepositionings.txt" );
-        fw = new FileWriter(file.getAbsoluteFile(), true);
-        bw = new BufferedWriter(fw);
-        out = new PrintWriter( bw);
-        out.println( Arrays.toString( result.getRequiredRepositionings().toArray() ) );
-        out.close();
-
-        file = new File(path + File.separator + "DocumentsOnCorrectLevelInTree.txt" );
-        fw = new FileWriter(file.getAbsoluteFile(), true);
-        bw = new BufferedWriter(fw);
-        out = new PrintWriter( bw);
-        out.println( result.getDocumentOnCorrectLevel() );
-        out.close();
-
-        file = new File(path + File.separator + "DistanceToCorrectLevel.txt" );
-        fw = new FileWriter(file.getAbsoluteFile(), true);
-        bw = new BufferedWriter(fw);
-        out = new PrintWriter( bw);
-        out.println(  Arrays.toString( result.getDistanceToOptimalPosition().toArray() ));
-        out.close();
+        writeInFile( path + File.separator + "HitMissRate.txt",
+                     result.getHitRate() + "/" + result.getMissRate() );
+        writeInFile( path + File.separator + "RequiredSearches.txt",
+                     Arrays.toString( result.getRequiredSearches().toArray() ) );
+        writeInFile( path + File.separator + "RequiredRepositionings.txt",
+                     Arrays.toString( result.getRequiredRepositionings().toArray() ) );
+        writeInFile( path + File.separator + "DocumentsOnCorrectLevelInTree.txt",
+                     String.valueOf( result.getDocumentOnCorrectLevel() ) );
+        writeInFile( path + File.separator + "DistanceToCorrectLevel.txt",
+                     Arrays.toString( result.getDistanceToOptimalPosition().toArray() ));
 
     }
 
 
 
-    private List<Parameter> parameterList = Arrays.asList( new Parameter( SearchType.DEPTH_FIRST, Distribution.EQUALLY, Distribution.EQUALLY, false  )
-                                                  ,new Parameter( SearchType.DEPTH_FIRST, Distribution.EQUALLY, Distribution.GAUSSIAN, false )
-                                                  ,new Parameter( SearchType.DEPTH_FIRST, Distribution.EQUALLY, Distribution.EXPONENTIALLY, false )
-                                                  ,new Parameter( SearchType.DEPTH_FIRST, Distribution.GAUSSIAN, Distribution.EQUALLY, false )
-                                                  ,new Parameter( SearchType.DEPTH_FIRST, Distribution.GAUSSIAN, Distribution.GAUSSIAN, false )
-                                                  ,new Parameter( SearchType.DEPTH_FIRST, Distribution.GAUSSIAN, Distribution.EXPONENTIALLY, false )
-                                                  ,new Parameter( SearchType.DEPTH_FIRST, Distribution.EXPONENTIALLY, Distribution.EQUALLY, false )
-                                                  ,new Parameter( SearchType.DEPTH_FIRST, Distribution.EXPONENTIALLY, Distribution.GAUSSIAN, false )
-                                                  ,new Parameter( SearchType.DEPTH_FIRST, Distribution.EXPONENTIALLY, Distribution.EXPONENTIALLY, false )
-                                                  ,new Parameter( SearchType.DEPTH_FIRST, Distribution.EQUALLY, Distribution.EQUALLY, true  )
-                                                  ,new Parameter( SearchType.DEPTH_FIRST, Distribution.EQUALLY, Distribution.GAUSSIAN, true )
-                                                  ,new Parameter( SearchType.DEPTH_FIRST, Distribution.EQUALLY, Distribution.EXPONENTIALLY, true )
-                                                  ,new Parameter( SearchType.DEPTH_FIRST, Distribution.GAUSSIAN, Distribution.EQUALLY, true )
-                                                  ,new Parameter( SearchType.DEPTH_FIRST, Distribution.GAUSSIAN, Distribution.GAUSSIAN, true )
-                                                  ,new Parameter( SearchType.DEPTH_FIRST, Distribution.GAUSSIAN, Distribution.EXPONENTIALLY, true )
-                                                  ,new Parameter( SearchType.DEPTH_FIRST, Distribution.EXPONENTIALLY, Distribution.EQUALLY, true )
-                                                  ,new Parameter( SearchType.DEPTH_FIRST, Distribution.EXPONENTIALLY, Distribution.GAUSSIAN, true )
-                                                  ,new Parameter( SearchType.DEPTH_FIRST, Distribution.EXPONENTIALLY, Distribution.EXPONENTIALLY, true )
-
-                                                  ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EQUALLY, Distribution.EQUALLY, false  )
-                                                  ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EQUALLY, Distribution.GAUSSIAN, false )
-                                                  ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EQUALLY, Distribution.EXPONENTIALLY, false )
-                                                  ,new Parameter( SearchType.BREADTH_FIRST, Distribution.GAUSSIAN, Distribution.EQUALLY, false )
-                                                  ,new Parameter( SearchType.BREADTH_FIRST, Distribution.GAUSSIAN, Distribution.GAUSSIAN, false )
-                                                  ,new Parameter( SearchType.BREADTH_FIRST, Distribution.GAUSSIAN, Distribution.EXPONENTIALLY, false )
-                                                  ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EXPONENTIALLY, Distribution.EQUALLY, false )
-                                                  ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EXPONENTIALLY, Distribution.GAUSSIAN, false )
-                                                  ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EXPONENTIALLY, Distribution.EXPONENTIALLY, false )
-                                                  ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EQUALLY, Distribution.EQUALLY, true  )
-                                                  ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EQUALLY, Distribution.GAUSSIAN, true )
-                                                  ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EQUALLY, Distribution.EXPONENTIALLY, true )
-                                                  ,new Parameter( SearchType.BREADTH_FIRST, Distribution.GAUSSIAN, Distribution.EQUALLY, true )
-                                                  ,new Parameter( SearchType.BREADTH_FIRST, Distribution.GAUSSIAN, Distribution.GAUSSIAN, true )
-                                                  ,new Parameter( SearchType.BREADTH_FIRST, Distribution.GAUSSIAN, Distribution.EXPONENTIALLY, true )
-                                                  ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EXPONENTIALLY, Distribution.EQUALLY, true )
-                                                  ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EXPONENTIALLY, Distribution.GAUSSIAN, true )
-                                                  ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EXPONENTIALLY, Distribution.EXPONENTIALLY, true )
-
-                                                  ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EQUALLY, Distribution.EQUALLY, false  )
-                                                  ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EQUALLY, Distribution.GAUSSIAN, false )
-                                                  ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EQUALLY, Distribution.EXPONENTIALLY, false )
-                                                  ,new Parameter( SearchType.RANDOM_WALKER, Distribution.GAUSSIAN, Distribution.EQUALLY, false )
-                                                  ,new Parameter( SearchType.RANDOM_WALKER, Distribution.GAUSSIAN, Distribution.GAUSSIAN, false )
-                                                  ,new Parameter( SearchType.RANDOM_WALKER, Distribution.GAUSSIAN, Distribution.EXPONENTIALLY, false )
-                                                  ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EXPONENTIALLY, Distribution.EQUALLY, false )
-                                                  ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EXPONENTIALLY, Distribution.GAUSSIAN, false )
-                                                  ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EXPONENTIALLY, Distribution.EXPONENTIALLY, false )
-                                                  ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EQUALLY, Distribution.EQUALLY, true  )
-                                                  ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EQUALLY, Distribution.GAUSSIAN, true )
-                                                  ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EQUALLY, Distribution.EXPONENTIALLY, true )
-                                                  ,new Parameter( SearchType.RANDOM_WALKER, Distribution.GAUSSIAN, Distribution.EQUALLY, true )
-                                                  ,new Parameter( SearchType.RANDOM_WALKER, Distribution.GAUSSIAN, Distribution.GAUSSIAN, true )
-                                                  ,new Parameter( SearchType.RANDOM_WALKER, Distribution.GAUSSIAN, Distribution.EXPONENTIALLY, true )
-                                                  ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EXPONENTIALLY, Distribution.EQUALLY, true )
-                                                  ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EXPONENTIALLY, Distribution.GAUSSIAN, true )
-                                                  ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EXPONENTIALLY, Distribution.EXPONENTIALLY, true )
-    );
-
-
-    private void startSimulationWithThreads() {
-
-        ExecutorService service = Executors.newFixedThreadPool( 3 );
-
-        parameterList.forEach( i -> service.submit( () -> {
-
-            SimulationApplication simulation = new SimulationApplication();
-            simulation.simulation( i.searchType, i.distributionForDocument, i.distributionForSearch, i.cluster, true );
-        } ) );
-        service.shutdown();
-
+    private void writeInFile( String path, String content )
+            throws IOException {
+        File file = new File( path );
+        PrintWriter writer = new PrintWriter( new BufferedWriter( new FileWriter( path, true ) ) );
+        writer.println( content );
+        writer.close();
     }
 
-    
+
 
     public static void main( String[] args ) {
 
