@@ -256,7 +256,7 @@ public class SimulationApplication {
 
     private void startSimulationWithThreads() {
 
-        ExecutorService service = Executors.newFixedThreadPool( 5 );
+        ExecutorService service = Executors.newFixedThreadPool( 3 );
 
         parameterList.forEach( i -> service.submit( () -> {
 
