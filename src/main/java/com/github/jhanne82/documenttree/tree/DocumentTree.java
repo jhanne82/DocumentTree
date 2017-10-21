@@ -131,8 +131,6 @@ public abstract class DocumentTree<T> {
             currentlyConsideredNode.getDocument().addRelevance( calcRelevanceOfDocument( currentlyConsideredNode.getDocument().getTermList(), searchTerm ) );
             currentlyConsideredNode.getDocument().setTimestampOfLastSearch( searchTimeStamp );
             resultDocumentList.add( currentlyConsideredNode.getDocument(), currentlyVisitedNode );
-            currentlyVisitedNode++;
-
             currentlyConsideredNode = getNextRandomNode( currentlyConsideredNode, searchTimeStamp );
 
         }
@@ -153,6 +151,7 @@ public abstract class DocumentTree<T> {
             while( returnNode == null && tmpNode.getParent() != null ) {
                 returnNode = getNextPossibleChildNodeFromBreadth( tmpNode.getParent(), searchTimeStamp );
                 tmpNode = tmpNode.getParent();
+                currentlyVisitedNode++;
             }
             return returnNode;
 
@@ -161,6 +160,7 @@ public abstract class DocumentTree<T> {
             while( returnNode == null && tmpNode.getParent() != null ) {
                 returnNode = getNextPossibleChildNodeFromDepth( tmpNode.getParent(), searchTimeStamp );
                 tmpNode = tmpNode.getParent();
+                currentlyVisitedNode++;
             }
             return returnNode;
         }
@@ -177,12 +177,12 @@ public abstract class DocumentTree<T> {
 
         // maxVisitedNode means no Abbruchkriterium
         while ( !nodesOnNextLevel.isEmpty() ) {
-
             // ChildLeaves von vorherigen Nodes werden zu aktuellen Nodes
             List<DocumentNode<T>> nodesOnCurrentLevel = ImmutableList.copyOf( nodesOnNextLevel );
             nodesOnNextLevel = new ArrayList<>();
 
             for( DocumentNode<T> nodeOnCurrentLevel : nodesOnCurrentLevel ) {
+                currentlyVisitedNode++;
                 if( nodeOnCurrentLevel.getDocument().getTimestampOfLastSearch() != searchTimeStamp ) {
                     return nodeOnCurrentLevel;
                 }
@@ -198,6 +198,8 @@ public abstract class DocumentTree<T> {
         if ( node == null) {
             return null;
         }
+
+        currentlyVisitedNode++;
 
         if( node.getDocument().getTimestampOfLastSearch() != searchTimeStamp ) {
             return node;
