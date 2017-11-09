@@ -4,11 +4,14 @@ import com.github.jhanne82.documenttree.document.Document;
 import com.github.jhanne82.documenttree.simulation.Distribution;
 import com.github.jhanne82.documenttree.simulation.DocumentTreeSimulation;
 import com.github.jhanne82.documenttree.simulation.utils.SimulationSetup;
+import com.github.jhanne82.documenttree.tree.DocumentTree;
 import com.github.jhanne82.documenttree.tree.number.NumberDocumentTree;
 import com.github.jhanne82.documenttree.utils.EulerianDistance;
 import com.github.jhanne82.documenttree.utils.RandomNumberGenerator;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -55,9 +58,24 @@ public class NumberDocumentTreeSimulation
                                                setup.countOfCreatedDocuments,
                                                setup.cluster);
 
+        List<Thread> threads = Arrays.asList(
+                new CreateTreeThread( documentTreeWithGlobalKnowledge, optimalDocumentTree, setup ),
+                new CreateTreeThread( documentTreeWithLocalKnowledge,  optimalDocumentTree, setup),
+                new CreateTreeThread( stressReducedDocumentTree,       optimalDocumentTree, setup )
+        );
+
+        for( Thread thread : threads ) {
+            try {
+                thread.start();
+                thread.join();
+            } catch ( InterruptedException e ) {
+                e.printStackTrace();
+            }
+        }
+        /*
         documentTreeWithGlobalKnowledge.level_order_insert( null, optimalDocumentTree, 0, setup.countOfCreatedDocuments );
         documentTreeWithLocalKnowledge.level_order_insert( null, optimalDocumentTree, 0, setup.countOfCreatedDocuments );
-        stressReducedDocumentTree.level_order_insert( null, optimalDocumentTree, 0, setup.countOfCreatedDocuments );
+        stressReducedDocumentTree.level_order_insert( null, optimalDocumentTree, 0, setup.countOfCreatedDocuments );*/
     }
 
 
@@ -125,5 +143,27 @@ public class NumberDocumentTreeSimulation
         }
 
         return documentArray;
+    }
+
+
+
+    private class CreateTreeThread
+        extends Thread {
+
+        DocumentTree<Double> tree;
+        Document<Double>[] documents;
+        SimulationSetup setup;
+
+        CreateTreeThread( DocumentTree<Double> tree, Document<Double>[] documents, SimulationSetup setup ) {
+            this.tree = tree;
+            this.documents = documents;
+            this.setup = setup;
+        }
+
+
+        @Override
+        public void run() {
+            tree.level_order_insert( null, documents, 0, setup.countOfCreatedDocuments );
+        }
     }
 }

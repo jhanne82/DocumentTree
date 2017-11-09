@@ -5,11 +5,7 @@ import com.github.jhanne82.documenttree.simulation.utils.SimulationResult;
 import com.github.jhanne82.documenttree.simulation.utils.SimulationSetup;
 import org.apache.commons.io.FileUtils;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -198,10 +194,46 @@ public class SimulationApplication {
 //        service.shutdown();
 //        
 
-        parameterList.forEach( i -> {
+        /*parameterList.forEach( i -> {
             SimulationApplication simulation = new SimulationApplication();
-            simulation.simulation( i.searchType, i.distributionForDocument, i.distributionForSearch, i.cluster, true );
-        } );
+            simulation.simulation( i.searchType, i.distributionForDocument, i.distributionForSearch, i.cluster, false );
+        } );      */
+
+        for( int i = 0; i< parameterList.size(); i = i+2 ) {
+            int finalI = i;
+            Thread thread1 = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Parameter parameter = parameterList.get(finalI);
+                    SimulationApplication simulation = new SimulationApplication();
+                    simulation.simulation( parameter.searchType, parameter.distributionForDocument,
+                            parameter.distributionForSearch, parameter.cluster, false );
+                }
+            });
+            thread1.start();
+            if( (i+1)< parameterList.size() ) {
+                Thread thread2 = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Parameter parameter = parameterList.get(finalI+1);
+                        SimulationApplication simulation = new SimulationApplication();
+                        simulation.simulation( parameter.searchType, parameter.distributionForDocument,
+                                parameter.distributionForSearch, parameter.cluster, false );
+                    }
+                });
+                thread2.start();
+                try {
+                    thread2.join();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            try {
+                thread1.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
 
     }
 
