@@ -24,7 +24,7 @@ public class ResultDocumentList<T> {
         } else {
 
             Result lastStoredResult = resultTree.last();
-            if( lastStoredResult.document.getLastCalculatedRelevance().compareTo( documentToAdd.getLastCalculatedRelevance() ) < 0) {
+            if( lastStoredResult.document.getLastCalculatedRelevance() < documentToAdd.getLastCalculatedRelevance() ) {
                 resultTree.remove( lastStoredResult );
                 resultTree.add( new Result( documentToAdd, searchesTillDocument, stepsInTreeTillDocument ) );
             }
@@ -76,8 +76,13 @@ public class ResultDocumentList<T> {
                 return -1;
             }
 
-            return this.document.getLastCalculatedRelevance().compareTo( o.document.getLastCalculatedRelevance() );
-            
+            if( this.document.getLastCalculatedRelevance() < o.document.getLastCalculatedRelevance() ) {
+                return -1;
+            }
+            if( this.document.getLastCalculatedRelevance() == o.document.getLastCalculatedRelevance() ) {
+                return 0;
+            }
+            return 1;
         }
     }
 }

@@ -6,7 +6,6 @@ import com.github.jhanne82.documenttree.tree.DocumentTree;
 import com.github.jhanne82.documenttree.tree.number.NumberDocumentTree;
 import com.github.jhanne82.documenttree.utils.EulerianDistance;
 import com.github.jhanne82.documenttree.utils.ResultDocumentList;
-import org.jscience.mathematics.number.Real;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -213,19 +212,19 @@ public class NumberDocumentTreeTest {
         tree.repositionOfDocuments( 1, 30,1 );
 
         assertEquals( "Doc1", tree.getRootNode().getDocument().getDocumentName() );
-        assertTrue( tree.getRootNode().getDocument().getAverageRelevance().compareTo( Real.ZERO ) > 0 );
+        assertTrue( tree.getRootNode().getDocument().getAverageRelevance() > 0 );
 
         assertEquals( "Doc4", tree.getRootNode().getLeftChild().getDocument().getDocumentName() );
-        assertTrue( tree.getRootNode().getLeftChild().getDocument().getAverageRelevance().compareTo( Real.ZERO ) == 0 );
+        assertTrue( tree.getRootNode().getLeftChild().getDocument().getAverageRelevance() == 0 );
 
         assertEquals( "Doc3", tree.getRootNode().getRightChild().getDocument().getDocumentName() );
-        assertTrue( tree.getRootNode().getRightChild().getDocument().getAverageRelevance().compareTo( Real.ZERO ) > 0 );
+        assertTrue( tree.getRootNode().getRightChild().getDocument().getAverageRelevance() > 0 );
 
         assertEquals( "Doc2", tree.getRootNode().getLeftChild().getLeftChild().getDocument().getDocumentName() );
-        assertTrue( tree.getRootNode().getLeftChild().getLeftChild().getDocument().getAverageRelevance().compareTo( Real.ZERO ) == 0 );
+        assertTrue( tree.getRootNode().getLeftChild().getLeftChild().getDocument().getAverageRelevance() == 0 );
 
         assertEquals( "Doc5", tree.getRootNode().getLeftChild().getRightChild().getDocument().getDocumentName() );
-        assertTrue( tree.getRootNode().getLeftChild().getRightChild().getDocument().getAverageRelevance().compareTo( Real.ZERO ) > 0 );
+        assertTrue( tree.getRootNode().getLeftChild().getRightChild().getDocument().getAverageRelevance() > 0 );
     }
 
 

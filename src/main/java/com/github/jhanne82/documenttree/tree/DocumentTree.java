@@ -4,7 +4,6 @@ package com.github.jhanne82.documenttree.tree;
 import com.github.jhanne82.documenttree.document.Document;
 import com.github.jhanne82.documenttree.utils.ResultDocumentList;
 import com.google.common.collect.ImmutableList;
-import org.jscience.mathematics.number.Real;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +17,7 @@ public abstract class DocumentTree<T> {
 
 
 
-    protected abstract Real calcRelevanceOfDocument( T[] documentTermVector, T[] searchTermVector );
+    protected abstract double calcRelevanceOfDocument(T[] documentTermVector, T[] searchTermVector );
 
 
 
@@ -239,17 +238,14 @@ public abstract class DocumentTree<T> {
                         if ( node.getLeftChild() != null
                              && node.getLeftChild().getDocument().getCountOfStoredRelevances()
                                 >= numberOfRelevenceCalculationToRepositiong
-                             && node.getLeftChild().getDocument()
-                                    .getAverageRelevance().compareTo( node.getDocument()
-                                                                          .getAverageRelevance() ) > 0 ) {
+                             && node.getLeftChild().getDocument().getAverageRelevance() > node.getDocument()
+                                                                                              .getAverageRelevance() ) {
                             switchDocuments( node, node.getLeftChild() );
                             countOfRepositionings++;
 
                         } else if ( node.getRightChild() != null
                                     && node.getRightChild().getDocument().getCountOfStoredRelevances() > numberOfRelevenceCalculationToRepositiong
-                                    && node.getRightChild().getDocument()
-                                           .getAverageRelevance().compareTo( node.getDocument()
-                                                                                 .getAverageRelevance() ) > 0 ) {
+                                    && node.getRightChild().getDocument().getAverageRelevance() > node.getDocument().getAverageRelevance() ) {
                             switchDocuments( node, node.getRightChild() );
                             countOfRepositionings++;
                         }

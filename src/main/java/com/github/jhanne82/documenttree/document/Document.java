@@ -2,7 +2,6 @@ package com.github.jhanne82.documenttree.document;
 
 
 import org.apache.commons.collections.buffer.CircularFifoBuffer;
-import org.jscience.mathematics.number.Real;
 
 public class Document <T>
     implements Cloneable, Comparable<Document<T>> {
@@ -52,35 +51,35 @@ public class Document <T>
 
 
     
-    public Real getAverageRelevance() {
+    public double getAverageRelevance() {
 
         if( relevanceBuffer.isEmpty() ) {
-            return Real.ZERO;
+            return 0.0;
         }
 
-        Real averageRelevance = Real.ZERO;
+        double averageRelevance = 0;
 
         for ( Object singleRelevance : relevanceBuffer ) {
-            averageRelevance = averageRelevance.plus( (Real)singleRelevance );
+            averageRelevance += (double)singleRelevance;
         }
 
-        averageRelevance = averageRelevance.divide( relevanceBuffer.size() );
+        averageRelevance = averageRelevance / relevanceBuffer.size();
 
         return averageRelevance;
     }
 
 
-    public Real getLastCalculatedRelevance() {
+    public double getLastCalculatedRelevance() {
         if( relevanceBuffer.isEmpty() ) {
-            return Real.ZERO;
+            return 0;
         }
 
-        return ( Real )relevanceBuffer.toArray()[ relevanceBuffer.size() - 1];
+        return ( double )relevanceBuffer.toArray()[ relevanceBuffer.size() - 1];
     }
 
 
 
-    public void addRelevance( Real relevance ) {
+    public void addRelevance( double relevance ) {
         relevanceBuffer.add( relevance );
     }
 
@@ -134,6 +133,12 @@ public class Document <T>
             return -1;
         }
 
-        return this.getLastCalculatedRelevance().compareTo( o.getLastCalculatedRelevance() );
+        if( this.getLastCalculatedRelevance() < o.getLastCalculatedRelevance() ) {
+            return -1;
+        }
+        if( this.getLastCalculatedRelevance() == o.getLastCalculatedRelevance() ) {
+            return 0;
+        }
+        return 1;
     }
 }

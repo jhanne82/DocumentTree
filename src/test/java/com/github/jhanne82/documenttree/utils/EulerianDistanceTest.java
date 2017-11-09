@@ -1,10 +1,8 @@
 package com.github.jhanne82.documenttree.utils;
 
-import org.jscience.mathematics.number.Real;
-import org.junit.Ignore;
 import org.junit.Test;
 
-import static junit.framework.TestCase.assertTrue;
+import static junit.framework.TestCase.assertEquals;
 
 
 public class EulerianDistanceTest {
@@ -15,23 +13,21 @@ public class EulerianDistanceTest {
 
 
     @Test
-    @Ignore
     public void calcEulerianDistance() {
 
-        Real expectedDist = Real.valueOf( 0.8 );
-        Real calcDistance = EulerianDistance.calEulerianDistance( documentVector, searchVector );
+        double expectedDist = 0.8;
+        double calcDistance = EulerianDistance.calEulerianDistance( documentVector, searchVector );
 
-        assertTrue( expectedDist.compareTo( calcDistance ) == 0 );
+        assertEquals( expectedDist, calcDistance );
     }
 
 
     @Test
     public void calcRelevanceTest() {
-        Real expectedRel = Real.valueOf(1.25);
+        double expectedRel = 1.25;
+        double calcRel = EulerianDistance.calcRelevance( documentVector, searchVector );
 
-        Real calcRel = EulerianDistance.calcRelevance( documentVector, searchVector );
-
-        assertTrue( expectedRel.compareTo( calcRel ) == 0 );
+        assertEquals( expectedRel, calcRel );
     }
 
 }
