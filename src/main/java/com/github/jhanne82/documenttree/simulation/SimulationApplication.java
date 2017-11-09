@@ -180,8 +180,6 @@ public class SimulationApplication {
         SimulationResult result[] = documentTreeSimulation.startSearchSimulation( setup );
         printResult( result, printInFile );
 
-        System.out.println( "Simulation END " + dateFormat.format( new Date() ) );
-
     }
 
 
@@ -333,8 +331,11 @@ public class SimulationApplication {
 
     public static void main( String[] args ) {
 
-        SimulationApplication simulation = new SimulationApplication();
-        simulation.startSimulationWithThreads();
+        for( int i = 0; i < 20; i++) {
+            System.out.println("Durchlauf.............." + i+1);
+            SimulationApplication simulation = new SimulationApplication();
+            simulation.startSimulationWithThreads();
+        }
     }
 
 
