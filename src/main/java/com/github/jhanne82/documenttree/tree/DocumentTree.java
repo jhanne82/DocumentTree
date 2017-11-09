@@ -151,7 +151,6 @@ public abstract class DocumentTree<T> {
             while( returnNode == null && tmpNode.getParent() != null ) {
                 returnNode = getNextPossibleChildNodeFromBreadth( tmpNode.getParent(), searchTimeStamp );
                 tmpNode = tmpNode.getParent();
-                currentlyVisitedNode++;
             }
             return returnNode;
 
@@ -160,7 +159,6 @@ public abstract class DocumentTree<T> {
             while( returnNode == null && tmpNode.getParent() != null ) {
                 returnNode = getNextPossibleChildNodeFromDepth( tmpNode.getParent(), searchTimeStamp );
                 tmpNode = tmpNode.getParent();
-                currentlyVisitedNode++;
             }
             return returnNode;
         }
