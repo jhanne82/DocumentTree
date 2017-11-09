@@ -1,40 +1,40 @@
 package com.github.jhanne82.documenttree.utils;
 
 
+import org.jscience.mathematics.number.Real;
+
 
 public class EulerianDistance {
 
 
 
-    protected static double calEulerianDistance(Double[] documentVector, Double[] searchVector ) {
+    protected static Real calEulerianDistance(Double[] documentVector, Double[] searchVector ) {
 
-        double sum = 0;
+        Real sum = Real.ZERO;
 
         for( int i = 0; i < documentVector.length; i++ ) {
-            double documentTermContent = documentVector[i] == null ? 0 : documentVector[i];
-            double searchTermContent = searchVector[i] == null ? 0 : searchVector[i];
-            sum += Math.pow( documentTermContent - searchTermContent, 2 );
+            Real documentTermContent = documentVector[i] == null ? Real.ZERO : Real.valueOf(documentVector[i]);
+            Real searchTermContent = searchVector[i] == null ? Real.ZERO : Real.valueOf( searchVector[i] );
+
+            sum = sum.plus( documentTermContent.minus( searchTermContent ).pow( 2 ));
         }
 
-        return Math.sqrt( sum );
+        return sum.sqrt();
     }
 
 
 
-    private static double transformEulerianDistanceToRelevanceValue( double eulerianDistance ) {
+    private static Real transformEulerianDistanceToRelevanceValue( Real eulerianDistance ) {
 
-        // 1/euler -> 1/10=0,1  1/1=1
-        if( eulerianDistance == 0 ) {
-            return eulerianDistance;
-        }
-        return ( 1/ eulerianDistance );
+        return Real.ONE.divide( eulerianDistance );
+
     }
 
 
 
-    public static double calcRelevance( Double[] documentVector, Double[] searchVector ) {
+    public static Real calcRelevance( Double[] documentVector, Double[] searchVector ) {
 
-        double distance = calEulerianDistance( documentVector, searchVector );
+        Real distance = calEulerianDistance( documentVector, searchVector );
         return transformEulerianDistanceToRelevanceValue( distance );
     }
 

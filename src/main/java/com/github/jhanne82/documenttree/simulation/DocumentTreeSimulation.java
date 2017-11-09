@@ -12,6 +12,7 @@ import com.google.common.math.LongMath;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 
@@ -144,15 +145,7 @@ public abstract class DocumentTreeSimulation <T> {
 
     private List<Document<T>> generateSortedListFromOptimalTree() {
         List<Document<T>> optimalTreeAsList = Arrays.asList( optimalDocumentTree );
-        optimalTreeAsList.sort( (d1, d2) -> {
-            if( d1.getAverageRelevance() == d2.getAverageRelevance() ) {
-                return 0;
-            }
-            if( d1.getAverageRelevance() < d2.getAverageRelevance() ) {
-                return 1;
-            }
-            return -1;
-        }  );
+        optimalTreeAsList.sort( Comparator.comparing( Document::getAverageRelevance ) );
 
         return optimalTreeAsList;
 
@@ -250,6 +243,7 @@ public abstract class DocumentTreeSimulation <T> {
             calcHitMissRate( resultList.getBestResult(), bestMatch, simulationResult );
             simulationResult.addRequiredSearches(resultList.numberOfSearchesTillOptimum());
             simulationResult.addRequiredRepositioning( requiredRepositionings );
+            simulationResult.addRequiredNodes( resultList.numberOfVisitedNodes() );
         }
 
 

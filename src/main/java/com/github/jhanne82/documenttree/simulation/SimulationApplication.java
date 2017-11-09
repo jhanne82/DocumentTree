@@ -5,7 +5,11 @@ import com.github.jhanne82.documenttree.simulation.utils.SimulationResult;
 import com.github.jhanne82.documenttree.simulation.utils.SimulationSetup;
 import org.apache.commons.io.FileUtils;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -304,6 +308,8 @@ public class SimulationApplication {
                      result.getHitRate() + "/" + result.getMissRate() );
         writeInFile( path + File.separator + "RequiredSearches.txt",
                      Arrays.toString( result.getRequiredSearches().toArray() ) );
+        writeInFile( path + File.separator + "VisitedNodes.txt",
+                     Arrays.toString( result.getRequiredRepositionings().toArray() ) );
         writeInFile( path + File.separator + "RequiredRepositionings.txt",
                      Arrays.toString( result.getRequiredRepositionings().toArray() ) );
         writeInFile( path + File.separator + "DocumentsOnCorrectLevelInTree.txt",

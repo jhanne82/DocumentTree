@@ -37,7 +37,7 @@ public class NumberDocumentTreeSimulation
             document.addRelevance( EulerianDistance.calcRelevance( document.getTermList(), searchTermVector ) );
 
             if(    bestMatch == null
-                || document.getLastCalculatedRelevance() > bestMatch.getLastCalculatedRelevance() ) {
+                   || document.getLastCalculatedRelevance().compareTo( bestMatch.getLastCalculatedRelevance() ) > 0 ) {
                 bestMatch = document;
             }
         }

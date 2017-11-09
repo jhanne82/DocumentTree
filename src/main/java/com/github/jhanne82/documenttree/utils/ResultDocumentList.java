@@ -17,16 +17,16 @@ public class ResultDocumentList<T> {
     }
 
 
-    public void add( Document<T> documentToAdd, int searchesTillDocument) {
+    public void add( Document<T> documentToAdd, int searchesTillDocument, int stepsInTreeTillDocument ) {
 
         if( resultTree.size() < maxResults ) {
-            resultTree.add( new Result( documentToAdd, searchesTillDocument ) );
+            resultTree.add( new Result( documentToAdd, searchesTillDocument, stepsInTreeTillDocument ) );
         } else {
 
             Result lastStoredResult = resultTree.last();
-            if( lastStoredResult.document.getLastCalculatedRelevance() < documentToAdd.getLastCalculatedRelevance() ) {
+            if( lastStoredResult.document.getLastCalculatedRelevance().compareTo( documentToAdd.getLastCalculatedRelevance() ) < 0) {
                 resultTree.remove( lastStoredResult );
-                resultTree.add( new Result( documentToAdd, searchesTillDocument ) );
+                resultTree.add( new Result( documentToAdd, searchesTillDocument, stepsInTreeTillDocument ) );
             }
         }
     }
@@ -43,6 +43,11 @@ public class ResultDocumentList<T> {
     }
 
 
+    public int numberOfVisitedNodes() {
+        return resultTree.first().requiredStepsInTreeTillDocument;
+    }
+
+
 
     @Override
     public String toString() {
@@ -55,12 +60,14 @@ public class ResultDocumentList<T> {
         implements Comparable<Result<T>>{
 
         int requiredSearchesTillDocument = 0;
+        int requiredStepsInTreeTillDocument = 0;
         Document<T> document;
 
 
-        Result( Document<T> document, int requiredSearchesTillDocument ) {
+        Result( Document<T> document, int requiredSearchesTillDocument, int requiredStepsInTreeTillDocument ) {
             this.document = document;
             this.requiredSearchesTillDocument = requiredSearchesTillDocument;
+            this.requiredStepsInTreeTillDocument = requiredStepsInTreeTillDocument;
         }
 
         @Override
@@ -69,13 +76,8 @@ public class ResultDocumentList<T> {
                 return -1;
             }
 
-            if( this.document.getLastCalculatedRelevance() < o.document.getLastCalculatedRelevance() ) {
-                return -1;
-            }
-            if( this.document.getLastCalculatedRelevance() == o.document.getLastCalculatedRelevance() ) {
-                return 0;
-            }
-            return 1;
+            return this.document.getLastCalculatedRelevance().compareTo( o.document.getLastCalculatedRelevance() );
+            
         }
     }
 }

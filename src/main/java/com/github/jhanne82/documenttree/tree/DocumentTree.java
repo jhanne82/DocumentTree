@@ -4,6 +4,7 @@ package com.github.jhanne82.documenttree.tree;
 import com.github.jhanne82.documenttree.document.Document;
 import com.github.jhanne82.documenttree.utils.ResultDocumentList;
 import com.google.common.collect.ImmutableList;
+import org.jscience.mathematics.number.Real;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,12 +13,12 @@ import java.util.Random;
 public abstract class DocumentTree<T> {
 
     private DocumentNode<T>       rootNode;
-    private int                   currentlyVisitedNode;
+    private int                   countOfSearchedDocuments;
     private ResultDocumentList<T> resultDocumentList;
 
 
 
-    protected abstract double calcRelevanceOfDocument(T[] documentTermVector, T[] searchTermVector );
+    protected abstract Real calcRelevanceOfDocument( T[] documentTermVector, T[] searchTermVector );
 
 
 
@@ -62,25 +63,25 @@ public abstract class DocumentTree<T> {
 
         nodesOnNextLevel.add( rootNode );
 
-        currentlyVisitedNode = 0;
+        countOfSearchedDocuments = 0;
 
         // maxVisitedNode means no Abbruchkriterium
-        while ( !nodesOnNextLevel.isEmpty() && ( currentlyVisitedNode < maxVisitedNode ) ) {
+        while ( !nodesOnNextLevel.isEmpty() && ( countOfSearchedDocuments < maxVisitedNode ) ) {
 
             // ChildLeaves von vorherigen Nodes werden zu aktuellen Nodes
             List<DocumentNode<T>> nodesOnCurrentLevel = ImmutableList.copyOf( nodesOnNextLevel );
             nodesOnNextLevel = new ArrayList<>();
 
             for( DocumentNode<T> node : nodesOnCurrentLevel ) {
-                if( currentlyVisitedNode == maxVisitedNode ) {
+                if( countOfSearchedDocuments == maxVisitedNode ) {
                     break;
                 }
                 if( node != null ) {
                     node.getDocument().addRelevance(calcRelevanceOfDocument(node.getDocument().getTermList(), searchTerm));
                     node.getDocument().setTimestampOfLastSearch( searchTimeStamp );
-                    resultDocumentList.add(node.getDocument(), currentlyVisitedNode);
+                    resultDocumentList.add( node.getDocument(), countOfSearchedDocuments, countOfSearchedDocuments );
                     nodesOnNextLevel.addAll(node.getChildLeaves());
-                    currentlyVisitedNode++;
+                    countOfSearchedDocuments++;
                 }
             }
         }
@@ -92,7 +93,7 @@ public abstract class DocumentTree<T> {
 
     public ResultDocumentList<T> depthFirstSearch( int maxVisitedNode, T[] searchTerm, int searchTimeStamp ) {
         resultDocumentList = new ResultDocumentList<>( 1 );
-        currentlyVisitedNode = 0;
+        countOfSearchedDocuments = 0;
 
         depthFirstSearch( rootNode, maxVisitedNode, searchTerm, searchTimeStamp  );
         return resultDocumentList;
@@ -106,13 +107,13 @@ public abstract class DocumentTree<T> {
             return false;
         }
 
-        if (currentlyVisitedNode == maxVisitedNode ) {
+        if ( countOfSearchedDocuments == maxVisitedNode ) {
             return true;
         } else {
             node.getDocument().addRelevance( calcRelevanceOfDocument( node.getDocument().getTermList(), searchTerm ) );
             node.getDocument().setTimestampOfLastSearch( searchTimeStamp );
-            resultDocumentList.add( node.getDocument(), currentlyVisitedNode );
-            currentlyVisitedNode++;
+            resultDocumentList.add( node.getDocument(), countOfSearchedDocuments, countOfSearchedDocuments );
+            countOfSearchedDocuments++;
         }
 
         return (   depthFirstSearch( node.getLeftChild(), maxVisitedNode, searchTerm, searchTimeStamp )
@@ -121,16 +122,20 @@ public abstract class DocumentTree<T> {
 
 
 
+    private int countOfVisitedDocuments = 0;
     public ResultDocumentList<T> randomWalkSearch( int maxVisitedNode, T[] searchTerm, int searchTimeStamp ) {
         resultDocumentList = new ResultDocumentList<>( 1 );
-        currentlyVisitedNode = 0;
+        countOfSearchedDocuments = 0;
+        countOfVisitedDocuments = 0;
 
         DocumentNode<T> currentlyConsideredNode = rootNode;
+        countOfVisitedDocuments++;
 
-        while ( currentlyConsideredNode != null && currentlyVisitedNode < maxVisitedNode ){
+        while ( currentlyConsideredNode != null && countOfSearchedDocuments < maxVisitedNode ){
+            countOfSearchedDocuments++;
             currentlyConsideredNode.getDocument().addRelevance( calcRelevanceOfDocument( currentlyConsideredNode.getDocument().getTermList(), searchTerm ) );
             currentlyConsideredNode.getDocument().setTimestampOfLastSearch( searchTimeStamp );
-            resultDocumentList.add( currentlyConsideredNode.getDocument(), currentlyVisitedNode );
+            resultDocumentList.add( currentlyConsideredNode.getDocument(), countOfSearchedDocuments, countOfVisitedDocuments );
             currentlyConsideredNode = getNextRandomNode( currentlyConsideredNode, searchTimeStamp );
 
         }
@@ -180,7 +185,7 @@ public abstract class DocumentTree<T> {
             nodesOnNextLevel = new ArrayList<>();
 
             for( DocumentNode<T> nodeOnCurrentLevel : nodesOnCurrentLevel ) {
-                currentlyVisitedNode++;
+                countOfVisitedDocuments++;
                 if( nodeOnCurrentLevel.getDocument().getTimestampOfLastSearch() != searchTimeStamp ) {
                     return nodeOnCurrentLevel;
                 }
@@ -197,12 +202,10 @@ public abstract class DocumentTree<T> {
             return null;
         }
 
-        currentlyVisitedNode++;
-
         if( node.getDocument().getTimestampOfLastSearch() != searchTimeStamp ) {
             return node;
         }
-
+        countOfVisitedDocuments++;
         DocumentNode<T> bcb = getNextPossibleChildNodeFromDepth( node.getLeftChild(), searchTimeStamp );
 
         if( bcb == null ) {
@@ -236,14 +239,17 @@ public abstract class DocumentTree<T> {
                         if ( node.getLeftChild() != null
                              && node.getLeftChild().getDocument().getCountOfStoredRelevances()
                                 >= numberOfRelevenceCalculationToRepositiong
-                             && node.getLeftChild().getDocument().getAverageRelevance() > node.getDocument()
-                                                                                              .getAverageRelevance() ) {
+                             && node.getLeftChild().getDocument()
+                                    .getAverageRelevance().compareTo( node.getDocument()
+                                                                          .getAverageRelevance() ) > 0 ) {
                             switchDocuments( node, node.getLeftChild() );
                             countOfRepositionings++;
 
                         } else if ( node.getRightChild() != null
                                     && node.getRightChild().getDocument().getCountOfStoredRelevances() > numberOfRelevenceCalculationToRepositiong
-                                    && node.getRightChild().getDocument().getAverageRelevance() > node.getDocument().getAverageRelevance() ) {
+                                    && node.getRightChild().getDocument()
+                                           .getAverageRelevance().compareTo( node.getDocument()
+                                                                                 .getAverageRelevance() ) > 0 ) {
                             switchDocuments( node, node.getRightChild() );
                             countOfRepositionings++;
                         }

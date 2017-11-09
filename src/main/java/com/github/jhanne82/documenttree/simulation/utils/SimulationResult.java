@@ -10,6 +10,7 @@ public class SimulationResult {
 
     // Bewertungskriterien
     private List<Integer> requiresSearches;
+    private List<Integer> requiredNodeList;
     private int missRate = 0;
     private int hitRate = 0;
     private List<Integer> averageCountOfRepositioning;
@@ -42,6 +43,16 @@ public class SimulationResult {
             requiresSearches = new ArrayList<>();
         }
         requiresSearches.add( requiredSearches );
+    }
+
+
+
+    public List<Integer> getRequiredNodes() { return requiredNodeList; }
+    public void addRequiredNodes( int requiredNodes ) {
+        if( null == requiredNodeList ) {
+            requiredNodeList = new ArrayList<>();
+        }
+        requiredNodeList.add( requiredNodes );
     }
 
 
