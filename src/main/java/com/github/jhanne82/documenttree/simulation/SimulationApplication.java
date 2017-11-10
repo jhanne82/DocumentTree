@@ -209,7 +209,7 @@ public class SimulationApplication {
                     Parameter parameter = parameterList.get(finalI);
                     SimulationApplication simulation = new SimulationApplication();
                     simulation.simulation( parameter.searchType, parameter.distributionForDocument,
-                            parameter.distributionForSearch, parameter.cluster, false );
+                            parameter.distributionForSearch, parameter.cluster, true );
                 }
             });
             thread1.start();
@@ -220,7 +220,7 @@ public class SimulationApplication {
                         Parameter parameter = parameterList.get(finalI+1);
                         SimulationApplication simulation = new SimulationApplication();
                         simulation.simulation( parameter.searchType, parameter.distributionForDocument,
-                                parameter.distributionForSearch, parameter.cluster, false );
+                                parameter.distributionForSearch, parameter.cluster, true );
                     }
                 });
                 thread2.start();
