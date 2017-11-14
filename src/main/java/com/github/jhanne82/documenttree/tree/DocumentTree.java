@@ -200,11 +200,10 @@ public abstract class DocumentTree<T> {
         if ( node == null) {
             return null;
         }
-
+        countOfVisitedDocuments++;
         if( node.getDocument().getTimestampOfLastSearch() != searchTimeStamp ) {
             return node;
         }
-        countOfVisitedDocuments++;
         DocumentNode<T> bcb = getNextPossibleChildNodeFromDepth( node.getLeftChild(), searchTimeStamp );
 
         if( bcb == null ) {
