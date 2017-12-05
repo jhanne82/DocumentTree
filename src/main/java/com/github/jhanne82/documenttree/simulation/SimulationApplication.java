@@ -317,11 +317,8 @@ public class SimulationApplication {
 
     public static void main( String[] args ) {
 
-        for( int i = 0; i < 4; i++) {
-            System.out.println("Durchlauf.............." + (i+1));
-            SimulationApplication simulation = new SimulationApplication();
-            simulation.startSimulationWithThreads();
-        }
+        SimulationApplication simulation = new SimulationApplication();
+        simulation.startSimulationWithThreads();
     }
 
 
