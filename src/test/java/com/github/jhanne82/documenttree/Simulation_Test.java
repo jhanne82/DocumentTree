@@ -1,8 +1,8 @@
 package com.github.jhanne82.documenttree;
 
 
-import com.github.jhanne82.documenttree.simulation.Distribution;
-import com.github.jhanne82.documenttree.simulation.SearchType;
+import com.github.jhanne82.documenttree.enumeration.Distribution;
+import com.github.jhanne82.documenttree.enumeration.SearchType;
 import com.github.jhanne82.documenttree.simulation.SimulationApplication;
 import org.junit.Test;
 

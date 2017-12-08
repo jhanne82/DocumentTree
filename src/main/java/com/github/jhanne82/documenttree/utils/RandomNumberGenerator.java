@@ -1,6 +1,6 @@
 package com.github.jhanne82.documenttree.utils;
 
-import com.github.jhanne82.documenttree.simulation.Distribution;
+import com.github.jhanne82.documenttree.enumeration.Distribution;
 
 import java.util.Random;
 

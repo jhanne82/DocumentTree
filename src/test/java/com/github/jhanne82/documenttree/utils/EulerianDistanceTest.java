@@ -13,16 +13,6 @@ public class EulerianDistanceTest {
 
 
     @Test
-    public void calcEulerianDistance() {
-
-        double expectedDist = 0.8;
-        double calcDistance = EulerianDistance.calEulerianDistance( documentVector, searchVector );
-
-        assertEquals( expectedDist, calcDistance );
-    }
-
-
-    @Test
     public void calcRelevanceTest() {
         double expectedRel = 1.25;
         double calcRel = EulerianDistance.calcRelevance( documentVector, searchVector );

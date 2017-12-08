@@ -1,7 +1,7 @@
 package com.github.jhanne82.documenttree.simulation.utils;
 
-import com.github.jhanne82.documenttree.simulation.Distribution;
-import com.github.jhanne82.documenttree.simulation.SearchType;
+import com.github.jhanne82.documenttree.enumeration.Distribution;
+import com.github.jhanne82.documenttree.enumeration.SearchType;
 
 public class SimulationSetup {
 
