@@ -11,7 +11,7 @@ import org.apache.commons.collections.buffer.CircularFifoBuffer;
  * @param <T> the type of the elements of terms describing the document.
  */
 public class Document <T>
-    implements Cloneable, Comparable<Document<T>> {
+    implements Cloneable {
 
     private final CircularFifoBuffer relevanceBuffer;
     private final String             documentName;
@@ -140,20 +140,4 @@ public class Document <T>
     }
     
 
-
-    @Override
-    public int compareTo( Document<T> o ) {
-
-        if( o == null ) {
-            return -1;
-        }
-
-        if( this.getLastCalculatedRelevance() < o.getLastCalculatedRelevance() ) {
-            return -1;
-        }
-        if( this.getLastCalculatedRelevance() == o.getLastCalculatedRelevance() ) {
-            return 0;
-        }
-        return 1;
-    }
 }
