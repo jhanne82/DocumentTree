@@ -34,7 +34,7 @@ public class NumberDocumentTreeSimulation
 
         for ( Document<Double> document : optimalDocumentTree ) {
 
-            document.addRelevance( EulerianDistance.calcRelevance( document.getTermList(), searchTermVector ) );
+            document.addRelevance( EulerianDistance.calcRelevance( document.getTermVector(), searchTermVector ) );
 
             if(    bestMatch == null
                 || document.getLastCalculatedRelevance() > bestMatch.getLastCalculatedRelevance() ) {
@@ -72,10 +72,6 @@ public class NumberDocumentTreeSimulation
                 e.printStackTrace();
             }
         }
-        /*
-        documentTreeWithGlobalKnowledge.level_order_insert( null, optimalDocumentTree, 0, setup.countOfCreatedDocuments );
-        documentTreeWithLocalKnowledge.level_order_insert( null, optimalDocumentTree, 0, setup.countOfCreatedDocuments );
-        stressReducedDocumentTree.level_order_insert( null, optimalDocumentTree, 0, setup.countOfCreatedDocuments );*/
     }
 
 
