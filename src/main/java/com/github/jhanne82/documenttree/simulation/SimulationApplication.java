@@ -295,7 +295,7 @@ public class SimulationApplication {
         writeInFile( path + File.separator + "RequiredSearches.txt",
                      Arrays.toString( result.getRequiredSearches().toArray() ) );
         writeInFile( path + File.separator + "VisitedNodes.txt",
-                     Arrays.toString( result.getRequiredRepositionings().toArray() ) );
+                     Arrays.toString( result.getRequiredNodes().toArray() ) );
         writeInFile( path + File.separator + "RequiredRepositionings.txt",
                      Arrays.toString( result.getRequiredRepositionings().toArray() ) );
         writeInFile( path + File.separator + "DocumentsOnCorrectLevelInTree.txt",
