@@ -57,9 +57,9 @@ public abstract class DocumentTreeSimulation <T> {
             Document<T> bestMatch = searchOnOptimalDocumentTree( searchTermVector );
 
             List<TreeSearchSimulationThread> threads = Arrays.asList(
-                    new TreeSearchSimulationThread( searchTermVector, setup, i + 1, bestMatch, resultGlobalKnowledge, documentTreeWithGlobalKnowledge, false ),
-                    new TreeSearchSimulationThread( searchTermVector, setup, i + 1, bestMatch, resultLocalKnowledge, documentTreeWithLocalKnowledge, true ),
-                    new TreeSearchSimulationThread( searchTermVector, setup, i + 1, bestMatch, resultStressReducedTree, stressReducedDocumentTree, true ));
+                    new TreeSearchSimulationThread( searchTermVector, setup, i + 1, bestMatch, resultGlobalKnowledge, documentTreeWithGlobalKnowledge, false, true ),
+                    new TreeSearchSimulationThread( searchTermVector, setup, i + 1, bestMatch, resultLocalKnowledge, documentTreeWithLocalKnowledge, true, true ),
+                    new TreeSearchSimulationThread( searchTermVector, setup, i + 1, bestMatch, resultStressReducedTree, stressReducedDocumentTree, true, false ));
 
             for( Thread thread : threads ) {
                 try {
@@ -69,9 +69,9 @@ public abstract class DocumentTreeSimulation <T> {
                     e.printStackTrace();
                 }
             }
-
         }
 
+        stressReducedDocumentTree.repositionOfDocuments( 0, 0, Integer.MAX_VALUE );
 
         List<Document<T>> optimalTreeAsList = generateSortedListFromOptimalTree();
         List<CheckDifferencesThread> threads = Arrays.asList(
@@ -114,8 +114,9 @@ public abstract class DocumentTreeSimulation <T> {
         private final SimulationResult result;
         private final DocumentTree<T>  tree;
         private final boolean isLocalKnowledge;
+        private final boolean shouldRepositionAfterSearch;
 
-        TreeSearchSimulationThread( T[] searchTermVector, SimulationSetup setup, int searchTimeStamp, Document<T> bestMatch, SimulationResult result, DocumentTree<T> tree, boolean isLocalKnowledge ) {
+        TreeSearchSimulationThread( T[] searchTermVector, SimulationSetup setup, int searchTimeStamp, Document<T> bestMatch, SimulationResult result, DocumentTree<T> tree, boolean isLocalKnowledge, boolean shouldRepositionAfterSearch ) {
             this.searchTermVector = searchTermVector;
             this.setup = setup;
             this.searchTimeStamp = searchTimeStamp +1;
@@ -123,6 +124,7 @@ public abstract class DocumentTreeSimulation <T> {
             this.result = result;
             this.tree = tree;
             this.isLocalKnowledge = isLocalKnowledge;
+            this.shouldRepositionAfterSearch = shouldRepositionAfterSearch;
         }
 
 
@@ -134,7 +136,10 @@ public abstract class DocumentTreeSimulation <T> {
                 limitForLocalKnowledge = setup.limitForLocalKnowledge;
             }
             ResultDocumentList resultList = searchOnTree( tree, searchTermVector, setup.searchType, limitForLocalKnowledge, searchTimeStamp );
-            int requiredRepositionings = tree.repositionOfDocuments( setup.requiredSearchesOnDocumentToRespositioning, searchTimeStamp, setup.treshold );
+            int requiredRepositionings = 0;
+            if(shouldRepositionAfterSearch) {
+                requiredRepositionings = tree.repositionOfDocuments( setup.requiredSearchesOnDocumentToRespositioning, searchTimeStamp, setup.treshold );
+            }
             storeSimulationResultAfterEverySearch( resultList, bestMatch, requiredRepositionings, result );
         }
 

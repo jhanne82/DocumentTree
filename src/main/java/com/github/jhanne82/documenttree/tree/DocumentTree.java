@@ -76,7 +76,7 @@ public abstract class DocumentTree<T> {
                     break;
                 }
                 if( node != null ) {
-                    node.getDocument().addRelevance(calcRelevanceOfDocument(node.getDocument().getTermList(), searchTerm));
+                    node.getDocument().addRelevance(calcRelevanceOfDocument(node.getDocument().getTermVector(), searchTerm));
                     node.getDocument().setTimestampOfLastSearch( searchTimeStamp );
                     resultDocumentList.add( node.getDocument(), countOfSearchedDocuments, countOfSearchedDocuments );
                     nodesOnNextLevel.addAll(node.getChildLeaves());
@@ -109,7 +109,7 @@ public abstract class DocumentTree<T> {
         if ( countOfSearchedDocuments == maxVisitedNode ) {
             return true;
         } else {
-            node.getDocument().addRelevance( calcRelevanceOfDocument( node.getDocument().getTermList(), searchTerm ) );
+            node.getDocument().addRelevance( calcRelevanceOfDocument( node.getDocument().getTermVector(), searchTerm ) );
             node.getDocument().setTimestampOfLastSearch( searchTimeStamp );
             resultDocumentList.add( node.getDocument(), countOfSearchedDocuments, countOfSearchedDocuments );
             countOfSearchedDocuments++;
@@ -132,7 +132,7 @@ public abstract class DocumentTree<T> {
 
         while ( currentlyConsideredNode != null && countOfSearchedDocuments < maxVisitedNode ){
             countOfSearchedDocuments++;
-            currentlyConsideredNode.getDocument().addRelevance( calcRelevanceOfDocument( currentlyConsideredNode.getDocument().getTermList(), searchTerm ) );
+            currentlyConsideredNode.getDocument().addRelevance( calcRelevanceOfDocument( currentlyConsideredNode.getDocument().getTermVector(), searchTerm ) );
             currentlyConsideredNode.getDocument().setTimestampOfLastSearch( searchTimeStamp );
             resultDocumentList.add( currentlyConsideredNode.getDocument(), countOfSearchedDocuments, countOfVisitedDocuments );
             currentlyConsideredNode = getNextRandomNode( currentlyConsideredNode, searchTimeStamp );
