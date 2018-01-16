@@ -3,27 +3,38 @@ package com.github.jhanne82.documenttree.document;
 
 import org.apache.commons.collections.buffer.CircularFifoBuffer;
 
+
+/**
+ *  Generic representation of a document.
+ *  A document will be defined by a term vector which describes the document and a name.
+ *
+ * @param <T> the type of the elements of terms describing the document.
+ */
 public class Document <T>
     implements Cloneable, Comparable<Document<T>> {
 
     private final CircularFifoBuffer relevanceBuffer;
-    //private final T[] termVector;
-    private final String documentName;
+    private final String             documentName;
+    private final T[]                termVector;
 
-    private final T[] termList;
-
-    private int   timestampOfLastSearch;
+    private int                      timestampOfLastSearch;
 
 
 
-    public Document( T[] termVectorList, String documentName ){
-        this( termVectorList, 20, documentName );
+    /**
+     * Constructs a Document object with a defined list of terms and a document name.
+     * The size of the relevance buffer is fix with 20.
+     * @param termVector defines the elements of the term which describes the document.
+     * @param documentName defines the name of the document.
+     */
+    public Document( T[] termVector, String documentName ){
+        this( termVector, 20, documentName );
     }
 
 
-    public Document( T[] termVectorList, int bufferSize, String documentName ){
+    public Document( T[] termVector, int bufferSize, String documentName ){
         this.relevanceBuffer = new CircularFifoBuffer( bufferSize );
-        this.termList = termVectorList;
+        this.termVector = termVector;
         this.documentName = documentName;
     }
 
@@ -34,13 +45,15 @@ public class Document <T>
     }
 
 
+
     public int getTimestampOfLastSearch() {
         return this.timestampOfLastSearch;
     }
 
 
-    public T[] getTermList() {
-        return this.termList;
+
+    public T[] getTermVector() {
+        return this.termVector;
     }
 
 
@@ -69,11 +82,11 @@ public class Document <T>
     }
 
 
+
     public double getLastCalculatedRelevance() {
         if( relevanceBuffer.isEmpty() ) {
             return 0;
         }
-
         return ( double )relevanceBuffer.toArray()[ relevanceBuffer.size() - 1];
     }
 
@@ -96,11 +109,13 @@ public class Document <T>
     }
 
 
+
     @Override
     public Document<T> clone() {
 
-        return new Document<>(termList, documentName );
+        return new Document<>( termVector, documentName );
     }
+
 
 
     @Override
