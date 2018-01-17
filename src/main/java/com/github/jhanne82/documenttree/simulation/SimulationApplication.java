@@ -190,39 +190,10 @@ public class SimulationApplication {
 
 
         for( int i = 0; i< parameterList.size(); i = i+2 ) {
-            int finalI = i;
-            Thread thread1 = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    Parameter parameter = parameterList.get(finalI);
-                    SimulationApplication simulation = new SimulationApplication();
-                    simulation.simulation( parameter.searchType, parameter.distributionForDocument,
-                            parameter.distributionForSearch, parameter.cluster, true );
-                }
-            });
-            thread1.start();
-            if( (i+1)< parameterList.size() ) {
-                Thread thread2 = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Parameter parameter = parameterList.get(finalI+1);
-                        SimulationApplication simulation = new SimulationApplication();
-                        simulation.simulation( parameter.searchType, parameter.distributionForDocument,
-                                parameter.distributionForSearch, parameter.cluster, true );
-                    }
-                });
-                thread2.start();
-                try {
-                    thread2.join();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-            try {
-                thread1.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            Parameter parameter = parameterList.get(i);
+            SimulationApplication simulation = new SimulationApplication();
+            simulation.simulation( parameter.searchType, parameter.distributionForDocument,
+                                   parameter.distributionForSearch, parameter.cluster, true );
         }
 
     }

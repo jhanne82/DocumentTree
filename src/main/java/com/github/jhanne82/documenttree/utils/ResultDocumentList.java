@@ -49,7 +49,7 @@ public class ResultDocumentList<T> {
             // if max count is not reach, replace the document from the list with the smallest relevance if this value
             // is smaller than the relevance of the document which should be added to the ResultDocumentList
             Result lastStoredResult = resultTree.last();
-            if( lastStoredResult.document.getLastCalculatedRelevance() < documentToAdd.getLastCalculatedRelevance() ) {
+            if( lastStoredResult.document.getLatestCalculatedRelevance() < documentToAdd.getLatestCalculatedRelevance() ) {
                 resultTree.remove( lastStoredResult );
                 resultTree.add( new Result<>( documentToAdd, searchesTillDocument, stepsInTreeTillDocument ) );
             }
@@ -113,7 +113,7 @@ public class ResultDocumentList<T> {
             }
 
             return Double
-                    .compare( this.document.getLastCalculatedRelevance(), o.document.getLastCalculatedRelevance() );
+                    .compare( this.document.getLatestCalculatedRelevance(), o.document.getLatestCalculatedRelevance() );
         }
     }
 }

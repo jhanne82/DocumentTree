@@ -36,16 +36,19 @@ public abstract class DocumentTree<T> {
         }
 
         if (root == null) {
-            rootNode = new DocumentNode<>( documents[start].clone() );
+            rootNode = new DocumentNode<>( new Document<>( documents[start].getTermVector()
+                                                          ,documents[start].getDocumentName() ) );
             root = rootNode;
         }
 
         if ( root.getLeftChild() == null && root.getRightChild() == null ) {
             if( left < size ) {
-                root.setLeftChild( new DocumentNode<>( documents[left ].clone() ));
+                root.setLeftChild( new DocumentNode<>( new Document<>( documents[left].getTermVector()
+                                                                      ,documents[left].getDocumentName() ) ));
             }
             if( right < size ) {
-                root.setRightChild( new DocumentNode<>( documents[right].clone() ) );
+                root.setRightChild( new DocumentNode<>( new Document<>( documents[right].getTermVector()
+                                                                       ,documents[right].getDocumentName() ) ) );
             }
         }
 
@@ -77,7 +80,7 @@ public abstract class DocumentTree<T> {
                 }
                 if( node != null ) {
                     node.getDocument().addRelevance(calcRelevanceOfDocument(node.getDocument().getTermVector(), searchTerm));
-                    node.getDocument().setTimestampOfLastSearch( searchTimeStamp );
+                    node.getDocument().setTimestampOfLatestSearch( searchTimeStamp );
                     resultDocumentList.add( node.getDocument(), countOfSearchedDocuments, countOfSearchedDocuments );
                     nodesOnNextLevel.addAll(node.getChildLeaves());
                     countOfSearchedDocuments++;
@@ -110,7 +113,7 @@ public abstract class DocumentTree<T> {
             return true;
         } else {
             node.getDocument().addRelevance( calcRelevanceOfDocument( node.getDocument().getTermVector(), searchTerm ) );
-            node.getDocument().setTimestampOfLastSearch( searchTimeStamp );
+            node.getDocument().setTimestampOfLatestSearch( searchTimeStamp );
             resultDocumentList.add( node.getDocument(), countOfSearchedDocuments, countOfSearchedDocuments );
             countOfSearchedDocuments++;
         }
@@ -133,7 +136,7 @@ public abstract class DocumentTree<T> {
         while ( currentlyConsideredNode != null && countOfSearchedDocuments < maxVisitedNode ){
             countOfSearchedDocuments++;
             currentlyConsideredNode.getDocument().addRelevance( calcRelevanceOfDocument( currentlyConsideredNode.getDocument().getTermVector(), searchTerm ) );
-            currentlyConsideredNode.getDocument().setTimestampOfLastSearch( searchTimeStamp );
+            currentlyConsideredNode.getDocument().setTimestampOfLatestSearch( searchTimeStamp );
             resultDocumentList.add( currentlyConsideredNode.getDocument(), countOfSearchedDocuments, countOfVisitedDocuments );
             currentlyConsideredNode = getNextRandomNode( currentlyConsideredNode, searchTimeStamp );
 
@@ -185,7 +188,7 @@ public abstract class DocumentTree<T> {
 
             for( DocumentNode<T> nodeOnCurrentLevel : nodesOnCurrentLevel ) {
                 countOfVisitedDocuments++;
-                if( nodeOnCurrentLevel.getDocument().getTimestampOfLastSearch() != searchTimeStamp ) {
+                if( nodeOnCurrentLevel.getDocument().getTimestampOfLatestSearch() != searchTimeStamp ) {
                     return nodeOnCurrentLevel;
                 }
                 nodesOnNextLevel.addAll(nodeOnCurrentLevel.getChildLeaves());
@@ -201,7 +204,7 @@ public abstract class DocumentTree<T> {
             return null;
         }
         countOfVisitedDocuments++;
-        if( node.getDocument().getTimestampOfLastSearch() != searchTimeStamp ) {
+        if( node.getDocument().getTimestampOfLatestSearch() != searchTimeStamp ) {
             return node;
         }
         DocumentNode<T> bcb = getNextPossibleChildNodeFromDepth( node.getLeftChild(), searchTimeStamp );
@@ -248,8 +251,8 @@ public abstract class DocumentTree<T> {
                             switchDocuments( node, node.getRightChild() );
                             countOfRepositionings++;
                         }
-                    } else if( timestampOfLastSearch - node.getDocument().getTimestampOfLastSearch() >= treshold
-                               && node.getDocument().getTimestampOfLastSearch() < node.getParent().getDocument().getTimestampOfLastSearch()) {
+                    } else if( timestampOfLastSearch - node.getDocument().getTimestampOfLatestSearch() >= treshold
+                               && node.getDocument().getTimestampOfLatestSearch() < node.getParent().getDocument().getTimestampOfLatestSearch()) {
                         switchDocuments( node, node.getParent() );
                         countOfRepositionings++;
                     }

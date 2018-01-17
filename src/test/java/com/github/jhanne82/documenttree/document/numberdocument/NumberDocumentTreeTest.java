@@ -65,34 +65,34 @@ public class NumberDocumentTreeTest {
         ResultDocumentList list = tree.depthFirstSearch( 5, searchVector, 20 );
 
         assertEquals( "Doc1", tree.getRootNode().getDocument().getDocumentName() );
-        assertEquals( 20, tree.getRootNode().getDocument().getTimestampOfLastSearch() );
+        assertEquals( 20, tree.getRootNode().getDocument().getTimestampOfLatestSearch() );
         assertEquals( EulerianDistance.calcRelevance( ( Double[] )tree.getRootNode().getDocument().getTermVector(),
                                                       searchVector ),
-                      tree.getRootNode().getDocument().getLastCalculatedRelevance() );
+                      tree.getRootNode().getDocument().getLatestCalculatedRelevance() );
 
         assertEquals( "Doc2", tree.getRootNode().getLeftChild().getDocument().getDocumentName() );
-        assertEquals( 20, tree.getRootNode().getLeftChild().getDocument().getTimestampOfLastSearch() );
+        assertEquals( 20, tree.getRootNode().getLeftChild().getDocument().getTimestampOfLatestSearch() );
         assertEquals( EulerianDistance.calcRelevance( ( Double[] )tree.getRootNode().getLeftChild().getDocument().getTermVector(),
                                                       searchVector ),
-                      tree.getRootNode().getLeftChild().getDocument().getLastCalculatedRelevance() );
+                      tree.getRootNode().getLeftChild().getDocument().getLatestCalculatedRelevance() );
 
         assertEquals( "Doc3", tree.getRootNode().getRightChild().getDocument().getDocumentName() );
-        assertEquals( 20, tree.getRootNode().getRightChild().getDocument().getTimestampOfLastSearch() );
+        assertEquals( 20, tree.getRootNode().getRightChild().getDocument().getTimestampOfLatestSearch() );
         assertEquals( EulerianDistance.calcRelevance( ( Double[] )tree.getRootNode().getRightChild().getDocument().getTermVector(),
                                                       searchVector ),
-                      tree.getRootNode().getRightChild().getDocument().getLastCalculatedRelevance() );
+                      tree.getRootNode().getRightChild().getDocument().getLatestCalculatedRelevance() );
 
         assertEquals( "Doc4", tree.getRootNode().getLeftChild().getLeftChild().getDocument().getDocumentName() );
-        assertEquals( 20, tree.getRootNode().getLeftChild().getLeftChild().getDocument().getTimestampOfLastSearch() );
+        assertEquals( 20, tree.getRootNode().getLeftChild().getLeftChild().getDocument().getTimestampOfLatestSearch() );
         assertEquals( EulerianDistance.calcRelevance( ( Double[] )tree.getRootNode().getLeftChild().getLeftChild().getDocument().getTermVector(),
                                                       searchVector ),
-                      tree.getRootNode().getLeftChild().getLeftChild().getDocument().getLastCalculatedRelevance() );
+                      tree.getRootNode().getLeftChild().getLeftChild().getDocument().getLatestCalculatedRelevance() );
 
         assertEquals( "Doc5", tree.getRootNode().getLeftChild().getRightChild().getDocument().getDocumentName() );
-        assertEquals( 20, tree.getRootNode().getLeftChild().getRightChild().getDocument().getTimestampOfLastSearch() );
+        assertEquals( 20, tree.getRootNode().getLeftChild().getRightChild().getDocument().getTimestampOfLatestSearch() );
         assertEquals( EulerianDistance.calcRelevance( ( Double[] )tree.getRootNode().getLeftChild().getRightChild().getDocument().getTermVector(),
                                                       searchVector ),
-                      tree.getRootNode().getLeftChild().getRightChild().getDocument().getLastCalculatedRelevance() );
+                      tree.getRootNode().getLeftChild().getRightChild().getDocument().getLatestCalculatedRelevance() );
     }
 
 
@@ -108,19 +108,19 @@ public class NumberDocumentTreeTest {
         ResultDocumentList list = tree.depthFirstSearch( 3, searchVector, 20 );
 
         assertEquals( "Doc1", tree.getRootNode().getDocument().getDocumentName() );
-        assertEquals( 20, tree.getRootNode().getDocument().getTimestampOfLastSearch() );
+        assertEquals( 20, tree.getRootNode().getDocument().getTimestampOfLatestSearch() );
 
         assertEquals( "Doc2", tree.getRootNode().getLeftChild().getDocument().getDocumentName() );
-        assertEquals( 20, tree.getRootNode().getLeftChild().getDocument().getTimestampOfLastSearch() );
+        assertEquals( 20, tree.getRootNode().getLeftChild().getDocument().getTimestampOfLatestSearch() );
 
         assertEquals( "Doc3", tree.getRootNode().getRightChild().getDocument().getDocumentName() );
-        assertEquals( 0, tree.getRootNode().getRightChild().getDocument().getTimestampOfLastSearch() );
+        assertEquals( 0, tree.getRootNode().getRightChild().getDocument().getTimestampOfLatestSearch() );
 
         assertEquals( "Doc4", tree.getRootNode().getLeftChild().getLeftChild().getDocument().getDocumentName() );
-        assertEquals( 20, tree.getRootNode().getLeftChild().getLeftChild().getDocument().getTimestampOfLastSearch() );
+        assertEquals( 20, tree.getRootNode().getLeftChild().getLeftChild().getDocument().getTimestampOfLatestSearch() );
 
         assertEquals( "Doc5", tree.getRootNode().getLeftChild().getRightChild().getDocument().getDocumentName() );
-        assertEquals( 0, tree.getRootNode().getLeftChild().getRightChild().getDocument().getTimestampOfLastSearch() );
+        assertEquals( 0, tree.getRootNode().getLeftChild().getRightChild().getDocument().getTimestampOfLatestSearch() );
 
     }
 
@@ -136,35 +136,35 @@ public class NumberDocumentTreeTest {
         ResultDocumentList list = tree.breadthFirstSearch( 5, searchVector, 25 );
 
         assertEquals( "Doc1", tree.getRootNode().getDocument().getDocumentName() );
-        assertEquals( 25, tree.getRootNode().getDocument().getTimestampOfLastSearch() );
+        assertEquals( 25, tree.getRootNode().getDocument().getTimestampOfLatestSearch() );
         assertEquals( EulerianDistance.calcRelevance( ( Double[] )tree.getRootNode().getDocument().getTermVector(),
                                                       searchVector ),
-                      tree.getRootNode().getDocument().getLastCalculatedRelevance() );
+                      tree.getRootNode().getDocument().getLatestCalculatedRelevance() );
 
         assertEquals( "Doc2", tree.getRootNode().getLeftChild().getDocument().getDocumentName() );
-        assertEquals( 25, tree.getRootNode().getLeftChild().getDocument().getTimestampOfLastSearch() );
+        assertEquals( 25, tree.getRootNode().getLeftChild().getDocument().getTimestampOfLatestSearch() );
         assertEquals( EulerianDistance.calcRelevance( ( Double[] )tree.getRootNode().getLeftChild().getDocument().getTermVector(),
                                                       searchVector ),
-                      tree.getRootNode().getLeftChild().getDocument().getLastCalculatedRelevance() );
+                      tree.getRootNode().getLeftChild().getDocument().getLatestCalculatedRelevance() );
 
 
         assertEquals( "Doc3", tree.getRootNode().getRightChild().getDocument().getDocumentName() );
-        assertEquals( 25, tree.getRootNode().getRightChild().getDocument().getTimestampOfLastSearch() );
+        assertEquals( 25, tree.getRootNode().getRightChild().getDocument().getTimestampOfLatestSearch() );
         assertEquals( EulerianDistance.calcRelevance( ( Double[] )tree.getRootNode().getRightChild().getDocument().getTermVector(),
                                                       searchVector ),
-                      tree.getRootNode().getRightChild().getDocument().getLastCalculatedRelevance() );
+                      tree.getRootNode().getRightChild().getDocument().getLatestCalculatedRelevance() );
 
         assertEquals( "Doc4", tree.getRootNode().getLeftChild().getLeftChild().getDocument().getDocumentName() );
-        assertEquals( 25, tree.getRootNode().getLeftChild().getLeftChild().getDocument().getTimestampOfLastSearch() );
+        assertEquals( 25, tree.getRootNode().getLeftChild().getLeftChild().getDocument().getTimestampOfLatestSearch() );
         assertEquals( EulerianDistance.calcRelevance( ( Double[] )tree.getRootNode().getLeftChild().getLeftChild().getDocument().getTermVector(),
                                                       searchVector ),
-                      tree.getRootNode().getLeftChild().getLeftChild().getDocument().getLastCalculatedRelevance() );
+                      tree.getRootNode().getLeftChild().getLeftChild().getDocument().getLatestCalculatedRelevance() );
 
         assertEquals( "Doc5", tree.getRootNode().getLeftChild().getRightChild().getDocument().getDocumentName() );
-        assertEquals( 25, tree.getRootNode().getLeftChild().getRightChild().getDocument().getTimestampOfLastSearch() );
+        assertEquals( 25, tree.getRootNode().getLeftChild().getRightChild().getDocument().getTimestampOfLatestSearch() );
         assertEquals( EulerianDistance.calcRelevance( ( Double[] )tree.getRootNode().getLeftChild().getRightChild().getDocument().getTermVector(),
                                                       searchVector ),
-                      tree.getRootNode().getLeftChild().getRightChild().getDocument().getLastCalculatedRelevance() );
+                      tree.getRootNode().getLeftChild().getRightChild().getDocument().getLatestCalculatedRelevance() );
     }
 
 
@@ -177,19 +177,19 @@ public class NumberDocumentTreeTest {
         tree.breadthFirstSearch( 3, searchVector, 30 );
 
         assertEquals( "Doc1", tree.getRootNode().getDocument().getDocumentName() );
-        assertEquals( 30, tree.getRootNode().getDocument().getTimestampOfLastSearch() );
+        assertEquals( 30, tree.getRootNode().getDocument().getTimestampOfLatestSearch() );
 
         assertEquals( "Doc2", tree.getRootNode().getLeftChild().getDocument().getDocumentName() );
-        assertEquals( 30, tree.getRootNode().getLeftChild().getDocument().getTimestampOfLastSearch() );
+        assertEquals( 30, tree.getRootNode().getLeftChild().getDocument().getTimestampOfLatestSearch() );
 
         assertEquals( "Doc3", tree.getRootNode().getRightChild().getDocument().getDocumentName() );
-        assertEquals( 30, tree.getRootNode().getRightChild().getDocument().getTimestampOfLastSearch() );
+        assertEquals( 30, tree.getRootNode().getRightChild().getDocument().getTimestampOfLatestSearch() );
 
         assertEquals( "Doc4", tree.getRootNode().getLeftChild().getLeftChild().getDocument().getDocumentName() );
-        assertEquals( 0, tree.getRootNode().getLeftChild().getLeftChild().getDocument().getTimestampOfLastSearch() );
+        assertEquals( 0, tree.getRootNode().getLeftChild().getLeftChild().getDocument().getTimestampOfLatestSearch() );
 
         assertEquals( "Doc5", tree.getRootNode().getLeftChild().getRightChild().getDocument().getDocumentName() );
-        assertEquals( 0, tree.getRootNode().getLeftChild().getRightChild().getDocument().getTimestampOfLastSearch() );
+        assertEquals( 0, tree.getRootNode().getLeftChild().getRightChild().getDocument().getTimestampOfLatestSearch() );
     }
 
 

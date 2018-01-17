@@ -173,7 +173,7 @@ public abstract class DocumentTreeSimulation <T> {
         private void calcHitMissRate( Document foundDocument, Document bestMatch, SimulationResult result ) {
 
             if(   bestMatch.getDocumentName().equals( foundDocument.getDocumentName() )
-               || bestMatch.getLastCalculatedRelevance() == foundDocument.getLastCalculatedRelevance()      ) {
+               || bestMatch.getLatestCalculatedRelevance() == foundDocument.getLatestCalculatedRelevance()      ) {
                 result.setHitRate( result.getHitRate() + 1 );
             } else {
                 result.setMissRate( result.getMissRate() + 1 );
