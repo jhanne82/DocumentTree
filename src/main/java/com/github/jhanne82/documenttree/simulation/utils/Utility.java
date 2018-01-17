@@ -1,6 +1,8 @@
 package com.github.jhanne82.documenttree.simulation.utils;
 
+import com.github.jhanne82.documenttree.document.Document;
 import com.github.jhanne82.documenttree.simulation.configuration.Parameter;
+import com.github.jhanne82.documenttree.simulation.enumeration.Distribution;
 import org.apache.commons.io.FileUtils;
 
 import java.io.BufferedWriter;
@@ -9,6 +11,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Utility {
 
@@ -45,6 +49,69 @@ public class Utility {
         PrintWriter writer = new PrintWriter( new BufferedWriter( new FileWriter( path, true ) ) );
         writer.println( content );
         writer.close();
+    }
+
+
+
+    public static Document<Double>[] createDocuments( Parameter parameter, Map<Double, Double> clusterMap ) {
+        RandomNumberGenerator numberGenerator = new RandomNumberGenerator();
+        Document<Double>[] documentArray = new Document[parameter.getMaxCountOfCreatedDocuments()];
+
+        for( int i = 0; i < documentArray.length; i++ ) {
+            documentArray[i] = new Document<>( createTermVector( parameter.getDistributionForDocument(),
+                                                                 parameter.getMaxCountOfTermsUsedToDefineVector(),
+                                                                 parameter.getMaxCountOfTermsWithQuantifier(),
+                                                                 parameter.isCluster(),
+                                                                 clusterMap,
+                                                                 numberGenerator ),
+                                               "Document " + i );
+        }
+        return documentArray;
+    }
+
+
+    private static Double[] createTermVector( Distribution distribution,
+                                              int maxCountOfTerms,
+                                              int maxCountOfTermsWithQuantifier,
+                                              boolean cluster,
+                                              Map<Double, Double> clusterMap,
+                                              RandomNumberGenerator numberGenerator ) {
+
+        Double[] termList = new Double[maxCountOfTerms];
+
+        for( int termsWithQuantifier = 0; termsWithQuantifier < maxCountOfTermsWithQuantifier; ) {
+            int index = numberGenerator.getInt( maxCountOfTerms );
+
+            if( termList[index] == null || termList[index] == 0 ) {
+                double term = numberGenerator.getDouble(distribution, 10 );
+                if( cluster && clusterMap.containsKey( term ) ) {
+                    term = clusterMap.get( term );
+                }
+                termList[index] = term;
+                termsWithQuantifier++;
+            }
+        }
+
+        return termList;
+    }
+
+
+    public static Map<Double, Double> createClusterMap() {
+        RandomNumberGenerator randomNumberGenerator = new RandomNumberGenerator();
+        Map<Double, Double> clusterMap = new HashMap<>();
+
+        for( int i = 0; i< 3; i++ ) {
+            double bunch = randomNumberGenerator.getDouble( Distribution.EQUALLY, 10 );
+
+            for (int j = 0; j < 3; j++ ) {
+                double singleItem = randomNumberGenerator.getDouble( Distribution.EQUALLY, 10 );
+                while( singleItem == bunch ) {
+                    singleItem = randomNumberGenerator.getDouble( Distribution.EQUALLY, 10 );
+                }
+                clusterMap.put( singleItem, bunch );
+            }
+        }
+        return clusterMap;
     }
 
 
