@@ -1,12 +1,16 @@
 package com.github.jhanne82.documenttree.simulation;
 
+import com.github.jhanne82.documenttree.DocumentNode;
+import com.github.jhanne82.documenttree.DocumentTree;
 import com.github.jhanne82.documenttree.document.Document;
+import com.github.jhanne82.documenttree.simulation.configuration.Parameter;
+import com.github.jhanne82.documenttree.simulation.documenttree.NumberDocumentTree;
+import com.github.jhanne82.documenttree.simulation.documenttree.retrieval.EulerianDistance;
 import com.github.jhanne82.documenttree.simulation.enumeration.Distribution;
 import com.github.jhanne82.documenttree.simulation.enumeration.SearchType;
+import com.github.jhanne82.documenttree.simulation.utils.RandomNumberGenerator;
 import com.github.jhanne82.documenttree.simulation.utils.SimulationResult;
 import com.github.jhanne82.documenttree.simulation.utils.SimulationSetup;
-import com.github.jhanne82.documenttree.tree.DocumentNode;
-import com.github.jhanne82.documenttree.tree.DocumentTree;
 import com.github.jhanne82.documenttree.utils.ResultDocumentList;
 import com.google.common.collect.ImmutableList;
 import com.google.common.math.LongMath;
@@ -15,30 +19,40 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
-public abstract class DocumentTreeSimulation <T> {
+public class DocumentTreeSimulation {
 
 
     
-    protected DocumentTree<T> documentTreeWithGlobalKnowledge;
-    protected DocumentTree<T> documentTreeWithLocalKnowledge;
-    protected DocumentTree<T> stressReducedDocumentTree;
-    protected Document<T>[] optimalDocumentTree;
+    protected DocumentTree<Double> documentTreeWithGlobalKnowledge;
+    protected DocumentTree<Double> documentTreeWithLocalKnowledge;
+    protected DocumentTree<Double> stressReducedDocumentTree;
+    protected Document<Double>[] optimalDocumentTree;
 
 
-
-    protected abstract Document<T> searchOnOptimalDocumentTree( T[] searchTermVector );
-
-
-    protected abstract void setupRequiredDocumentTrees( SimulationSetup setup );
+    private RandomNumberGenerator randomNumberGenerator = new RandomNumberGenerator();
+    private Map<Double, Double>   clusterMap;
 
 
-    protected abstract T[] createTermVector( Distribution distribution,
-                                             int maxCountOfTerms,
-                                             int maxCountOfTermsWithQuantifier,
-                                             boolean cluster );
+    public SimulationResult[] startSearchSimulation( Parameter parameter ) {
+
+        return startSearchSimulation( new SimulationSetup( parameter.getSearchType(),
+                                                           parameter.getDistributionForDocument(),
+                                                           parameter.getDistributionForSearch(),
+                                                           parameter.getMaxCountOfTermsUsedToDefineVector(),
+                                                           parameter.getMaxCountOfTermsWithQuantifier(),
+                                                           parameter.getMaxCountOfCreatedDocuments(),
+                                                           parameter.getMaxCountOfCreatedSearches(),
+                                                           parameter.getLimitForLocalKnowledge(),
+                                                           parameter.getNumberOfSearchesBeforeRepositioning(),
+                                                           parameter.getTHRESHOLD(),
+                                                           parameter.isCluster() ) );
+
+    }
 
 
     public SimulationResult[] startSearchSimulation( SimulationSetup setup ) {
@@ -49,12 +63,12 @@ public abstract class DocumentTreeSimulation <T> {
 
         for( int i = 0; i < setup.countOfPerformedSearches; i++ ) {
 
-            T[] searchTermVector = createTermVector( setup.distributionForSearchVector,
-                                                     setup.countOfTermsUsedToDefineVector,
-                                                     setup.countOfTermsWithQuantifier,
-                                                     setup.cluster );
+            Double[] searchTermVector = createTermVector( setup.distributionForSearchVector,
+                                                          setup.countOfTermsUsedToDefineVector,
+                                                          setup.countOfTermsWithQuantifier,
+                                                          setup.cluster );
 
-            Document<T> bestMatch = searchOnOptimalDocumentTree( searchTermVector );
+            Document<Double> bestMatch = searchOnOptimalDocumentTree( searchTermVector );
 
             List<TreeSearchSimulationThread> threads = Arrays.asList(
                     new TreeSearchSimulationThread( searchTermVector, setup, i + 1, bestMatch, resultGlobalKnowledge, documentTreeWithGlobalKnowledge, false, true ),
@@ -73,7 +87,7 @@ public abstract class DocumentTreeSimulation <T> {
 
         stressReducedDocumentTree.repositionOfDocuments( 0, 0, Integer.MAX_VALUE );
 
-        List<Document<T>> optimalTreeAsList = generateSortedListFromOptimalTree();
+        List<Document<Double>> optimalTreeAsList = generateSortedListFromOptimalTree();
         List<CheckDifferencesThread> threads = Arrays.asList(
                 new CheckDifferencesThread( optimalTreeAsList, documentTreeWithGlobalKnowledge, resultGlobalKnowledge ),
                 new CheckDifferencesThread( optimalTreeAsList, documentTreeWithLocalKnowledge, resultLocalKnowledge ),
@@ -93,8 +107,8 @@ public abstract class DocumentTreeSimulation <T> {
 
 
 
-    private List<Document<T>> generateSortedListFromOptimalTree() {
-        List<Document<T>> optimalTreeAsList = Arrays.asList( optimalDocumentTree );
+    private List<Document<Double>> generateSortedListFromOptimalTree() {
+        List<Document<Double>> optimalTreeAsList = Arrays.asList( optimalDocumentTree );
         optimalTreeAsList.sort( Comparator.comparing( Document::getAverageRelevance ) );
 
         return optimalTreeAsList;
@@ -107,16 +121,16 @@ public abstract class DocumentTreeSimulation <T> {
         extends Thread {
 
 
-        private final T[]              searchTermVector;
+        private final Double[]              searchTermVector;
         private final SimulationSetup  setup;
         private final int              searchTimeStamp;
-        private final Document<T>      bestMatch;
+        private final Document<Double>      bestMatch;
         private final SimulationResult result;
-        private final DocumentTree<T>  tree;
+        private final DocumentTree<Double>  tree;
         private final boolean isLocalKnowledge;
         private final boolean shouldRepositionAfterSearch;
 
-        TreeSearchSimulationThread( T[] searchTermVector, SimulationSetup setup, int searchTimeStamp, Document<T> bestMatch, SimulationResult result, DocumentTree<T> tree, boolean isLocalKnowledge, boolean shouldRepositionAfterSearch ) {
+        TreeSearchSimulationThread( Double[] searchTermVector, SimulationSetup setup, int searchTimeStamp, Document<Double> bestMatch, SimulationResult result, DocumentTree<Double> tree, boolean isLocalKnowledge, boolean shouldRepositionAfterSearch ) {
             this.searchTermVector = searchTermVector;
             this.setup = setup;
             this.searchTimeStamp = searchTimeStamp +1;
@@ -145,7 +159,7 @@ public abstract class DocumentTreeSimulation <T> {
 
 
 
-        private ResultDocumentList<T> searchOnTree( DocumentTree<T> documentTree, T[] searchTermVector, SearchType searchType, int limitForLocalKnowledge, int searchTimeStamp ) {
+        private ResultDocumentList<Double> searchOnTree( DocumentTree<Double> documentTree, Double[] searchTermVector, SearchType searchType, int limitForLocalKnowledge, int searchTimeStamp ) {
 
 
             switch ( searchType ) {
@@ -161,7 +175,7 @@ public abstract class DocumentTreeSimulation <T> {
         }
 
 
-        private void storeSimulationResultAfterEverySearch( ResultDocumentList<T> resultList, Document bestMatch, int requiredRepositionings, SimulationResult simulationResult ) {
+        private void storeSimulationResultAfterEverySearch( ResultDocumentList<Double> resultList, Document bestMatch, int requiredRepositionings, SimulationResult simulationResult ) {
 
             calcHitMissRate( resultList.getBestResult(), bestMatch, simulationResult );
             simulationResult.addRequiredSearches(resultList.numberOfSearchesTillOptimum());
@@ -187,12 +201,12 @@ public abstract class DocumentTreeSimulation <T> {
         extends Thread {
 
 
-        private List<Document<T>> sortedList;
-        private DocumentTree<T> tree;
+        private List<Document<Double>> sortedList;
+        private DocumentTree<Double> tree;
         private SimulationResult result;
 
 
-        CheckDifferencesThread( List<Document<T>> sortedList, DocumentTree<T> tree, SimulationResult result ) {
+        CheckDifferencesThread( List<Document<Double>> sortedList, DocumentTree<Double> tree, SimulationResult result ) {
             this.sortedList = sortedList;
             this.tree = tree;
             this.result = result;
@@ -206,20 +220,20 @@ public abstract class DocumentTreeSimulation <T> {
         }
 
 
-        private void computeDifferenceBetweenTrees( List<Document<T>> treeAsList, DocumentTree<T> tree, SimulationResult result ) {
+        private void computeDifferenceBetweenTrees( List<Document<Double>> treeAsList, DocumentTree<Double> tree, SimulationResult result ) {
 
             int documentsOnCorrectLevel=0;
             int level = 0;
 
-            List<DocumentNode<T>> nodesOnNextLevel = new ArrayList<>();
+            List<DocumentNode<Double>> nodesOnNextLevel = new ArrayList<>();
             nodesOnNextLevel.add( tree.getRootNode() );
 
             while ( !nodesOnNextLevel.isEmpty() ) {
 
-                List<DocumentNode<T>> nodesOnCurrentLevel = ImmutableList.copyOf( nodesOnNextLevel );
+                List<DocumentNode<Double>> nodesOnCurrentLevel = ImmutableList.copyOf( nodesOnNextLevel );
                 nodesOnNextLevel = new ArrayList<>();
 
-                for( DocumentNode<T> node : nodesOnCurrentLevel ) {
+                for( DocumentNode<Double> node : nodesOnCurrentLevel ) {
 
                     int index = treeAsList.indexOf( node.getDocument() ) +1;
 
@@ -235,5 +249,155 @@ public abstract class DocumentTreeSimulation <T> {
             }
             result.setDocumentOnCorrectLevel( documentsOnCorrectLevel );
         }
+    }
+
+
+    private class CreateTreeThread
+            extends Thread {
+
+        DocumentTree<Double> tree;
+        Document<Double>[] documents;
+        SimulationSetup setup;
+
+        CreateTreeThread( DocumentTree<Double> tree, Document<Double>[] documents, SimulationSetup setup ) {
+            this.tree = tree;
+            this.documents = documents;
+            this.setup = setup;
+        }
+
+
+        @Override
+        public void run() {
+            tree.level_order_insert( null, documents, 0, setup.countOfCreatedDocuments );
+        }
+    }
+
+
+    protected Document<Double> searchOnOptimalDocumentTree( Double[] searchTermVector ) {
+
+        Document<Double> bestMatch = null;
+
+        for ( Document<Double> document : optimalDocumentTree ) {
+
+            document.addRelevance( EulerianDistance.calcRelevance( document.getTermVector(), searchTermVector ) );
+
+            if(    bestMatch == null
+                   || document.getLatestCalculatedRelevance() > bestMatch.getLatestCalculatedRelevance() ) {
+                bestMatch = document;
+            }
+        }
+
+        return bestMatch;
+    }
+
+
+    protected void setupRequiredDocumentTrees( Parameter parameter ) {
+        setupRequiredDocumentTrees( new SimulationSetup( parameter.getSearchType(),
+                                                         parameter.getDistributionForDocument(),
+                                                         parameter.getDistributionForSearch(),
+                                                         parameter.getMaxCountOfTermsUsedToDefineVector(),
+                                                         parameter.getMaxCountOfTermsWithQuantifier(),
+                                                         parameter.getMaxCountOfCreatedDocuments(),
+                                                         parameter.getMaxCountOfCreatedSearches(),
+                                                         parameter.getLimitForLocalKnowledge(),
+                                                         parameter.getNumberOfSearchesBeforeRepositioning(),
+                                                         parameter.getTHRESHOLD(),
+                                                         parameter.isCluster() ) );
+    }
+
+
+
+    protected void setupRequiredDocumentTrees(SimulationSetup setup ) {
+
+        documentTreeWithGlobalKnowledge = new NumberDocumentTree();
+        documentTreeWithLocalKnowledge = new NumberDocumentTree();
+        stressReducedDocumentTree = new NumberDocumentTree();
+
+        optimalDocumentTree = createDocuments( setup.distributionForDocumentVector,
+                                               setup.countOfTermsUsedToDefineVector,
+                                               setup.countOfTermsWithQuantifier,
+                                               setup.countOfCreatedDocuments,
+                                               setup.cluster);
+
+        List<Thread> threads = Arrays.asList(
+                new CreateTreeThread( documentTreeWithGlobalKnowledge, optimalDocumentTree, setup ),
+                new CreateTreeThread( documentTreeWithLocalKnowledge,  optimalDocumentTree, setup),
+                new CreateTreeThread( stressReducedDocumentTree,       optimalDocumentTree, setup )
+        );
+
+        for( Thread thread : threads ) {
+            try {
+                thread.start();
+                thread.join();
+            } catch ( InterruptedException e ) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+
+    protected Double[] createTermVector( Distribution distribution,
+                                         int maxCountOfTerms,
+                                         int maxCountOfTermsWithQuantifier,
+                                         boolean cluster ) {
+
+        if( cluster && clusterMap == null ) {
+            createClusterMap();
+        }
+
+        Double[] termList = new Double[maxCountOfTerms];
+
+        for( int termsWithQuantifier = 0; termsWithQuantifier < maxCountOfTermsWithQuantifier; ) {
+            int index = randomNumberGenerator.getInt( maxCountOfTerms );
+
+            if( termList[index] == null || termList[index] == 0 ) {
+                double term = randomNumberGenerator.getDouble(distribution, 10 );
+                if( cluster && clusterMap.containsKey( term ) ) {
+                    term = clusterMap.get( term );
+                }
+                termList[index] = term;
+                termsWithQuantifier++;
+            }
+        }
+
+        return termList;
+    }
+
+
+    private void createClusterMap() {
+        clusterMap = new HashMap<>();
+
+        for( int i = 0; i< 3; i++ ) {
+            double bunch = randomNumberGenerator.getDouble( Distribution.EQUALLY, 10 );
+
+            for (int j = 0; j < 3; j++ ) {
+                double singleItem = randomNumberGenerator.getDouble( Distribution.EQUALLY, 10 );
+                while( singleItem == bunch ) {
+                    singleItem = randomNumberGenerator.getDouble( Distribution.EQUALLY, 10 );
+                }
+                clusterMap.put( singleItem, bunch );
+            }
+        }
+    }
+
+
+
+    private Document<Double>[] createDocuments( Distribution distribution,
+                                                int maxCountOfTerms,
+                                                int maxCountOfTermsWithQuantifier,
+                                                int maxCountOfDocuments,
+                                                boolean cluster ) {
+        Document<Double>[] documentArray = new Document[maxCountOfDocuments];
+
+        for( int i = 0; i < maxCountOfDocuments; i++ ) {
+            documentArray[i] = new Document<>( createTermVector( distribution,
+                                                                 maxCountOfTerms,
+                                                                 maxCountOfTermsWithQuantifier,
+                                                                 cluster ),
+                                               "Document " + i );
+        }
+
+        return documentArray;
     }
 }

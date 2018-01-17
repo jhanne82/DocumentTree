@@ -1,5 +1,6 @@
 package com.github.jhanne82.documenttree.utils;
 
+import com.github.jhanne82.documenttree.simulation.documenttree.retrieval.EulerianDistance;
 import org.junit.Test;
 
 import static junit.framework.TestCase.assertEquals;

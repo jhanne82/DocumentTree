@@ -1,4 +1,4 @@
-package com.github.jhanne82.documenttree.tree;
+package com.github.jhanne82.documenttree;
 
 
 import com.github.jhanne82.documenttree.document.Document;

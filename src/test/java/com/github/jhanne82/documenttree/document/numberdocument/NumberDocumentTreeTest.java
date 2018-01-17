@@ -1,10 +1,10 @@
 package com.github.jhanne82.documenttree.document.numberdocument;
 
+import com.github.jhanne82.documenttree.DocumentNode;
+import com.github.jhanne82.documenttree.DocumentTree;
 import com.github.jhanne82.documenttree.document.Document;
-import com.github.jhanne82.documenttree.tree.DocumentNode;
-import com.github.jhanne82.documenttree.tree.DocumentTree;
-import com.github.jhanne82.documenttree.tree.number.NumberDocumentTree;
-import com.github.jhanne82.documenttree.utils.EulerianDistance;
+import com.github.jhanne82.documenttree.simulation.documenttree.NumberDocumentTree;
+import com.github.jhanne82.documenttree.simulation.documenttree.retrieval.EulerianDistance;
 import com.github.jhanne82.documenttree.utils.ResultDocumentList;
 import org.junit.Before;
 import org.junit.Test;
