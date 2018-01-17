@@ -2,7 +2,7 @@ package com.github.jhanne82.documenttree;
 
 
 import com.github.jhanne82.documenttree.document.Document;
-import com.github.jhanne82.documenttree.utils.ResultDocumentList;
+import com.github.jhanne82.documenttree.document.DocumentList;
 import com.google.common.collect.ImmutableList;
 
 import java.util.ArrayList;
@@ -13,7 +13,7 @@ public abstract class DocumentTree<T> {
 
     private DocumentNode<T>       rootNode;
     private int                   countOfSearchedDocuments;
-    private ResultDocumentList<T> resultDocumentList;
+    private DocumentList<T> resultDocumentList;
 
 
 
@@ -58,8 +58,8 @@ public abstract class DocumentTree<T> {
 
 
 
-    public ResultDocumentList<T> breadthFirstSearch( int maxVisitedNode, T[] searchTerm, int searchTimeStamp ) {
-        resultDocumentList = new ResultDocumentList<>( 1 );
+    public DocumentList<T> breadthFirstSearch(int maxVisitedNode, T[] searchTerm, int searchTimeStamp ) {
+        resultDocumentList = new DocumentList<>( 1 );
 
         List<DocumentNode<T>> nodesOnNextLevel = new ArrayList<>();
 
@@ -93,8 +93,8 @@ public abstract class DocumentTree<T> {
 
 
 
-    public ResultDocumentList<T> depthFirstSearch( int maxVisitedNode, T[] searchTerm, int searchTimeStamp ) {
-        resultDocumentList = new ResultDocumentList<>( 1 );
+    public DocumentList<T> depthFirstSearch(int maxVisitedNode, T[] searchTerm, int searchTimeStamp ) {
+        resultDocumentList = new DocumentList<>( 1 );
         countOfSearchedDocuments = 0;
 
         depthFirstSearch( rootNode, maxVisitedNode, searchTerm, searchTimeStamp  );
@@ -125,8 +125,8 @@ public abstract class DocumentTree<T> {
 
 
     private int countOfVisitedDocuments = 0;
-    public ResultDocumentList<T> randomWalkSearch( int maxVisitedNode, T[] searchTerm, int searchTimeStamp ) {
-        resultDocumentList = new ResultDocumentList<>( 1 );
+    public DocumentList<T> randomWalkSearch(int maxVisitedNode, T[] searchTerm, int searchTimeStamp ) {
+        resultDocumentList = new DocumentList<>( 1 );
         countOfSearchedDocuments = 0;
         countOfVisitedDocuments = 0;
 

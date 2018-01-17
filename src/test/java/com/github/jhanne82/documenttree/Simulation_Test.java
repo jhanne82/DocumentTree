@@ -4,8 +4,8 @@ package com.github.jhanne82.documenttree;
 
 import com.github.jhanne82.documenttree.simulation.Simulation;
 import com.github.jhanne82.documenttree.simulation.configuration.Parameter;
-import com.github.jhanne82.documenttree.simulation.enumeration.Distribution;
-import com.github.jhanne82.documenttree.simulation.enumeration.SearchType;
+import com.github.jhanne82.documenttree.simulation.configuration.enumeration.Distribution;
+import com.github.jhanne82.documenttree.simulation.configuration.enumeration.SearchType;
 import com.github.jhanne82.documenttree.simulation.utils.SimulationResult;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,7 +29,7 @@ public class Simulation_Test {
 
 
 
-    @Parameterized.Parameter // first data value (0) is default
+    @Parameterized.Parameter 
     public /* NOT private */ Parameter parameter;
 
     @Test
@@ -43,7 +43,7 @@ public class Simulation_Test {
 
 
     private void printResult( SimulationResult[] results ) {
-        String str = results[ 0 ].getSimulationSetup().toString() +
+        String str = results[ 0 ].getParameter().toString() +
                      '\n' +
                      String.format( "%39s %20s%n", "global Knowledge", "local Knowledge" ) +
                      String.format( "Hit/Miss Rate: %10d/%d %17d/%d%n",

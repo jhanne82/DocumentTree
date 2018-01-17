@@ -1,20 +1,20 @@
 package com.github.jhanne82.documenttree.simulation.configuration;
 
-import com.github.jhanne82.documenttree.simulation.enumeration.Distribution;
-import com.github.jhanne82.documenttree.simulation.enumeration.SearchType;
+import com.github.jhanne82.documenttree.simulation.configuration.enumeration.Distribution;
+import com.github.jhanne82.documenttree.simulation.configuration.enumeration.SearchType;
 
 
 
 public class Parameter {
 
 
-    private static final int MAX_COUNT_OF_CREATED_DOCUMENTS = 1000;
-    private static final int MAX_COUNT_OF_CREATED_SEARCHES  = 1000000;
-    private static final int MAX_COUNT_OF_TERMS_USED_TO_DEFINE_VECTOR = 1000;
+    private static final int MAX_COUNT_OF_CREATED_DOCUMENTS = 100;
+    private static final int MAX_COUNT_OF_CREATED_SEARCHES  = 1000;
+    private static final int MAX_COUNT_OF_TERMS_USED_TO_DEFINE_VECTOR = 100;
     private static final int MAX_COUNT_OF_TERMS_WITH_QUANTIFIER = 3;
-    private static final int LIMIT_FOR_LOCAL_KNOWLEDGE = 300;
-    private static final int NUMBER_OF_SEARCHES_BEFORE_REPOSITIONING = 20;
-    private static final int THRESHOLD = 100;
+    private static final int LIMIT_FOR_LOCAL_KNOWLEDGE = 30;
+    private static final int NUMBER_OF_SEARCHES_BEFORE_REPOSITIONING = 0;
+    private static final int THRESHOLD = 10;
 
 
 
@@ -100,5 +100,20 @@ public class Parameter {
 
     public boolean isCluster() {
         return cluster;
+    }
+
+
+
+    @Override
+    public String toString() {
+
+        StringBuffer buffer = new StringBuffer();
+
+        buffer.append( String.format( "Search Type: %20s%n", searchType ) );
+        buffer.append( String.format( "Search Distr.: %14s%n", distributionForSearch ) );
+        buffer.append( String.format( "Document Distr.: %12s%n", distributionForDocument ) );
+        buffer.append( String.format( "Cluster: %18s%n", cluster ) );
+
+        return buffer.toString();
     }
 }

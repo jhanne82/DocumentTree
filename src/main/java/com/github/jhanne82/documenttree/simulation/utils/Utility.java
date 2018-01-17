@@ -2,14 +2,10 @@ package com.github.jhanne82.documenttree.simulation.utils;
 
 import com.github.jhanne82.documenttree.document.Document;
 import com.github.jhanne82.documenttree.simulation.configuration.Parameter;
-import com.github.jhanne82.documenttree.simulation.enumeration.Distribution;
+import com.github.jhanne82.documenttree.simulation.configuration.enumeration.Distribution;
 import org.apache.commons.io.FileUtils;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,7 +17,8 @@ public class Utility {
     public static void writeSimulationResults( String path, Parameter parameter, SimulationResult simulationResult )
             throws IOException {
 
-        path += parameter.isCluster() ? "clustered" : "not_clustered";
+        path += parameter.isCluster() ? File.separator + "clustered"
+                                      : File.separator + "not_clustered";
 
         path = path + File.separator + parameter.getSearchType()
                + File.separator + parameter.getDistributionForDocument()
@@ -45,7 +42,6 @@ public class Utility {
 
     private static void writeInFile( String path, String content )
             throws IOException {
-//        File file = new File( path );
         PrintWriter writer = new PrintWriter( new BufferedWriter( new FileWriter( path, true ) ) );
         writer.println( content );
         writer.close();
@@ -70,7 +66,7 @@ public class Utility {
     }
 
 
-    private static Double[] createTermVector( Distribution distribution,
+    public static Double[] createTermVector( Distribution distribution,
                                               int maxCountOfTerms,
                                               int maxCountOfTermsWithQuantifier,
                                               boolean cluster,
@@ -114,5 +110,15 @@ public class Utility {
         return clusterMap;
     }
 
+
+    public static void calcHitMissRate( Document foundDocument, Document bestMatch, SimulationResult result ) {
+
+        if(   bestMatch.getDocumentName().equals( foundDocument.getDocumentName() )
+                || bestMatch.getLatestCalculatedRelevance() == foundDocument.getLatestCalculatedRelevance()      ) {
+            result.setHitRate( result.getHitRate() + 1 );
+        } else {
+            result.setMissRate( result.getMissRate() + 1 );
+        }
+    }
 
 }

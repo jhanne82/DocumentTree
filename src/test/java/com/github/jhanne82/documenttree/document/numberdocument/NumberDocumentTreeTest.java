@@ -3,9 +3,9 @@ package com.github.jhanne82.documenttree.document.numberdocument;
 import com.github.jhanne82.documenttree.DocumentNode;
 import com.github.jhanne82.documenttree.DocumentTree;
 import com.github.jhanne82.documenttree.document.Document;
+import com.github.jhanne82.documenttree.document.DocumentList;
 import com.github.jhanne82.documenttree.simulation.documenttree.NumberDocumentTree;
 import com.github.jhanne82.documenttree.simulation.documenttree.retrieval.EulerianDistance;
-import com.github.jhanne82.documenttree.utils.ResultDocumentList;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -62,7 +62,7 @@ public class NumberDocumentTreeTest {
 
         Double[] searchVector = new Double[]{ 0.1, 0.1, 0.1 };
 
-        ResultDocumentList list = tree.depthFirstSearch( 5, searchVector, 20 );
+        DocumentList list = tree.depthFirstSearch( 5, searchVector, 20 );
 
         assertEquals( "Doc1", tree.getRootNode().getDocument().getDocumentName() );
         assertEquals( 20, tree.getRootNode().getDocument().getTimestampOfLatestSearch() );
@@ -105,7 +105,7 @@ public class NumberDocumentTreeTest {
 
         Double[] searchVector = new Double[]{ 0.1, 0.1, 0.1 };
 
-        ResultDocumentList list = tree.depthFirstSearch( 3, searchVector, 20 );
+        DocumentList list = tree.depthFirstSearch( 3, searchVector, 20 );
 
         assertEquals( "Doc1", tree.getRootNode().getDocument().getDocumentName() );
         assertEquals( 20, tree.getRootNode().getDocument().getTimestampOfLatestSearch() );
@@ -133,7 +133,7 @@ public class NumberDocumentTreeTest {
         Double[] searchVector = new Double[]{ 0.2, 0.15, 0.0 };
 
 
-        ResultDocumentList list = tree.breadthFirstSearch( 5, searchVector, 25 );
+        DocumentList list = tree.breadthFirstSearch( 5, searchVector, 25 );
 
         assertEquals( "Doc1", tree.getRootNode().getDocument().getDocumentName() );
         assertEquals( 25, tree.getRootNode().getDocument().getTimestampOfLatestSearch() );

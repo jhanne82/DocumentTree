@@ -1,7 +1,7 @@
 package com.github.jhanne82.documenttree.simulation.configuration;
 
-import com.github.jhanne82.documenttree.simulation.enumeration.Distribution;
-import com.github.jhanne82.documenttree.simulation.enumeration.SearchType;
+import com.github.jhanne82.documenttree.simulation.configuration.enumeration.Distribution;
+import com.github.jhanne82.documenttree.simulation.configuration.enumeration.SearchType;
 
 import java.util.Arrays;
 import java.util.List;
