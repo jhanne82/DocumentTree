@@ -1,13 +1,13 @@
 package com.github.jhanne82.documenttree.simulation.number;
 
 import com.github.jhanne82.documenttree.document.Document;
-import com.github.jhanne82.documenttree.enumeration.Distribution;
 import com.github.jhanne82.documenttree.simulation.DocumentTreeSimulation;
+import com.github.jhanne82.documenttree.simulation.enumeration.Distribution;
+import com.github.jhanne82.documenttree.simulation.utils.RandomNumberGenerator;
 import com.github.jhanne82.documenttree.simulation.utils.SimulationSetup;
 import com.github.jhanne82.documenttree.tree.DocumentTree;
 import com.github.jhanne82.documenttree.tree.number.NumberDocumentTree;
 import com.github.jhanne82.documenttree.utils.EulerianDistance;
-import com.github.jhanne82.documenttree.utils.RandomNumberGenerator;
 
 import java.util.Arrays;
 import java.util.HashMap;

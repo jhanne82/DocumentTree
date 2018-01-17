@@ -1,8 +1,8 @@
 package com.github.jhanne82.documenttree.simulation;
 
 import com.github.jhanne82.documenttree.document.Document;
-import com.github.jhanne82.documenttree.enumeration.Distribution;
-import com.github.jhanne82.documenttree.enumeration.SearchType;
+import com.github.jhanne82.documenttree.simulation.enumeration.Distribution;
+import com.github.jhanne82.documenttree.simulation.enumeration.SearchType;
 import com.github.jhanne82.documenttree.simulation.utils.SimulationResult;
 import com.github.jhanne82.documenttree.simulation.utils.SimulationSetup;
 import com.github.jhanne82.documenttree.tree.DocumentNode;

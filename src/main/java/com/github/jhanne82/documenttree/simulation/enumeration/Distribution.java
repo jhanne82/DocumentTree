@@ -1,4 +1,4 @@
-package com.github.jhanne82.documenttree.enumeration;
+package com.github.jhanne82.documenttree.simulation.enumeration;
 
 
 /**
