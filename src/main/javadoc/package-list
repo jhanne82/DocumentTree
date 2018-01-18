@@ -1,0 +1,8 @@
+com.github.jhanne82.documenttree
+com.github.jhanne82.documenttree.document
+com.github.jhanne82.documenttree.simulation
+com.github.jhanne82.documenttree.simulation.configuration
+com.github.jhanne82.documenttree.simulation.configuration.enumeration
+com.github.jhanne82.documenttree.simulation.documenttree
+com.github.jhanne82.documenttree.simulation.documenttree.retrieval
+com.github.jhanne82.documenttree.simulation.utils
