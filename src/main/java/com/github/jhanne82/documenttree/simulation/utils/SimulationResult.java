@@ -49,16 +49,6 @@ public class SimulationResult {
 
 
 
-    public List<Integer> getRequiredNodes() { return requiredNodeList; }
-    public void addRequiredNodes( int requiredNodes ) {
-        if( null == requiredNodeList ) {
-            requiredNodeList = new ArrayList<>();
-        }
-        requiredNodeList.add( requiredNodes );
-    }
-
-
-
     public List<Integer> getRequiredRepositionings() { return averageCountOfRepositioning; }
     public void addRequiredRepositioning( int requiredRepositioning ) {
         if( null == averageCountOfRepositioning ) {

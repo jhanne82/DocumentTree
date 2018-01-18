@@ -3,9 +3,9 @@ package com.github.jhanne82.documenttree.simulation.configuration.enumeration;
 
 /**
  *  Distributions that can be used to define the distribution of the document and search terms.
- *  <li>{@link #EQUALLY}</li>
- *  <li>{@link #GAUSSIAN}</li>
- *  <li>{@link #EXPONENTIALLY}</li>
+ *  <li>{@link #EQUALLY}
+ *  <li>{@link #GAUSSIAN}
+ *  <li>{@link #EXPONENTIALLY}
  */
 public enum Distribution {
 

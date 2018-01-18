@@ -14,7 +14,7 @@ public class DocumentList<T> {
 
 
 
-    private final int                size;
+    private final int                          size;
     private final TreeSet<DocumentListItem<T>> resultTree;
 
 
@@ -35,13 +35,12 @@ public class DocumentList<T> {
      * is reached, the document will replace a document with a lower relevance value.
      * @param documentToAdd document which should be added to the list
      * @param searchesTillDocument number of documents which were searched before the search reached this document
-     * @param stepsInTreeTillDocument number of documents which needs to be considered to reach at this document
      */
-    public void add( Document<T> documentToAdd, int searchesTillDocument, int stepsInTreeTillDocument ) {
+    public void add( Document<T> documentToAdd, int searchesTillDocument ) {
 
         // if max count of stored documents is not reach, just add the document
         if( resultTree.size() < size ) {
-            resultTree.add( new DocumentListItem<>( documentToAdd, searchesTillDocument, stepsInTreeTillDocument ) );
+            resultTree.add( new DocumentListItem<>( documentToAdd, searchesTillDocument ) );
         } else {
 
             // if max count is not reach, replace the document from the list with the smallest relevance if this value
@@ -49,7 +48,7 @@ public class DocumentList<T> {
             DocumentListItem lastStoredResult = resultTree.last();
             if( lastStoredResult.document.getLatestCalculatedRelevance() < documentToAdd.getLatestCalculatedRelevance() ) {
                 resultTree.remove( lastStoredResult );
-                resultTree.add( new DocumentListItem<>( documentToAdd, searchesTillDocument, stepsInTreeTillDocument ) );
+                resultTree.add( new DocumentListItem<>( documentToAdd, searchesTillDocument ) );
             }
         }
     }
@@ -77,33 +76,19 @@ public class DocumentList<T> {
 
 
 
-    /**
-     * Returns the number of steps which were required to reach the document with the
-     * highest relevance within the document tree.
-     *
-     * @return number of steps needed to reach the document marked as best result
-     */
-    public int numberOfVisitedNodes() {
-        return resultTree.first().requiredStepsInTreeTillDocument;
-    }
-
-
-
     /*
      * Wrapper class for the Document and related information which should be stored in DocumentList
      */
     private class DocumentListItem<R>
         implements Comparable<DocumentListItem<R>>{
 
-        int requiredSearchesTillDocument = 0;
-        int requiredStepsInTreeTillDocument = 0;
+        final int requiredSearchesTillDocument;
         Document<R> document;
 
 
-        DocumentListItem(Document<R> document, int requiredSearchesTillDocument, int requiredStepsInTreeTillDocument ) {
+        DocumentListItem(Document<R> document, int requiredSearchesTillDocument ) {
             this.document = document;
             this.requiredSearchesTillDocument = requiredSearchesTillDocument;
-            this.requiredStepsInTreeTillDocument = requiredStepsInTreeTillDocument;
         }
 
         @Override

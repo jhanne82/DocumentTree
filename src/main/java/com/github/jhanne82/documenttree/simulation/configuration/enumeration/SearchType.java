@@ -4,9 +4,9 @@ package com.github.jhanne82.documenttree.simulation.configuration.enumeration;
 
 /**
  *  Search types that can be used to define how the tree should be searched.
- *  <li>{@link #BREADTH_FIRST}</li>
- *  <li>{@link #DEPTH_FIRST}</li>
- *  <li>{@link #RANDOM_WALKER}</li>
+ *  <li> {@link #BREADTH_FIRST}
+ *  <li> {@link #DEPTH_FIRST}
+ *  <li> {@link #RANDOM_WALKER}
  */
 public enum SearchType {
 

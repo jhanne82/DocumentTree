@@ -7,9 +7,9 @@ import java.util.Random;
 
 
 /**
- * Implementation to generate a stream of pseudorandom numbers. For pseudorandom {@code double} value the generations
+ * Implementation to generate a stream of pseudo random numbers. For pseudo random {@code double} value the generations
  * relates to different distributions.
- * This classes uses the current timestamp as milliseconds as seed for the pseudorandom number generation.
+ * This classes uses the current timestamp as milliseconds as seed for the pseudo random number generation.
  *
  */
 public class RandomNumberGenerator {
@@ -23,7 +23,7 @@ public class RandomNumberGenerator {
 
     /**
      * Returns a pseudorandom {@code int} value between 0 (inclusive) and the specified maxValue (exclusive).
-     * @param maxValue is the exclusive upper bound, must be >0
+     * @param maxValue is the exclusive upper bound, must be greater than 0
      * @return the next pseudorandom {@code int} value from this random number generator's sequence
      */
     public int getInt(  int maxValue ) {
@@ -37,7 +37,7 @@ public class RandomNumberGenerator {
      * to the defined distribution.
      * @param distribution defines the distribution of the generated pseudorandim {@code double} double value:
      * {@code EQUALLY}, {@code GAUSSIAN}, {@code EXPONENTIALLY}
-     * @param maxValue is the exclusive upper bound, must be >0
+     * @param maxValue is the exclusive upper bound, must be greater than 0
      * @return the next pseudorandom {@code double} value from this random number generator's sequence
      */
     public double getDouble( Distribution distribution, int maxValue ) {

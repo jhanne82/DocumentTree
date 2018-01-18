@@ -23,7 +23,9 @@ public class Simulation_Test {
         return new Parameter[] { new TestParameter( SearchType.DEPTH_FIRST, Distribution.EQUALLY, Distribution.EQUALLY, false ),
                                  new TestParameter( SearchType.DEPTH_FIRST, Distribution.EQUALLY, Distribution.EQUALLY, true ),
                                  new TestParameter( SearchType.RANDOM_WALKER, Distribution.EQUALLY, Distribution.EQUALLY, true ),
-                                 new TestParameter( SearchType.BREADTH_FIRST, Distribution.EQUALLY, Distribution.EQUALLY, false )
+                                 new TestParameter( SearchType.BREADTH_FIRST, Distribution.EQUALLY, Distribution.EQUALLY, false ),
+                                 new TestParameter( SearchType.BREADTH_FIRST, Distribution.EXPONENTIALLY, Distribution.EQUALLY, false ),
+                                 new TestParameter( SearchType.BREADTH_FIRST, Distribution.EXPONENTIALLY, Distribution.EXPONENTIALLY, false )
         };
     }
 

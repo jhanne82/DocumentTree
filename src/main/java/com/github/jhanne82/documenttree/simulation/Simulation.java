@@ -17,7 +17,11 @@ import com.google.common.math.LongMath;
 import java.io.File;
 import java.io.IOException;
 import java.math.RoundingMode;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 
 public class Simulation {
 
@@ -134,7 +138,6 @@ public class Simulation {
         Utility.calcHitMissRate( resultDocumentList.getBestResult(), bestMatch, result );
         result.addRequiredSearches(resultDocumentList.numberOfSearchesTillOptimum());
         result.addRequiredRepositioning( requiredRepositionings );
-        result.addRequiredNodes( resultDocumentList.numberOfVisitedNodes() );
     }
 
 
