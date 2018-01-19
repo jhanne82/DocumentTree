@@ -3,6 +3,8 @@ package com.github.jhanne82.documenttree;
 
 import com.github.jhanne82.documenttree.document.Document;
 
+import java.util.LinkedList;
+import java.util.List;
 
 
 /**
@@ -14,12 +16,11 @@ import com.github.jhanne82.documenttree.document.Document;
  */
 public class DocumentNode<T> {
 
-
-
-    private DocumentNode<T>       parent   = null;
-    private DocumentNode<T>       left     = null;
-    private DocumentNode<T>       right    = null;
-    private Document<T>           document;
+   private List<DocumentNode<T>> leaves = new LinkedList<>();
+   private DocumentNode<T>       parent = null;
+   private DocumentNode<T>       left   = null;
+   private DocumentNode<T>       right  = null;
+   private Document<T>           document;
 
 
 
@@ -53,9 +54,7 @@ public class DocumentNode<T> {
      */
    public void setLeftChild( DocumentNode<T> left ) {
       this.left = left;
-      if( left != null ) {
-          this.parent = this;
-      }
+      addChildLeaf( left );
    }
 
 
@@ -78,9 +77,7 @@ public class DocumentNode<T> {
      */
    public void setRightChild( DocumentNode<T> right ) {
       this.right = right;
-      if( right != null ) {
-          right.parent = this;
-      }
+      addChildLeaf( right );
    }
 
 
@@ -97,9 +94,30 @@ public class DocumentNode<T> {
 
 
     /**
-     * Get the stored Document from this node.
+     * Get list of child leaves.
      *
-     * @return the document
+     * @return the child leaves
+     */
+   public List<DocumentNode<T>> getChildLeaves() {
+      return leaves;
+   }
+
+
+
+   // helper method to add a child to this document
+   private void addChildLeaf( DocumentNode<T> childLeaf ) {
+      if( childLeaf != null ) {
+         childLeaf.parent = this;
+      }
+      this.leaves.add( childLeaf );
+   }
+
+
+
+    /**
+     * Get the document which is stored on this node.
+     *
+     * @return the document of the node
      */
    public Document<T> getDocument() {
       return this.document;

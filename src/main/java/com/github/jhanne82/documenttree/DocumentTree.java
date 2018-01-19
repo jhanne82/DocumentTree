@@ -133,8 +133,7 @@ public abstract class DocumentTree<T> {
                     resultDocumentList.add( node.getDocument(), countOfSearchedDocuments );
 
                     // set child nodes to list of nodes which should be search in next while loop
-                    nodesOnNextLevel.add( node.getLeftChild() );
-                    nodesOnNextLevel.add( node.getRightChild() );
+                    nodesOnNextLevel.addAll(node.getChildLeaves());
                     countOfSearchedDocuments++;
                 }
             }
@@ -274,8 +273,8 @@ public abstract class DocumentTree<T> {
                 if( nodeOnCurrentLevel.getDocument().getTimestampOfLatestSearch() != searchTimeStamp ) {
                     return nodeOnCurrentLevel;
                 }
-                nodesOnNextLevel.add( node.getLeftChild() );
-                nodesOnNextLevel.add( node.getRightChild() );            }
+                nodesOnNextLevel.addAll(nodeOnCurrentLevel.getChildLeaves());
+            }
         }
         // if no node could be found which was not searched already, it will be returned null
         return null;
@@ -339,32 +338,32 @@ public abstract class DocumentTree<T> {
             for( DocumentNode<T> nodeOnCurrentLevel : nodesOnCurrentLevel ) {
 
                 // node can only be switched if the required count of stored relevance values is reached
-                if( nodeOnCurrentLevel.getDocument().getCountOfStoredRelevances() >= numberOfRelevenceCalculationToRepositiong ) {
+                if (nodeOnCurrentLevel.getDocument().getCountOfStoredRelevances() >= numberOfRelevenceCalculationToRepositiong) {
 
                     Document<T> leftDocument = nodeOnCurrentLevel.getLeftChild() != null ? nodeOnCurrentLevel.getLeftChild()
-                                                                                                             .getDocument()
-                                                                                         : null;
+                            .getDocument()
+                            : null;
                     Document<T> rigthDocument = nodeOnCurrentLevel.getRightChild() != null ? nodeOnCurrentLevel.getRightChild()
-                                                                                                               .getDocument()
-                                                                                           : null;
+                            .getDocument()
+                            : null;
 
                     // switch current node with child node if child node a average relevance which is greater than the
                     // average relevance of the current node
-                    if(    leftDocument != null
-                        && leftDocument.getCountOfStoredRelevances() >= numberOfRelevenceCalculationToRepositiong
-                        && leftDocument.getAverageRelevance() > nodeOnCurrentLevel.getDocument().getAverageRelevance() ) {
+                    if (leftDocument != null
+                            && leftDocument.getCountOfStoredRelevances() >= numberOfRelevenceCalculationToRepositiong
+                            && leftDocument.getAverageRelevance() > nodeOnCurrentLevel.getDocument().getAverageRelevance()) {
                         numberOfRelevenceCalculationToRepositiong++;
-                        switchDocuments( nodeOnCurrentLevel, nodeOnCurrentLevel.getLeftChild() );
+                        switchDocuments(nodeOnCurrentLevel, nodeOnCurrentLevel.getLeftChild());
 
-                    } else if ( rigthDocument != null
-                                && rigthDocument.getCountOfStoredRelevances() >= numberOfRelevenceCalculationToRepositiong
-                                && rigthDocument.getAverageRelevance() > nodeOnCurrentLevel.getDocument().getAverageRelevance() ) {
+                    } else if (rigthDocument != null
+                            && rigthDocument.getCountOfStoredRelevances() >= numberOfRelevenceCalculationToRepositiong
+                            && rigthDocument.getAverageRelevance() > nodeOnCurrentLevel.getDocument().getAverageRelevance()) {
                         requiredRepositionings++;
-                        switchDocuments( nodeOnCurrentLevel, nodeOnCurrentLevel.getRightChild() );
+                        switchDocuments(nodeOnCurrentLevel, nodeOnCurrentLevel.getRightChild());
                     }
                 }
-                nodesOnNextLevel.add( nodeOnCurrentLevel.getLeftChild() );
-                nodesOnNextLevel.add( nodeOnCurrentLevel.getRightChild() );            }
+                nodesOnNextLevel.addAll(nodeOnCurrentLevel.getChildLeaves());
+            }
         }
         return requiredRepositionings;
     }
@@ -405,8 +404,8 @@ public abstract class DocumentTree<T> {
                         switchDocuments( nodeOnCurrentLevel, nodeOnCurrentLevel.getParent() );
                     }
                 }
-                nodesOnNextLevel.add( nodeOnCurrentLevel.getLeftChild() );
-                nodesOnNextLevel.add( nodeOnCurrentLevel.getRightChild() );            }
+                nodesOnNextLevel.addAll(nodeOnCurrentLevel.getChildLeaves());
+            }
         }
         return requiredRepositionings;
     }

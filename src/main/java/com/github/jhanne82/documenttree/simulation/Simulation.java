@@ -17,11 +17,7 @@ import com.google.common.math.LongMath;
 import java.io.File;
 import java.io.IOException;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Simulation {
 
@@ -165,8 +161,7 @@ public class Simulation {
                 }
                 result.addDistanceToOptimalPosition( Math.abs( level - optimalLevel ) );
 
-                nodesOnNextLevel.add( node.getLeftChild() );
-                nodesOnNextLevel.add( node.getRightChild() );
+                nodesOnNextLevel.addAll( node.getChildLeaves() );
             }
             level++;
         }
