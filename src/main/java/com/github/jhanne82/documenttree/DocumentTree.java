@@ -14,6 +14,11 @@ import java.util.Random;
 /**
  * Generic abstract class which implements a binary tree to store {@link com.github.jhanne82.documenttree.document.Document }
  * This implementation provides methods to
+ * <li>fill the tree by a given list of Documents</li>
+ * <li>Breadth First Search</li>
+ * <li>Depth First Search</li>
+ * <li>Random Walker Search</li>
+ * <li>reposition of documents</li>
  *
  * @param <T> the type of the elements of terms describing the document.
  */
