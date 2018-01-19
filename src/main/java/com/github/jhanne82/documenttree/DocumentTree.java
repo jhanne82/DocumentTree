@@ -128,7 +128,8 @@ public abstract class DocumentTree<T> {
                     resultDocumentList.add( node.getDocument(), countOfSearchedDocuments );
 
                     // set child nodes to list of nodes which should be search in next while loop
-                    nodesOnNextLevel.addAll(node.getChildLeaves());
+                    nodesOnNextLevel.add( node.getLeftChild() );
+                    nodesOnNextLevel.add( node.getRightChild() );
                     countOfSearchedDocuments++;
                 }
             }
@@ -268,8 +269,8 @@ public abstract class DocumentTree<T> {
                 if( nodeOnCurrentLevel.getDocument().getTimestampOfLatestSearch() != searchTimeStamp ) {
                     return nodeOnCurrentLevel;
                 }
-                nodesOnNextLevel.addAll(nodeOnCurrentLevel.getChildLeaves());
-            }
+                nodesOnNextLevel.add( node.getLeftChild() );
+                nodesOnNextLevel.add( node.getRightChild() );            }
         }
         // if no node could be found which was not searched already, it will be returned null
         return null;
@@ -357,8 +358,8 @@ public abstract class DocumentTree<T> {
                         switchDocuments( nodeOnCurrentLevel, nodeOnCurrentLevel.getRightChild() );
                     }
                 }
-                nodesOnNextLevel.addAll(nodeOnCurrentLevel.getChildLeaves());
-            }
+                nodesOnNextLevel.add( nodeOnCurrentLevel.getLeftChild() );
+                nodesOnNextLevel.add( nodeOnCurrentLevel.getRightChild() );            }
         }
         return requiredRepositionings;
     }
@@ -399,8 +400,8 @@ public abstract class DocumentTree<T> {
                         switchDocuments( nodeOnCurrentLevel, nodeOnCurrentLevel.getParent() );
                     }
                 }
-                nodesOnNextLevel.addAll(nodeOnCurrentLevel.getChildLeaves());
-            }
+                nodesOnNextLevel.add( nodeOnCurrentLevel.getLeftChild() );
+                nodesOnNextLevel.add( nodeOnCurrentLevel.getRightChild() );            }
         }
         return requiredRepositionings;
     }
