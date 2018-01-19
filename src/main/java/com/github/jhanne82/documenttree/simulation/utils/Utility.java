@@ -1,11 +1,15 @@
 package com.github.jhanne82.documenttree.simulation.utils;
 
 import com.github.jhanne82.documenttree.document.Document;
-import com.github.jhanne82.documenttree.simulation.configuration.Parameter;
+import com.github.jhanne82.documenttree.simulation.configuration.Configuration;
 import com.github.jhanne82.documenttree.simulation.configuration.enumeration.Distribution;
 import org.apache.commons.io.FileUtils;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,7 +18,7 @@ public class Utility {
 
 
 
-    public static void writeSimulationResults( String path, Parameter parameter, SimulationResult simulationResult )
+    public static void writeSimulationResults( String path, Configuration parameter, SimulationResult simulationResult )
             throws IOException {
 
         path += parameter.isCluster() ? File.separator + "clustered"
@@ -49,7 +53,7 @@ public class Utility {
 
 
 
-    public static Document<Double>[] createDocuments( Parameter parameter, Map<Double, Double> clusterMap ) {
+    public static Document<Double>[] createDocuments( Configuration parameter, Map<Double, Double> clusterMap ) {
         RandomNumberGenerator numberGenerator = new RandomNumberGenerator();
         Document<Double>[] documentArray = new Document[parameter.getMaxCountOfCreatedDocuments()];
 

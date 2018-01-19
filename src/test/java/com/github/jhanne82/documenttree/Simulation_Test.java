@@ -3,7 +3,7 @@ package com.github.jhanne82.documenttree;
 
 
 import com.github.jhanne82.documenttree.simulation.Simulation;
-import com.github.jhanne82.documenttree.simulation.configuration.Parameter;
+import com.github.jhanne82.documenttree.simulation.configuration.Configuration;
 import com.github.jhanne82.documenttree.simulation.configuration.enumeration.Distribution;
 import com.github.jhanne82.documenttree.simulation.configuration.enumeration.SearchType;
 import com.github.jhanne82.documenttree.simulation.utils.SimulationResult;
@@ -19,20 +19,20 @@ public class Simulation_Test {
 
 
     @Parameterized.Parameters
-    public static Parameter[] data() {
-        return new Parameter[] { new TestParameter( SearchType.DEPTH_FIRST, Distribution.EQUALLY, Distribution.EQUALLY, false ),
-                                 new TestParameter( SearchType.DEPTH_FIRST, Distribution.EQUALLY, Distribution.EQUALLY, true ),
-                                 new TestParameter( SearchType.RANDOM_WALKER, Distribution.EQUALLY, Distribution.EQUALLY, true ),
-                                 new TestParameter( SearchType.BREADTH_FIRST, Distribution.EQUALLY, Distribution.EQUALLY, false ),
-                                 new TestParameter( SearchType.BREADTH_FIRST, Distribution.EXPONENTIALLY, Distribution.EQUALLY, false ),
-                                 new TestParameter( SearchType.BREADTH_FIRST, Distribution.EXPONENTIALLY, Distribution.EXPONENTIALLY, false )
+    public static Configuration[] data() {
+        return new Configuration[] { new TestConfiguration( SearchType.DEPTH_FIRST, Distribution.EQUALLY, Distribution.EQUALLY, false ),
+                                     new TestConfiguration( SearchType.DEPTH_FIRST, Distribution.EQUALLY, Distribution.EQUALLY, true ),
+                                     new TestConfiguration( SearchType.RANDOM_WALKER, Distribution.EQUALLY, Distribution.EQUALLY, true ),
+                                     new TestConfiguration( SearchType.BREADTH_FIRST, Distribution.EQUALLY, Distribution.EQUALLY, false ),
+                                     new TestConfiguration( SearchType.BREADTH_FIRST, Distribution.EXPONENTIALLY, Distribution.EQUALLY, false ),
+                                     new TestConfiguration( SearchType.BREADTH_FIRST, Distribution.EXPONENTIALLY, Distribution.EXPONENTIALLY, false )
         };
     }
 
 
 
     @Parameterized.Parameter 
-    public /* NOT private */ Parameter parameter;
+    public /* NOT private */ Configuration parameter;
 
     @Test
     public void testSimulation() {
@@ -60,14 +60,14 @@ public class Simulation_Test {
 
 
 
-    private static class TestParameter
-        extends Parameter {
+    private static class TestConfiguration
+        extends Configuration {
 
 
-        TestParameter( SearchType   searchType,
-                               Distribution distributionForDocument,
-                               Distribution distributionForSearch,
-                               boolean      cluster ) {
+        TestConfiguration( SearchType   searchType,
+                           Distribution distributionForDocument,
+                           Distribution distributionForSearch,
+                           boolean      cluster ) {
 
             super(searchType, distributionForDocument, distributionForSearch, cluster );
         }

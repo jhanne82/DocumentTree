@@ -5,7 +5,7 @@ import com.github.jhanne82.documenttree.DocumentTree;
 import com.github.jhanne82.documenttree.document.Document;
 import com.github.jhanne82.documenttree.document.DocumentList;
 import com.github.jhanne82.documenttree.simulation.configuration.Configuration;
-import com.github.jhanne82.documenttree.simulation.configuration.Parameter;
+import com.github.jhanne82.documenttree.simulation.configuration.Setup;
 import com.github.jhanne82.documenttree.simulation.documenttree.NumberDocumentTree;
 import com.github.jhanne82.documenttree.simulation.documenttree.retrieval.EulerianDistance;
 import com.github.jhanne82.documenttree.simulation.utils.RandomNumberGenerator;
@@ -39,7 +39,7 @@ public class Simulation {
 
 
 
-    public SimulationResult[] start( Parameter parameter ) {
+    public SimulationResult[] start( Configuration parameter ) {
         Map<Double, Double> clusterMap = null;
         if( parameter.isCluster() ) {
             clusterMap = Utility.createClusterMap();
@@ -50,7 +50,7 @@ public class Simulation {
 
 
 
-    private SimulationResult[] simulateSearchesOnTrees( Parameter parameter, Map<Double,Double> clusterMap ) {
+    private SimulationResult[] simulateSearchesOnTrees( Configuration parameter, Map<Double,Double> clusterMap ) {
         RandomNumberGenerator numberGenerator = new RandomNumberGenerator();
 
         SimulationResult resultGlobalKnowledge = new SimulationResult( parameter );
@@ -105,7 +105,7 @@ public class Simulation {
     }
 
 
-    private DocumentList<Double> searchOnTree(Parameter parameter,
+    private DocumentList<Double> searchOnTree(Configuration parameter,
                                               NumberDocumentTree tree,
                                               Double[] searchTermVector,
                                               int searchTimeStamp,
@@ -165,7 +165,8 @@ public class Simulation {
                 }
                 result.addDistanceToOptimalPosition( Math.abs( level - optimalLevel ) );
 
-                nodesOnNextLevel.addAll(node.getChildLeaves());
+                nodesOnNextLevel.add( node.getLeftChild() );
+                nodesOnNextLevel.add( node.getRightChild() );
             }
             level++;
         }
@@ -191,7 +192,7 @@ public class Simulation {
 
 
 
-    private void setupDocumentTress( Parameter parameter, Map<Double, Double> clusterMap ) {
+    private void setupDocumentTress( Configuration parameter, Map<Double, Double> clusterMap ) {
         documentTreeWithGlobalKnowledge = new NumberDocumentTree();
         documentTreeWithLocalKnowledge = new NumberDocumentTree();
         stressReducedDocumentTree = new NumberDocumentTree();
@@ -203,7 +204,7 @@ public class Simulation {
     }
 
 
-    private void writeResults( Parameter parameter, SimulationResult[] simulationResults )
+    private void writeResults( Configuration parameter, SimulationResult[] simulationResults )
             throws IOException {
         String pathPrefix = System.getProperty( "user.home" ) + File.separator + "Results_DocumentTree" + File.separator;
 
@@ -219,9 +220,9 @@ public class Simulation {
 
         Simulation simulation = new Simulation();
 
-        for( int i = 0; i < Configuration.getNumberOfConfigurations(); i++ ) {
-            SimulationResult results[] = simulation.start( Configuration.getConfigurationParameter( i ));
-            simulation.writeResults( Configuration.getConfigurationParameter( i ), results );
+        for( int i = 0; i < Setup.SETUP_LIST.size(); i++ ) {
+            SimulationResult results[] = simulation.start( Setup.SETUP_LIST.get( i ));
+            simulation.writeResults( Setup.SETUP_LIST.get( i ), results );
         }
     }
 

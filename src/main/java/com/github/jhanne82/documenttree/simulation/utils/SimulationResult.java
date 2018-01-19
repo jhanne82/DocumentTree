@@ -1,6 +1,6 @@
 package com.github.jhanne82.documenttree.simulation.utils;
 
-import com.github.jhanne82.documenttree.simulation.configuration.Parameter;
+import com.github.jhanne82.documenttree.simulation.configuration.Configuration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,7 +8,7 @@ import java.util.List;
 public class SimulationResult {
 
 
-    private final Parameter parameter;
+    private final Configuration parameter;
 
     // Bewertungskriterien
     private List<Integer> requiresSearches;
@@ -21,7 +21,7 @@ public class SimulationResult {
 
 
 
-    public SimulationResult( Parameter parameter ) {
+    public SimulationResult( Configuration parameter ) {
         this.parameter = parameter;
     }
 
@@ -69,7 +69,7 @@ public class SimulationResult {
 
 
 
-    public Parameter getParameter() {
+    public Configuration getParameter() {
         return parameter;
     }
 

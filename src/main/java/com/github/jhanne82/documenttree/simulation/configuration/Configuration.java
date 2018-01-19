@@ -3,83 +3,113 @@ package com.github.jhanne82.documenttree.simulation.configuration;
 import com.github.jhanne82.documenttree.simulation.configuration.enumeration.Distribution;
 import com.github.jhanne82.documenttree.simulation.configuration.enumeration.SearchType;
 
-import java.util.Arrays;
-import java.util.List;
+
 
 public class Configuration {
 
 
+    private static final int MAX_COUNT_OF_CREATED_DOCUMENTS             = 1000;
+    private static final int MAX_COUNT_OF_CREATED_SEARCHES              = 1000000;
+    private static final int MAX_COUNT_OF_TERMS_USED_TO_DEFINE_VECTOR   = 1000;
+    private static final int MAX_COUNT_OF_TERMS_WITH_QUANTIFIER         = 3;
+    private static final int LIMIT_FOR_LOCAL_KNOWLEDGE                  = 300;
+    private static final int NUMBER_OF_SEARCHES_BEFORE_REPOSITIONING    = 20;
+    private static final int THRESHOLD                                  = 100;
 
-    // define the simulation like previously described in master thesis section "Simulation Setup"
-    private static final List<Parameter> parameterList = Arrays.asList(
-            new Parameter( SearchType.DEPTH_FIRST, Distribution.EQUALLY, Distribution.EQUALLY, false  )
-            ,new Parameter( SearchType.DEPTH_FIRST, Distribution.EQUALLY, Distribution.GAUSSIAN, false )
-            ,new Parameter( SearchType.DEPTH_FIRST, Distribution.EQUALLY, Distribution.EXPONENTIALLY, false )
-            ,new Parameter( SearchType.DEPTH_FIRST, Distribution.GAUSSIAN, Distribution.EQUALLY, false )
-            ,new Parameter( SearchType.DEPTH_FIRST, Distribution.GAUSSIAN, Distribution.GAUSSIAN, false )
-            ,new Parameter( SearchType.DEPTH_FIRST, Distribution.GAUSSIAN, Distribution.EXPONENTIALLY, false )
-            ,new Parameter( SearchType.DEPTH_FIRST, Distribution.EXPONENTIALLY, Distribution.EQUALLY, false )
-            ,new Parameter( SearchType.DEPTH_FIRST, Distribution.EXPONENTIALLY, Distribution.GAUSSIAN, false )
-            ,new Parameter( SearchType.DEPTH_FIRST, Distribution.EXPONENTIALLY, Distribution.EXPONENTIALLY, false )
-            ,new Parameter( SearchType.DEPTH_FIRST, Distribution.EQUALLY, Distribution.EQUALLY, true  )
-            ,new Parameter( SearchType.DEPTH_FIRST, Distribution.EQUALLY, Distribution.GAUSSIAN, true )
-            ,new Parameter( SearchType.DEPTH_FIRST, Distribution.EQUALLY, Distribution.EXPONENTIALLY, true )
-            ,new Parameter( SearchType.DEPTH_FIRST, Distribution.GAUSSIAN, Distribution.EQUALLY, true )
-            ,new Parameter( SearchType.DEPTH_FIRST, Distribution.GAUSSIAN, Distribution.GAUSSIAN, true )
-            ,new Parameter( SearchType.DEPTH_FIRST, Distribution.GAUSSIAN, Distribution.EXPONENTIALLY, true )
-            ,new Parameter( SearchType.DEPTH_FIRST, Distribution.EXPONENTIALLY, Distribution.EQUALLY, true )
-            ,new Parameter( SearchType.DEPTH_FIRST, Distribution.EXPONENTIALLY, Distribution.GAUSSIAN, true )
-            ,new Parameter( SearchType.DEPTH_FIRST, Distribution.EXPONENTIALLY, Distribution.EXPONENTIALLY, true )
 
-            ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EQUALLY, Distribution.EQUALLY, false  )
-            ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EQUALLY, Distribution.GAUSSIAN, false )
-            ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EQUALLY, Distribution.EXPONENTIALLY, false )
-            ,new Parameter( SearchType.BREADTH_FIRST, Distribution.GAUSSIAN, Distribution.EQUALLY, false )
-            ,new Parameter( SearchType.BREADTH_FIRST, Distribution.GAUSSIAN, Distribution.GAUSSIAN, false )
-            ,new Parameter( SearchType.BREADTH_FIRST, Distribution.GAUSSIAN, Distribution.EXPONENTIALLY, false )
-            ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EXPONENTIALLY, Distribution.EQUALLY, false )
-            ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EXPONENTIALLY, Distribution.GAUSSIAN, false )
-            ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EXPONENTIALLY, Distribution.EXPONENTIALLY, false )
-            ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EQUALLY, Distribution.EQUALLY, true  )
-            ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EQUALLY, Distribution.GAUSSIAN, true )
-            ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EQUALLY, Distribution.EXPONENTIALLY, true )
-            ,new Parameter( SearchType.BREADTH_FIRST, Distribution.GAUSSIAN, Distribution.EQUALLY, true )
-            ,new Parameter( SearchType.BREADTH_FIRST, Distribution.GAUSSIAN, Distribution.GAUSSIAN, true )
-            ,new Parameter( SearchType.BREADTH_FIRST, Distribution.GAUSSIAN, Distribution.EXPONENTIALLY, true )
-            ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EXPONENTIALLY, Distribution.EQUALLY, true )
-            ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EXPONENTIALLY, Distribution.GAUSSIAN, true )
-            ,new Parameter( SearchType.BREADTH_FIRST, Distribution.EXPONENTIALLY, Distribution.EXPONENTIALLY, true )
 
-            ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EQUALLY, Distribution.EQUALLY, false  )
-            ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EQUALLY, Distribution.GAUSSIAN, false )
-            ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EQUALLY, Distribution.EXPONENTIALLY, false )
-            ,new Parameter( SearchType.RANDOM_WALKER, Distribution.GAUSSIAN, Distribution.EQUALLY, false )
-            ,new Parameter( SearchType.RANDOM_WALKER, Distribution.GAUSSIAN, Distribution.GAUSSIAN, false )
-            ,new Parameter( SearchType.RANDOM_WALKER, Distribution.GAUSSIAN, Distribution.EXPONENTIALLY, false )
-            ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EXPONENTIALLY, Distribution.EQUALLY, false )
-            ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EXPONENTIALLY, Distribution.GAUSSIAN, false )
-            ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EXPONENTIALLY, Distribution.EXPONENTIALLY, false )
-            ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EQUALLY, Distribution.EQUALLY, true  )
-            ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EQUALLY, Distribution.GAUSSIAN, true )
-            ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EQUALLY, Distribution.EXPONENTIALLY, true )
-            ,new Parameter( SearchType.RANDOM_WALKER, Distribution.GAUSSIAN, Distribution.EQUALLY, true )
-            ,new Parameter( SearchType.RANDOM_WALKER, Distribution.GAUSSIAN, Distribution.GAUSSIAN, true )
-            ,new Parameter( SearchType.RANDOM_WALKER, Distribution.GAUSSIAN, Distribution.EXPONENTIALLY, true )
-            ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EXPONENTIALLY, Distribution.EQUALLY, true )
-            ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EXPONENTIALLY, Distribution.GAUSSIAN, true )
-            ,new Parameter( SearchType.RANDOM_WALKER, Distribution.EXPONENTIALLY, Distribution.EXPONENTIALLY, true )
-    );
+    private SearchType   searchType;
+    private Distribution distributionForDocument;
+    private Distribution distributionForSearch;
+    private boolean      cluster;
 
-    
 
-    public static Parameter getConfigurationParameter( int i) {
-        return parameterList.get( i );
+
+    public Configuration( SearchType   searchType,
+                          Distribution distributionForDocument,
+                          Distribution distributionForSearch,
+                          boolean      cluster  ) {
+
+        this.searchType = searchType;
+        this.distributionForDocument = distributionForDocument;
+        this.distributionForSearch = distributionForSearch;
+        this.cluster = cluster;
     }
 
 
 
-    public static int getNumberOfConfigurations() {
-        return parameterList.size();
+    public int getMaxCountOfCreatedDocuments() {
+        return MAX_COUNT_OF_CREATED_DOCUMENTS;
     }
 
+
+
+    public int getMaxCountOfCreatedSearches() {
+        return MAX_COUNT_OF_CREATED_SEARCHES;
+    }
+
+
+
+    public int getMaxCountOfTermsUsedToDefineVector() {
+        return MAX_COUNT_OF_TERMS_USED_TO_DEFINE_VECTOR;
+    }
+
+
+
+    public int getMaxCountOfTermsWithQuantifier() {
+        return MAX_COUNT_OF_TERMS_WITH_QUANTIFIER;
+    }
+
+
+
+    public int getLimitForLocalKnowledge() {
+        return LIMIT_FOR_LOCAL_KNOWLEDGE;
+    }
+
+
+
+    public int getNumberOfSearchesBeforeRepositioning() {
+        return NUMBER_OF_SEARCHES_BEFORE_REPOSITIONING;
+    }
+
+
+
+    public int getTHRESHOLD() {
+        return THRESHOLD;
+    }
+
+
+
+    public SearchType getSearchType() {
+        return searchType;
+    }
+
+
+
+    public Distribution getDistributionForDocument() {
+        return distributionForDocument;
+    }
+
+
+
+    public Distribution getDistributionForSearch() {
+        return distributionForSearch;
+    }
+
+
+
+    public boolean isCluster() {
+        return cluster;
+    }
+
+
+
+    @Override
+    public String toString() {
+
+        return String.format("Search Type: %20s%n", searchType) +
+               String.format("Search Distr.: %14s%n", distributionForSearch) +
+               String.format("Document Distr.: %12s%n", distributionForDocument) +
+               String.format("Cluster: %18s%n", cluster);
+    }
 }
