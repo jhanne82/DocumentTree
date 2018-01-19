@@ -5,7 +5,19 @@ import com.github.jhanne82.documenttree.simulation.configuration.enumeration.Sea
 
 
 
+/**
+ * Implementation to store all parameters used for the simulation.
+ * Irreversible parameters which will be the same in each simulation are:
+ * <li>the count of created documents which will be filled into the tree</li>
+ * <li>the count of searches which will be performed in a simulation run</li>
+ * <li>the count of terms which will describe a document and search</li>
+ * <li>count of terms of the document and search vector which are greater than 0</li>
+ * <li>limitation for the tree which should not be searched completely</li>
+ * <li>number of searches which needs to be performed on a document to change the position within the tree</li>
+ * <li>a threshold value to switch documents which did not match {@link #NUMBER_OF_SEARCHES_BEFORE_REPOSITIONING}</li>
+ */
 public class Configuration {
+
 
 
     private static final int MAX_COUNT_OF_CREATED_DOCUMENTS             = 1000;
@@ -18,13 +30,21 @@ public class Configuration {
 
 
 
-    private SearchType   searchType;
-    private Distribution distributionForDocument;
-    private Distribution distributionForSearch;
-    private boolean      cluster;
+    private final SearchType   searchType;
+    private final Distribution distributionForDocument;
+    private final Distribution distributionForSearch;
+    private final boolean      cluster;
 
 
 
+    /**
+     * Creates a object of type {@link Configuration}.
+     *
+     * @param searchType defines the {@link com.github.jhanne82.documenttree.simulation.configuration.enumeration.SearchType}
+     * @param distributionForDocument defines the {@link com.github.jhanne82.documenttree.simulation.configuration.enumeration.Distribution} for the document terms
+     * @param distributionForSearch defines the {@link com.github.jhanne82.documenttree.simulation.configuration.enumeration.Distribution} for the search terms
+     * @param cluster defines of term cluster will be used
+     */
     public Configuration( SearchType   searchType,
                           Distribution distributionForDocument,
                           Distribution distributionForSearch,
