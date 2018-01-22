@@ -323,7 +323,7 @@ public abstract class DocumentTree<T> {
 
 
 
-    private int repositionOfDocumentsDependingOnRelevance( int numberOfRelevenceCalculationToRepositiong ) {
+    private int repositionOfDocumentsDependingOnRelevance( int numberOfRelevanceCalculationToRepositioning ) {
 
         List<DocumentNode<T>> nodesOnNextLevel = new ArrayList<>();
         int requiredRepositionings = 0;
@@ -338,7 +338,7 @@ public abstract class DocumentTree<T> {
             for( DocumentNode<T> nodeOnCurrentLevel : nodesOnCurrentLevel ) {
 
                 // node can only be switched if the required count of stored relevance values is reached
-                if (nodeOnCurrentLevel.getDocument().getCountOfStoredRelevances() >= numberOfRelevenceCalculationToRepositiong) {
+                if (nodeOnCurrentLevel.getDocument().getCountOfStoredRelevances() >= numberOfRelevanceCalculationToRepositioning) {
 
                     Document<T> leftDocument = nodeOnCurrentLevel.getLeftChild() != null ? nodeOnCurrentLevel.getLeftChild()
                             .getDocument()
@@ -350,13 +350,13 @@ public abstract class DocumentTree<T> {
                     // switch current node with child node if child node a average relevance which is greater than the
                     // average relevance of the current node
                     if (leftDocument != null
-                            && leftDocument.getCountOfStoredRelevances() >= numberOfRelevenceCalculationToRepositiong
+                            && leftDocument.getCountOfStoredRelevances() >= numberOfRelevanceCalculationToRepositioning
                             && leftDocument.getAverageRelevance() > nodeOnCurrentLevel.getDocument().getAverageRelevance()) {
-                        numberOfRelevenceCalculationToRepositiong++;
+                        numberOfRelevanceCalculationToRepositioning++;
                         switchDocuments(nodeOnCurrentLevel, nodeOnCurrentLevel.getLeftChild());
 
                     } else if (rigthDocument != null
-                            && rigthDocument.getCountOfStoredRelevances() >= numberOfRelevenceCalculationToRepositiong
+                            && rigthDocument.getCountOfStoredRelevances() >= numberOfRelevanceCalculationToRepositioning
                             && rigthDocument.getAverageRelevance() > nodeOnCurrentLevel.getDocument().getAverageRelevance()) {
                         requiredRepositionings++;
                         switchDocuments(nodeOnCurrentLevel, nodeOnCurrentLevel.getRightChild());
