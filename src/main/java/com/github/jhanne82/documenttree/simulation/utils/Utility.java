@@ -5,11 +5,7 @@ import com.github.jhanne82.documenttree.simulation.configuration.Configuration;
 import com.github.jhanne82.documenttree.simulation.configuration.enumeration.Distribution;
 import org.apache.commons.io.FileUtils;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -117,8 +113,8 @@ public class Utility {
 
     public static void calcHitMissRate( Document foundDocument, Document bestMatch, SimulationResult result ) {
 
-        if(   bestMatch.getDocumentName().equals( foundDocument.getDocumentName() )
-                || bestMatch.getLatestCalculatedRelevance() == foundDocument.getLatestCalculatedRelevance()      ) {
+        if(   Arrays.equals(foundDocument.getTermVector(), bestMatch.getTermVector() )
+           || bestMatch.getLatestCalculatedRelevance() == foundDocument.getLatestCalculatedRelevance()      ) {
             result.setHitRate( result.getHitRate() + 1 );
         } else {
             result.setMissRate( result.getMissRate() + 1 );
