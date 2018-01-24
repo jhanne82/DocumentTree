@@ -91,6 +91,7 @@ public class DocumentList<T> {
             this.requiredSearchesTillDocument = requiredSearchesTillDocument;
         }
 
+
         @Override
         public int compareTo(DocumentListItem<R> o) {
             if( o == null || o.document == null ) {

@@ -111,7 +111,7 @@ public class Simulation_Test {
 
 
         @Override
-        public int getTHRESHOLD() {
+        public int getThreshold() {
             return 10;
         }
 

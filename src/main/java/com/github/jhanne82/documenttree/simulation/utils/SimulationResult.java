@@ -12,7 +12,6 @@ public class SimulationResult {
 
     // Bewertungskriterien
     private List<Integer> requiresSearches;
-    private List<Integer> requiredNodeList;
     private int missRate = 0;
     private int hitRate = 0;
     private List<Integer> averageCountOfRepositioning;

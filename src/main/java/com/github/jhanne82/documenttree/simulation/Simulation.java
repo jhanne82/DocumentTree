@@ -17,7 +17,11 @@ import com.google.common.math.LongMath;
 import java.io.File;
 import java.io.IOException;
 import java.math.RoundingMode;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 
 public class Simulation {
 
@@ -68,7 +72,7 @@ public class Simulation {
                                      bestMatch,
                                      documentTreeWithGlobalKnowledge.repositionOfDocuments( parameter.getNumberOfSearchesBeforeRepositioning(),
                                                                                             i+1,
-                                                                                            parameter.getTHRESHOLD() ),
+                                                                                            parameter.getThreshold() ),
                                      resultGlobalKnowledge );
 
             computeSimulationResult( searchOnTree( parameter,
@@ -77,7 +81,7 @@ public class Simulation {
                                      bestMatch,
                                      documentTreeWithLocalKnowledge.repositionOfDocuments( parameter.getNumberOfSearchesBeforeRepositioning(),
                                                                                             i+1,
-                                                                                            parameter.getTHRESHOLD() ),
+                                                                                            parameter.getThreshold() ),
                                      resultLocalKnowledge );
 
             computeSimulationResult( searchOnTree( parameter,

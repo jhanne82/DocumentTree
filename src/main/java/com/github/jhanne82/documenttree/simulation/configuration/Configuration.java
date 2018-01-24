@@ -58,66 +58,122 @@ public class Configuration {
 
 
 
+    /**
+     * Get the maximum count how many documents should be created.
+     *
+     * @return count of documents to create
+     */
     public int getMaxCountOfCreatedDocuments() {
         return MAX_COUNT_OF_CREATED_DOCUMENTS;
     }
 
 
 
+    /**
+     * Get the maximum count how many searches should be performed.
+     *
+     * @return count of searches which will be performed
+     */
     public int getMaxCountOfCreatedSearches() {
         return MAX_COUNT_OF_CREATED_SEARCHES;
     }
 
 
 
+    /**
+     * Get the count of terms which will define a document and/or search.
+     *
+     * @return count of terms
+     */
     public int getMaxCountOfTermsUsedToDefineVector() {
         return MAX_COUNT_OF_TERMS_USED_TO_DEFINE_VECTOR;
     }
 
 
 
+    /**
+     * Get the count of terms for the document/search vector which needs to be greater than 0.
+     *
+     * @return count of terms unequal zero.
+     */
     public int getMaxCountOfTermsWithQuantifier() {
         return MAX_COUNT_OF_TERMS_WITH_QUANTIFIER;
     }
 
 
 
+    /**
+     * Get the count of documents which will be searched for limit search.
+     *
+     * @return count of terms which will be searched
+     */
     public int getLimitForLocalKnowledge() {
         return LIMIT_FOR_LOCAL_KNOWLEDGE;
     }
 
 
 
+    /**
+     * Get the number of searches which needs to be performed until a document can be repositioned.
+     *
+     * @return required number of searches to reposition a document
+     */
     public int getNumberOfSearchesBeforeRepositioning() {
         return NUMBER_OF_SEARCHES_BEFORE_REPOSITIONING;
     }
 
 
 
-    public int getTHRESHOLD() {
+    /**
+     * Get the threshold to reposition documents which are not searched for a defined number of searches (threshold).
+     *
+     * @return the threshold
+     */
+    public int getThreshold() {
         return THRESHOLD;
     }
 
 
 
+    /**
+     * Get the defined {@link com.github.jhanne82.documenttree.simulation.configuration.enumeration.SearchType}
+     * for the simulation to search on the tree.
+     *
+     * @return the defined {@link com.github.jhanne82.documenttree.simulation.configuration.enumeration.SearchType}
+     */
     public SearchType getSearchType() {
         return searchType;
     }
 
 
-
+    /**
+     * Get the defined {@link com.github.jhanne82.documenttree.simulation.configuration.enumeration.Distribution}
+     * when the document terms will be created randomly.
+     *
+     * @return the defined {@link com.github.jhanne82.documenttree.simulation.configuration.enumeration.Distribution} used to create a document
+     */
     public Distribution getDistributionForDocument() {
         return distributionForDocument;
     }
 
 
-
+    /**
+     * Get the defined {@link com.github.jhanne82.documenttree.simulation.configuration.enumeration.Distribution}
+     * when the search terms will be created randomly.
+     *
+     * @return the defined {@link com.github.jhanne82.documenttree.simulation.configuration.enumeration.Distribution} used to create a search
+     */
     public Distribution getDistributionForSearch() {
         return distributionForSearch;
     }
 
 
 
+    /**
+     * Defines if cluster for document and search terms will be used.
+     *
+     * @return if cluster will be used
+     */
     public boolean isCluster() {
         return cluster;
     }
