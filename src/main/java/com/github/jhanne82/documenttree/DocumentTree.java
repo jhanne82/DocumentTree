@@ -5,10 +5,7 @@ import com.github.jhanne82.documenttree.document.Document;
 import com.github.jhanne82.documenttree.document.DocumentList;
 import com.google.common.collect.ImmutableList;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
+import java.util.*;
 
 
 /**
@@ -109,33 +106,27 @@ public abstract class DocumentTree<T> {
      */
     public DocumentList<T> breadthFirstSearch(int maxVisitedNode, T[] searchTerm, int searchTimeStamp ) {
         resultDocumentList = new DocumentList<>( 1 );
-
-        List<DocumentNode<T>> nodesOnNextLevel = new ArrayList<>();
-
-        nodesOnNextLevel.add( rootNode );
-
         countOfSearchedDocuments = 0;
 
-        while ( !nodesOnNextLevel.isEmpty() ) {
+        Queue<DocumentNode<T>> queue = new LinkedList<>();
+        queue.add(rootNode );
 
-            // child nodes from the previous while loop are now the nodes to be searched
-            List<DocumentNode<T>> nodesOnCurrentLevel = ImmutableList.copyOf( nodesOnNextLevel );
-            nodesOnNextLevel = new ArrayList<>();
+        while ( !queue.isEmpty() ) {
 
-            for( DocumentNode<T> node : nodesOnCurrentLevel ) {
-                // if maximum number of nodes are searched the search will be terminated
-                if( countOfSearchedDocuments == maxVisitedNode ) {
-                    return resultDocumentList;
-                }
-                if( node != null ) {
-                    node.getDocument().addRelevance(calcRelevanceOfDocument(node.getDocument().getTermVector(), searchTerm));
-                    node.getDocument().setTimestampOfLatestSearch( searchTimeStamp );
-                    resultDocumentList.add( node.getDocument(), countOfSearchedDocuments );
+            // if maximum number of nodes are searched the search will be terminated
+            if( countOfSearchedDocuments == maxVisitedNode ) {
+                return resultDocumentList;
+            }
 
-                    // set child nodes to list of nodes which should be search in next while loop
-                    nodesOnNextLevel.addAll(node.getChildLeaves());
-                    countOfSearchedDocuments++;
-                }
+            DocumentNode<T> node = queue.poll();
+            if( node != null ) {
+                node.getDocument().addRelevance(calcRelevanceOfDocument(node.getDocument().getTermVector(), searchTerm));
+                node.getDocument().setTimestampOfLatestSearch( searchTimeStamp );
+                resultDocumentList.add( node.getDocument(), countOfSearchedDocuments );
+
+                // set child nodes to list of nodes which should be search in next while loop
+                queue.addAll( node.getChildLeaves());
+                countOfSearchedDocuments++;
             }
         }
 
