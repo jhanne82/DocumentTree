@@ -5,60 +5,132 @@ import com.github.jhanne82.documenttree.simulation.configuration.Configuration;
 import java.util.ArrayList;
 import java.util.List;
 
+
+/**
+ * Implementation to store the results of a simulation.
+ * The results which are stored are defined in the master thesis.
+ */
 public class SimulationResult {
+
 
 
     private final Configuration parameter;
 
-    // Bewertungskriterien
-    private List<Integer> requiresSearches;
-    private int missRate = 0;
-    private int hitRate = 0;
-    private List<Integer> averageCountOfRepositioning;
+    private List<Integer> requiredSearches;
+    private int hits = 0;
+    private List<Integer> repositionings;
     private int documentOnCorrectLevel = 0;
     private List<Integer> distanceToOptimalPosition;
 
 
 
+    /**
+     * Constructs a SimulationResult object by a given Configuration
+     *
+     * @param parameter defines the configuration which was used for the simulation.
+     */
     public SimulationResult( Configuration parameter ) {
         this.parameter = parameter;
     }
 
 
-    public int getHitRate() {return hitRate; }
-    public void setHitRate( int hitRate ) { this.hitRate = hitRate; }
+
+    /**
+     * Get the number if Hits after all searches.
+     *
+     * @return the number of hits
+     */
+    public int getHits() {return hits; }
 
 
-    public int getMissRate() { return missRate; }
-    public void setMissRate( int missRate ) { this.missRate = missRate; }
+
+    /**
+     * Set the current number of hits after  all searches are performed.
+     *
+     * @param hits defines the number of hits.
+     */
+    public void setHits(int hits) { this.hits = hits; }
 
 
+
+    /**
+     * Get the number of documents which are on the same level like the copies of them in the optimal tree.
+     *
+     * @return the number of documents on the correct level.
+     */
     public int getDocumentOnCorrectLevel() { return documentOnCorrectLevel; }
+
+
+
+    /**
+     * Sets the number of documents which are on the same level like the copies of them in the optimal tree.
+     *
+     * @param documentOnCorrectLevel defines the number of documents on the correct level.
+     */
     public void setDocumentOnCorrectLevel( int documentOnCorrectLevel ) { this.documentOnCorrectLevel = documentOnCorrectLevel; }
 
 
 
-    public List<Integer> getRequiredSearches() { return requiresSearches; }
+    /**
+     * Get the list of number of required searches until the document with the highest relevance was found.
+     *
+     * @return the number of searches.
+     */
+    public List<Integer> getRequiredSearches() { return requiredSearches; }
+
+
+
+    /**
+     * Add the number of required searches to find the document with the highest relevance for the last search.
+     *
+     * @param requiredSearches defines the number of required searches.
+     */
     public void addRequiredSearches( int requiredSearches ) {
-        if( null == requiresSearches ) {
-            requiresSearches = new ArrayList<>();
+        if( null == this.requiredSearches) {
+            this.requiredSearches = new ArrayList<>();
         }
-        requiresSearches.add( requiredSearches );
+        this.requiredSearches.add( requiredSearches );
     }
 
 
 
-    public List<Integer> getRequiredRepositionings() { return averageCountOfRepositioning; }
+    /**
+     * Get a list of counts of performed repositionings.
+     *
+     * @return a list of repositionings
+     */
+    public List<Integer> getRequiredRepositionings() { return repositionings; }
+
+
+
+    /**
+     * Add the number of performed repositionings.
+     *
+     * @param requiredRepositioning defines the last number of repositionings.
+     */
     public void addRequiredRepositioning( int requiredRepositioning ) {
-        if( null == averageCountOfRepositioning ) {
-            averageCountOfRepositioning = new ArrayList<>();
+        if( null == repositionings) {
+            repositionings = new ArrayList<>();
         }
-        averageCountOfRepositioning.add( requiredRepositioning );
+        repositionings.add( requiredRepositioning );
     }
 
 
 
+    /**
+     * Get a list which contains the distance of each document from the optimal position.
+     *
+     * @return the list of distances to optimum position
+     */
     public List<Integer> getDistanceToOptimalPosition() { return distanceToOptimalPosition; }
+
+
+
+    /**
+     * Add a distance to the optimum position for a special document.
+     *
+     * @param distance defines the distance for a special document.
+     */
     public void addDistanceToOptimalPosition( int distance ) {
         if( null == distanceToOptimalPosition ) {
             distanceToOptimalPosition = new ArrayList<>();
@@ -68,6 +140,11 @@ public class SimulationResult {
 
 
 
+    /**
+     * Get the defined parameter which were used for the simulation.
+     *
+     * @return the parameter for the simulation.
+     */
     public Configuration getParameter() {
         return parameter;
     }

@@ -10,24 +10,34 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+
+/**
+ * Utility class with some helper methods
+ */
 public class Utility {
 
 
-
-    public static void writeSimulationResults( String path, Configuration parameter, SimulationResult simulationResult )
+    /**
+     * Method to write the result of a simulation into files.
+     *
+     * @param path defines the path where the files should be stored.
+     * @param simulationResult defines the stored results of the simulation.
+     * @throws IOException if the named file exists.
+     */
+    public static void writeSimulationResults( String path, SimulationResult simulationResult )
             throws IOException {
 
-        path += parameter.isCluster() ? File.separator + "clustered"
-                                      : File.separator + "not_clustered";
+        path += simulationResult.getParameter().isCluster() ? File.separator + "clustered"
+                                                            : File.separator + "not_clustered";
 
-        path = path + File.separator + parameter.getSearchType()
-               + File.separator + parameter.getDistributionForDocument()
-               + File.separator + parameter.getDistributionForSearch();
+        path = path + File.separator + simulationResult.getParameter().getSearchType()
+               + File.separator + simulationResult.getParameter().getDistributionForDocument()
+               + File.separator + simulationResult.getParameter().getDistributionForSearch();
 
         FileUtils.forceMkdir( new File( path ) );
 
         writeInFile( path + File.separator + "HitMissRate.txt",
-                     simulationResult.getHitRate() + "/" + simulationResult.getMissRate() );
+                     Integer.toString( simulationResult.getHits() ) );
         writeInFile( path + File.separator + "RequiredSearches.txt",
                      Arrays.toString( simulationResult.getRequiredSearches().toArray() ) );
         writeInFile( path + File.separator + "RequiredRepositionings.txt",
@@ -48,7 +58,13 @@ public class Utility {
     }
 
 
-
+    /**
+     * Method to create a list of documents. The documents will be created like defined in the configuration parameter.
+     *
+     * @param parameter defines the Configuration used for the simulation which defines the distribution and the number of terms.
+     * @param clusterMap defines the term cluster.
+     * @return an array of documents.
+     */
     public static Document<Double>[] createDocuments( Configuration parameter, Map<Double, Double> clusterMap ) {
         RandomNumberGenerator numberGenerator = new RandomNumberGenerator();
         Document<Double>[] documentArray = new Document[parameter.getMaxCountOfCreatedDocuments()];
@@ -66,6 +82,18 @@ public class Utility {
     }
 
 
+
+    /**
+     * Method to create an array with double values which can represent the term vector of a document and/or searches.
+     *
+     * @param distribution defines the distribution of the terms.
+     * @param maxCountOfTerms defines the maximum count of terms which will defined the vector.
+     * @param maxCountOfTermsWithQuantifier defines the maximum count of terms with a value greater than zero.
+     * @param cluster defines if cluster will be used.
+     * @param clusterMap defines the cluster map
+     * @param numberGenerator defines the Pseudo-Number generator
+     * @return an array of double values
+     */
     public static Double[] createTermVector( Distribution distribution,
                                               int maxCountOfTerms,
                                               int maxCountOfTermsWithQuantifier,
@@ -92,6 +120,11 @@ public class Utility {
     }
 
 
+
+    /**
+     * Method to create a cluster map. It contains
+     * @return a cluster map.
+     */
     public static Map<Double, Double> createClusterMap() {
         RandomNumberGenerator randomNumberGenerator = new RandomNumberGenerator();
         Map<Double, Double> clusterMap = new HashMap<>();
@@ -111,13 +144,19 @@ public class Utility {
     }
 
 
-    public static void calcHitMissRate( Document foundDocument, Document bestMatch, SimulationResult result ) {
+
+    /**
+     * Helper method to define if the found document is the searched one to increase the number of hits of the SimulationResults.
+     *
+     * @param foundDocument defines the document with the highest relevance which was found.
+     * @param bestMatch defines the best match/ searched document to compare with the found document.
+     * @param result defines the SimulationResult where the hit should be added.
+     */
+    public static void addSearchHit(Document foundDocument, Document bestMatch, SimulationResult result ) {
 
         if(   Arrays.equals(foundDocument.getTermVector(), bestMatch.getTermVector() )
            || bestMatch.getLatestCalculatedRelevance() == foundDocument.getLatestCalculatedRelevance()      ) {
-            result.setHitRate( result.getHitRate() + 1 );
-        } else {
-            result.setMissRate( result.getMissRate() + 1 );
+            result.setHits( result.getHits() + 1 );
         }
     }
 

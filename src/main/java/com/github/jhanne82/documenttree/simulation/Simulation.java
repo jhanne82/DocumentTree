@@ -17,12 +17,14 @@ import com.google.common.math.LongMath;
 import java.io.File;
 import java.io.IOException;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+
+/**
+ * Implementation of the simulation to the test the improvement due to the repositions.
+ * The documents will be created, copies of the stored in the different an trees and the searches are created.
+ * After each search the repositioning is started.
+ */
 public class Simulation {
 
 
@@ -38,7 +40,16 @@ public class Simulation {
     private Document<Double>[] optimalDocumentTree;
 
 
-
+    /**
+     * Method to start the simulation.
+     * <li>create documents</li>
+     * <li>stored copies of document in the different trees</li>
+     * <li>search on the tree </li>
+     *
+     * @param parameter defines the used Configuration
+     *
+     * @return an array which contains the SimulationResult for globalKnowledge, localKnowledge, stressReduced
+     */
     public SimulationResult[] start( Configuration parameter ) {
         Map<Double, Double> clusterMap = null;
         if( parameter.isCluster() ) {
@@ -135,7 +146,7 @@ public class Simulation {
                                           Document<Double> bestMatch,
                                           int requiredRepositionings,
                                           SimulationResult result ) {
-        Utility.calcHitMissRate( resultDocumentList.getBestResult(), bestMatch, result );
+        Utility.addSearchHit( resultDocumentList.getBestResult(), bestMatch, result );
         result.addRequiredSearches(resultDocumentList.numberOfSearchesTillOptimum());
         result.addRequiredRepositioning( requiredRepositionings );
     }
@@ -207,9 +218,9 @@ public class Simulation {
             throws IOException {
         String pathPrefix = System.getProperty( "user.home" ) + File.separator + "Results_DocumentTree" + File.separator;
 
-        Utility.writeSimulationResults( pathPrefix + "globalKnowledge", parameter, simulationResults[SEARCH_MODE_GLOBAL]);
-        Utility.writeSimulationResults( pathPrefix + "localKnowledge",  parameter, simulationResults[SEARCH_MODE_LOCAL]);
-        Utility.writeSimulationResults( pathPrefix + "stressReduced",   parameter, simulationResults[SEARCH_MODE_STRESS_REDUCED]);
+        Utility.writeSimulationResults( pathPrefix + "globalKnowledge", simulationResults[SEARCH_MODE_GLOBAL]);
+        Utility.writeSimulationResults( pathPrefix + "localKnowledge",  simulationResults[SEARCH_MODE_LOCAL]);
+        Utility.writeSimulationResults( pathPrefix + "stressReduced",   simulationResults[SEARCH_MODE_STRESS_REDUCED]);
     }
 
 

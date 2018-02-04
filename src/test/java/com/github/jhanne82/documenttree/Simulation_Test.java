@@ -49,8 +49,8 @@ public class Simulation_Test {
                      '\n' +
                      String.format( "%39s %20s%n", "global Knowledge", "local Knowledge" ) +
                      String.format( "Hit/Miss Rate: %10d/%d %17d/%d%n",
-                                    results[ 0 ].getHitRate(), results[ 0 ].getMissRate(),
-                                    results[ 1 ].getHitRate(), results[ 1 ].getMissRate() ) +
+                                    results[ 0 ].getHits(), results[ 0 ].getMissRate(),
+                                    results[ 1 ].getHits(), results[ 1 ].getMissRate() ) +
                      String.format( "NodesOnCorrectLevel: %10d %17d%n",
                                     results[ 0 ].getDocumentOnCorrectLevel(),
                                     results[ 1 ].getDocumentOnCorrectLevel() );
